@@ -26,5 +26,50 @@
         "editorMultiCursor.secondary.foreground": "#94E2D5",
         "editorSuggestWidget.border": "#94E2D5",
         "editorLineNumber.activeForeground": "#94E2D5"
-    }
+    },
+
+    //Ruff
+    "ruff.path": [ "/Users/wrath/projects/klaw/.venv/bin/ruff" ],
+    "ruff.interpreter": [
+        "/Users/wrath/projects/klaw/.venv/bin/python"
+    ],
+    "ruff.configuration": "home/wrath/klaw/ruff.toml",
+    "ruff.nativeServer": "on",
+    "ruff.organizeImports": true,
+    "ruff.configurationPreference": "filesystemFirst",
+    "ruff.importStrategy": "fromEnvironment",
+    "ruff.enable": true,
+    "ruff.trace.server": "messages",
+    "ruff.showSyntaxErrors": true,
+    
+    // Python specific settings
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
+        },
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "debugpy.showPythonInlineValues": true,
+    
+    // PyLance
+    "python.languageServer": "Pylance",
+    "python.analysis.diagnosticMode": "openFilesOnly",
+    "python.analysis.typeCheckingMode": "strict",
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportUndefinedVariable": "none"
+    },
+    "python.analysis.ignore": [ "*" ],
+    "python.analysis.inlayHints.callArgumentNames": "all",
+    "python.analysis.inlayHints.functionReturnTypes": true,
+    "python.analysis.inlayHints.pytestParameters": true,
+    "python.analysis.inlayHints.variableTypes": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.completeFunctionParens": true,
+    "python.diagnostics.sourceMapsEnabled": true,
+    "python.analysis.extraCommitChars": true,
+    "python.analysis.regenerateStdLibIndices": true,
 }
