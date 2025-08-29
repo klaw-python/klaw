@@ -1,0 +1,17 @@
+[project]
+name = "klaw"
+version = "0.1.0"
+description = "Type-safe, performant tools, meant to work together to better the python ecosystem."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+authors = [
+    {name = "klaw team"}
+]
+
+[tool.uv.workspace]
+members = [
+    "workspaces/python/*",
+    "workspaces/rust/*",
+    "workspaces/tools/*"
+]

@@ -1,0 +1,96 @@
+exclude: |
+  (?x)^(
+      .*\{\{.*\}\}.*|     # Exclude any files with cookiecutter variables
+      docs/site/.*|       # Exclude mkdocs compiled files
+      \.history/.*|       # Exclude history files
+      .*cache.*/.*|       # Exclude cache directories
+      .*venv.*/.*|        # Exclude virtual environment directories
+  )$
+fail_fast: true
+default_language_version:
+  python: python3.12
+default_install_hook_types:
+- pre-commit
+- commit-msg
+
+repos:
+# Linting & Formatting
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.11.13
+  hooks:
+  # Run the linter.
+  - id: ruff
+    name: 🔧 ruff · lint
+    types_or: [ python, pyi ]
+    args: [ --fix ]
+  # Run the formatter.
+  - id: ruff-format
+    name: 🔧 ruff · format
+    types_or: [ python, pyi ]
+
+# Data & Config Validation
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.33.0
+  hooks:
+  - id: check-github-workflows
+    name: "🐙 github-actions · Validate gh workflow files"
+    args: [ "--verbose" ]
+  - id: check-taskfile
+    name: "✅ taskfile · Validate Task configuration"
+
+# Markdown
+- repo: https://github.com/hukkin/mdformat
+  rev: 0.7.22
+  hooks:
+  - id: mdformat
+    name: "📝 markdown · Format markdown"
+    additional_dependencies:
+    - mdformat-gfm
+    - mdformat-ruff
+    - mdformat-frontmatter
+    - ruff
+  # Test formatting
+- repo: local
+  hooks:
+  - id: pytest-collect
+    name: 🧪 test · Validate test formatting
+    entry: ./.venv/bin/pytest test
+    language: system
+    types: [ python ]
+    args: [ "--collect-only" ]
+    pass_filenames: false
+    always_run: true
+    # Tests Fast
+  - id: pytest-fast
+    name: 🧪 test · Run fast tests
+    entry: ./.venv/bin/pytest test
+    language: system
+    types: [ python ]
+    pass_filenames: false
+    always_run: true
+
+# Verify web stuff
+- repo: https://github.com/biomejs/pre-commit
+  rev: v2.0.0-beta.5 # Use the sha / tag you want to point at
+  hooks:
+  - id: biome-check
+    name: "🕸️ javascript · Lint, format, and safe fixes with Biome"
+
+# Optimize images
+- repo: https://github.com/shssoichiro/oxipng
+  rev: v9.1.4
+  hooks:
+  - id: oxipng
+    name: 📸 images · optimize
+    args: [ "-o", "4", "--strip", "safe", "--alpha" ]
+
+# Dependency management
+- repo: https://github.com/astral-sh/uv-pre-commit
+  # uv version.
+  rev: 0.7.13
+  hooks:
+  - id: uv-lock
+    name: "🔒 uv-lock · Lock dependencies"
+  - id: uv-export
+    name: "🔗 uv-export · Export dependencies"
