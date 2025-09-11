@@ -72,4 +72,23 @@
     "python.diagnostics.sourceMapsEnabled": true,
     "python.analysis.extraCommitChars": true,
     "python.analysis.regenerateStdLibIndices": true,
+    "cSpell.words": [
+        "autorefs",
+        "catppuccin",
+        "codehilite",
+        "crossrefs",
+        "docstrings",
+        "fieldz",
+        "inlinehilite",
+        "klaw",
+        "kwds",
+        "linenums",
+        "mkdocs",
+        "pathlib",
+        "pycon",
+        "pygments",
+        "pymdownx",
+        "superfences",
+        "twemoji"
+    ],
 }

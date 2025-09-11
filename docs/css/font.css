@@ -1,0 +1,74 @@
+/* Caskaydia Cove (Proportional) */
+@font-face {
+    font-family: 'CaskaydiaCove';
+    src: url('../assets/fonts/CascadiaCode/CaskaydiaCoveNerdFont-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'CaskaydiaCove';
+    src: url('../assets/fonts/CascadiaCode/CaskaydiaCoveNerdFont-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'CaskaydiaCove';
+    src: url('../assets/fonts/CascadiaCode/CaskaydiaCoveNerdFont-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'CaskaydiaCove';
+    src: url('../assets/fonts/CascadiaCode/CaskaydiaCoveNerdFont-BoldItalic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+/* Caskaydia Cove Mono (Monospaced) */
+@font-face {
+    font-family: 'CaskaydiaCoveMono';
+    src: url('../assets/fonts/CascadiaCode/CaskaydiaCoveNerdFontMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'CaskaydiaCoveMono';
+    src: url('../assets/fonts/CascadiaCode/CaskaydiaCoveNerdFontMono-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'CaskaydiaCoveMono';
+    src: url('../assets/fonts/CascadiaCode/CaskaydiaCoveNerdFontMono-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'CaskaydiaCoveMono';
+    src: url('../assets/fonts/CascadiaCode/CaskaydiaCoveNerdFontMono-BoldItalic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+
+/* Override Material theme font variables for whole-page application */
+:root {
+    --md-text-font: 'CaskaydiaCove';
+    --md-code-font: 'CaskaydiaCoveMono';
+}
+
+/* Fallback for elements not using variables */
+body,
+.md-nav,
+.md-header,
+.md-main,
+.md-footer {
+    font-family: var(--md-text-font), sans-serif;
+}
+
+.md-typeset code,
+.md-typeset pre,
+.doc-signature,
+.highlight {
+    font-family: var(--md-code-font), monospace;
+}

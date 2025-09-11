@@ -1,0 +1,163 @@
+[data-md-color-scheme="slate"] {
+    .md-header {
+        background-color: var(--catppuccin-mocha-base);
+        color: var(--catppuccin-mocha-text);
+    }
+    
+    .md-source__icon {
+        color: var(--catppuccin-mocha-peach);
+    }
+    .md-source__fact--stars {
+        color: var(--catppuccin-mocha-green);
+    }
+    .md-source__fact--forks {
+        color: var(--catppuccin-mocha-mauve);
+    }
+    
+    /* .md-main {
+        background-color: var(--catppuccin-mocha-crust);
+    } */
+    
+    --md-default-bg-color: var(--catppuccin-mocha-crust);
+
+    --md-primary-fg-color: var(--catppuccin-mocha-base);
+    --md-primary-bg-color: var(--catppuccin-mocha-text);
+    
+
+    --md-accent-fg-color: var(--catppuccin-mocha-green);
+    --md-accent-fg-color--transparent: hsl(var(--catppuccin-mocha-h), var(--catppuccin-mocha-s), calc(var(--catppuccin-mocha-l) - 0.1%));
+    --md-accent-bg-color: var(--catppuccin-mocha-base);
+
+    /* Base colors */
+    --md-default-fg-color--dark: var(--catppuccin-mocha-text);
+
+    /* Code colors */
+    --md-code-fg-color: var(--catppuccin-mocha-text);
+    --md-code-bg-color: var(--catppuccin-mocha-mantle);
+    --md-code-hl-color: var(--catppuccin-mocha-surface1);
+
+    /* Typeset colors */
+    /* --md-typeset-color: var(--catppuccin-mocha-text);
+    --md-typeset-a-color: var(--catppuccin-mocha-mauve);
+    --md-typeset-a-color--visited: var(--catppuccin-mocha-lavender);
+    --md-typeset-mark-color: var(--catppuccin-mocha-yellow);
+    --md-typeset-del-color: var(--catppuccin-mocha-red);
+    --md-typeset-ins-color: var(--catppuccin-mocha-green);
+    --md-typeset-kbd-color: var(--catppuccin-mocha-surface0);
+    --md-typeset-kbd-accent-color: var(--catppuccin-mocha-surface1); */
+
+    /* Table colors */
+    --md-typeset-table-color: var(--catppuccin-mocha-text);
+    --md-typeset-table-color--light: var(--catppuccin-mocha-subtext0);
+    --md-typeset-table-color--dark: var(--catppuccin-mocha-subtext1);
+
+    /* Admonition colors */
+    --md-admonition-fg-color: var(--catppuccin-mocha-text);
+    --md-admonition-bg-color: var(--catppuccin-mocha-mantle);
+    --md-admonition-bg-color--light: var(--catppuccin-mocha-surface1);
+    --md-admonition-bg-color--dark: var(--catppuccin-mocha-surface2);
+
+    /* Footer colors */
+    --md-footer-fg-color: var(--catppuccin-mocha-subtext0);
+    --md-footer-fg-color--light: var(--catppuccin-mocha-subtext1);
+    --md-footer-bg-color: var(--catppuccin-mocha-crust);
+    --md-footer-bg-color--dark: var(--catppuccin-mocha-mantle);
+
+    /* Navigation colors - Top navbar should be crust */
+    --md-nav-fg-color: var(--catppuccin-mocha-text);
+    --md-nav-bg-color: var(--catppuccin-mocha-mantle);  /* Top navbar: crust */
+    --md-nav-bg-color--light: var(--catppuccin-mocha-base);
+    --md-nav-bg-color--dark: var(--catppuccin-mocha-base);
+    --md-nav-link-fg-color: var(--catppuccin-mocha-lavender);
+    --md-nav-link-fg-color--visited: var(--catppuccin-mocha-mauve);
+    --md-nav-link-bg-color: transparent;
+    --md-nav-link-bg-color--active: var(--catppuccin-mocha-green);
+    --md-nav-link-bg-color--hover: var(--catppuccin-mocha-teal);
+    
+    
+    /* --md-code-hl-number-color: var(--catppuccin-mocha-red);
+    --md-code-hl-class-color: var(--catppuccin-mocha-peach);
+    --md-code-hl-special-color: var(--catppuccin-mocha-mauve);
+    --md-code-hl-function-color: var(--catppuccin-mocha-blue);
+    --md-code-hl-constant-color: var(--catppuccin-mocha-sky);
+    --md-code-hl-keyword-color: var(--catppuccin-mocha-mauve);
+    --md-code-hl-string-color: var(--catppuccin-mocha-green);
+    --md-code-hl-name-color: var(--catppuccin-mocha-red);
+    --md-code-hl-operator-color: var(--catppuccin-mocha-mauve);
+    --md-code-hl-punctuation-color: var(--catppuccin-mocha-peach);
+    --md-code-hl-comment-color: var(--catppuccin-mocha-surface2);
+    --md-code-hl-generic-color: var(--catppuccin-mocha-sapphire);
+    --md-code-hl-variable-color: var(--catppuccin-mocha-rosewater);
+    --md-code-hl-parameter-color: var(--catppuccin-mocha-rosewater); */
+    
+
+    --doc-symbol-parameter-fg-color: var(--catppuccin-mocha-rosewater);
+    --doc-symbol-type_parameter-fg-color: var(--catppuccin-mocha-sky);
+    --doc-symbol-attribute-fg-color: var(--catppuccin-mocha-teal);
+    --doc-symbol-function-fg-color: var(--catppuccin-mocha-blue);
+    --doc-symbol-method-fg-color: var(--catppuccin-mocha-mauve);
+    --doc-symbol-class-fg-color: var(--catppuccin-mocha-peach);
+    --doc-symbol-type_alias-fg-color: var(--catppuccin-mocha-lavender);
+    --doc-symbol-module-fg-color: var(--catppuccin-mocha-green);
+
+
+    --doc-symbol-parameter-bg-color: color-mix(in srgb, var(--catppuccin-mocha-rosewater) 30%, var(--catppuccin-mocha-base) 70%);
+    --doc-symbol-type_parameter-bg-color: color-mix(in srgb, var(--catppuccin-mocha-sky) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-attribute-bg-color: color-mix(in srgb, var(--catppuccin-mocha-teal) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-function-bg-color: color-mix(in srgb, var(--catppuccin-mocha-blue) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-method-bg-color: color-mix(in srgb, var(--catppuccin-mocha-mauve) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-class-bg-color: color-mix(in srgb, var(--catppuccin-mocha-peach) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-type_alias-bg-color: color-mix(in srgb, var(--catppuccin-mocha-lavender) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-module-bg-color: color-mix(in srgb, var(--catppuccin-mocha-green) 20%, var(--catppuccin-mocha-base) 80%);
+    
+    
+    .doc-symbol-attribute::after {
+        content: "A";
+        border-radius: 0.2rem;
+        padding: 0.1rem 0.1rem;
+        font-weight: bold;
+    }
+
+    .doc-symbol-parameter::after {
+        content: "P";
+        border-radius: 0.2rem;
+        padding: 0.1rem 0.1rem;
+        font-weight: bold;
+    }
+    
+    
+    .doc-symbol-function::after {
+        content: "F";
+        border-radius: 0.2rem;
+        padding: 0.1rem 0.1rem;
+        font-weight: bold;
+    }
+
+    .doc-symbol-method::after {
+        content: "M";
+        border-radius: 0.2rem;
+        padding: 0.1rem 0.1rem;
+        font-weight: bold;
+    }
+
+    .doc-symbol-class::after {
+        content: "C";
+        border-radius: 0.2rem;
+        padding: 0.1rem 0.1rem;
+    }
+
+    .doc-symbol-module::after {
+        content: "M";
+        border-radius: 0.2rem;
+        padding: 0.1rem 0.1rem;
+        font-weight: bold;
+    }
+
+    .doc-label { border-radius: 5px; padding: 2px 8px; font-weight: semibold; font-size: 0.8em; }
+
+    /* .doc-label-special { background-color: var(--doc-symbol-attribute-bg-color); color: var(--doc-symbol-attribute-fg-color); }
+    .doc-label-private { background-color: var(--doc-symbol-class-bg-color); color: var(--doc-symbol-class-fg-color); }
+    .doc-label-property { background-color: var(--doc-symbol-method-bg-color); color: var(--doc-symbol-method-fg-color); }
+    .doc-label-read-only { background-color: var(--doc-symbol-function-bg-color); color: var(--doc-symbol-function-fg-color); } */
+
+}
