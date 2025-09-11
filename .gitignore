@@ -113,4 +113,6 @@ public/bundle
 .tmp/
 tmp/
 .DS_Store
+.kilocode
 .kilocode/
+.kilocode/*
