@@ -36,12 +36,12 @@ def get_title(source_path: Path) -> str:
     return source_path.stem
 
 
-def get_module_info(init_path: Path) -> dict:
-    """Extract module information from __init__.py."""
-    if not init_path.exists():
+def get_module_info(module_path: Path) -> dict:
+    """Extract module information from Python file (module docstring)."""
+    if not module_path.exists():
         return {}
     try:
-        with open(init_path, encoding='utf-8') as f:
+        with open(module_path, encoding='utf-8') as f:
             tree = ast.parse(f.read())
         for node in ast.iter_child_nodes(tree):
             if isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant):
@@ -59,6 +59,7 @@ def clean_description(desc: str) -> str:
 
 # Process each workspace
 modules_structure = {}
+submodules_per_package = {}
 
 for workspace_path in python_workspaces:
     src = root / workspace_path
@@ -67,6 +68,7 @@ for workspace_path in python_workspaces:
 
     module_name = workspace_path.split('/')[-1]  # e.g., "klaw_core"
     modules_structure[module_name] = set()
+    submodules_per_package[module_name] = []
 
     # Find all Python files in the workspace
     for path in sorted(src.rglob('*.py')):
@@ -87,24 +89,70 @@ for workspace_path in python_workspaces:
                         clean_description(module_info.get('description', 'No description')),
                     ))
 
+        # Collect submodules for package index
+        if len(parts) == 1 and parts[0] != '__init__':
+            submodule_name = parts[0]
+            # Try to get description from module's own docstring
+            submodule_info = get_module_info(path)
+            if not submodule_info:
+                # Fallback to package __init__.py or default
+                submodule_info = (
+                    get_module_info(path.parent / '__init__.py') if (path.parent / '__init__.py').exists() else {}
+                )
+            description = clean_description(submodule_info.get('description', f'Module {submodule_name}'))
+            submodules_per_package[module_name].append((submodule_name, description))
+
 # Generate the main reference index
 with mkdocs_gen_files.open('reference/index.md', 'w') as index:
     index.write('# API Reference\n\n')
     index.write('Welcome to the Klaw API reference documentation.\n\n')
     index.write('## Available Modules\n\n')
 
-    for module_name, submodules in modules_structure.items():
-        if submodules:  # Only show modules that have content
-            display_name = module_name.replace('_', ' ').title()
-            index.write(f'### {display_name}\n\n')
+    # Create a single table for all packages
+    index.write('| Package   | Description |\n')
+    index.write('|-----------|-------------|\n')
 
-            index.write('| Module | Description |\n')
-            index.write('|--------|------------|\n')
-            for submodule, description in sorted(submodules):
-                index.write(f'| [{submodule}]({module_name}/{submodule}/index.md) | {description} |\n')
-            index.write('\n')
+    for module_name, submodules in submodules_per_package.items():
+        if submodules:  # Only show packages that have submodules
+            display_name = module_name.replace('_', ' ').title()
+
+            # Get package description from __init__.py
+            # Find the correct workspace path for this module
+            workspace_src = None
+            for ws_path in python_workspaces:
+                if ws_path.endswith(module_name):
+                    workspace_src = root / ws_path
+                    break
+
+            package_description = f'Package containing {len(submodules)} modules'
+            if workspace_src:
+                package_init_path = workspace_src / '__init__.py'
+                package_info = get_module_info(package_init_path)
+                if package_info:
+                    package_description = clean_description(package_info.get('description', package_description))
+
+            index.write(f'| [{display_name}]({module_name}/index.md) | {package_description} |\n')
+
+    index.write('\n')
 
 nav['reference'] = 'index.md'
+
+# Generate package index pages
+for module_name, submodules in submodules_per_package.items():
+    if submodules:
+        package_index_path = Path('reference', module_name, 'index.md')
+        with mkdocs_gen_files.open(package_index_path, 'w') as fd:
+            display_name = module_name.replace('_', ' ').title()
+            fd.write(f'# {display_name}\n\n')
+            fd.write(f'Package `{module_name}` provides the following modules:\n\n')
+
+            fd.write('| Module | Description |\n')
+            fd.write('|--------|-------------|\n')
+            for submodule, description in sorted(submodules):
+                fd.write(f'| [{submodule}]({submodule}.md) | {description} |\n')
+            fd.write('\n')
+
+        nav[*('reference', module_name)] = 'index.md'
 
 # Generate documentation for each Python file
 for workspace_path in python_workspaces:
@@ -150,6 +198,10 @@ for workspace_path in python_workspaces:
 # Generate navigation file with correct structure
 with mkdocs_gen_files.open('reference/SUMMARY.md', 'w') as nav_file:
     nav_file.write('* [API Reference](index.md)\n')
-    nav_file.write('  * [Core](klaw_core/core.md)\n')
-    nav_file.write('  * [Plugins](klaw_plugins/plugin.md)\n')
-    nav_file.write('  * [Types](klaw_types/types.md)\n')
+    for module_name, submodules in sorted(submodules_per_package.items()):
+        if submodules:
+            display_name = module_name.replace('_', ' ').title()
+            nav_file.write(f'  * {display_name}\n')
+            nav_file.write(f'    * [{display_name}]({module_name}/index.md)\n')
+            for submodule, _ in sorted(submodules):
+                nav_file.write(f'    * [{submodule}]({module_name}/{submodule}.md)\n')

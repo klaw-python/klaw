@@ -1,10 +1,5 @@
 /* MkDocStrings specific styles */
 
-/* Improve function signatures */
-.doc-heading {
-    margin-bottom: 1rem;
-}
-
 .doc-heading .highlight {
     background: transparent;
     border: none;
@@ -12,18 +7,8 @@
     padding: 0;
 }
 
-/* Better spacing for docstring sections */
-.doc-contents {
-    margin-top: 1rem;
-}
-
-.doc-contents > .doc-section {
-    margin-bottom: 1rem;
-}
-
 /* Improve parameter lists */
-
-/* .field-list {
+.field-list {
     margin: 1rem 0;
 }
 
@@ -35,18 +20,13 @@
 .field-list dd {
     margin-left: 1rem;
     margin-bottom: 1rem;
-} */
+}
 
 /* Better code examples in docstrings */
 .doctest-highlight {
     margin: 1rem 0;
 }
 
-/* Improve return type annotations */
-.return-annotation {
-    font-style: italic;
-    color: var(--md-code-fg-color);
-}
 
 /* Better inheritance diagrams */
 .inheritance-diagram {
@@ -82,7 +62,4 @@
 
 }
 
-.highlight .gp,
-.highlight .go {
-    user-select: none;
-}
+

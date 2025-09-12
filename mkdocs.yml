@@ -20,6 +20,8 @@ theme:
   - navigation.tabs
   - navigation.tabs.sticky
   - navigation.tracking
+  - navigation.indexes
+  - navigation.sections
   - navigation.top
   - content.tabs.link
   - content.code.annotate
@@ -31,10 +33,6 @@ theme:
   - toc.follow
 
   palette:
-  - media: '(prefers-color-scheme: dark)'
-    toggle:
-      icon: material/toggle-switch-off-outline
-      name: Switch to light mode
     scheme: slate
 
 plugins:
@@ -48,6 +46,7 @@ plugins:
     scripts: [ docs/scripts/gen_ref_pages.py ]
 - literate-nav:
     nav_file: SUMMARY.md
+    implicit_index: true
 - section-index
 
 - mkdocstrings:
@@ -61,12 +60,14 @@ plugins:
           show_labels: true
           heading_level: 3
           members: true
-          inherited_members: false
+          inherited_members: true
           summary:
             functions: false
             classes: false
+            methods: false
             attributes: false
             modules: true
+            type_aliases: false
           modernize_annotations: true
           annotations_path: brief
           members_order: source
@@ -95,7 +96,7 @@ plugins:
           show_root_full_path: false
           show_root_members_full_path: false
           show_object_full_path: false
-          parameter_headings: true
+          parameter_headings: false
           show_overloads: true
           overloads_only: true
           line_length: 120
@@ -115,6 +116,20 @@ plugins:
           merge_init_into_class: false
           docstring_options:
             ignore_init_summary: false
+            method: true
+            class: true
+            attribute: true
+            property: true
+            function: true
+            warnings: true
+            receives_named_value: true
+            returns_multiple_items: true
+            returns_type_in_property_summary: true
+            receives_multiple_items: true
+            returns_named_value: true
+            trim_doctest_flags: true
+            warn_missing_types: true
+            warn_unknown_params: true
 
         options.extra:
           show_inheritance: true
@@ -182,6 +197,7 @@ extra_javascript:
 - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
 - optionalConfig.js
 - extra-loader.js
+- js/extra_selectors.js
 
 markdown_extensions:
 - tables
@@ -221,21 +237,25 @@ markdown_extensions:
       format: !!python/name:pymdownx.superfences.fence_code_format ""
 - admonition
 - pymdownx.details
+- pymdownx.caret
+- pymdownx.mark
+- pymdownx.tilde
+
+- pymdownx.betterem:
+    smart_enable: all
 
 - toc:
     title: Contents
     toc_depth: 5
     permalink: 
+
 - pymdownx.tabbed:
     alternate_style: true
+    combine_header_slug: true
 
 nav:
 - Home: index.md
-- API Reference:
-  - Overview: reference/index.md
-  - Core: reference/klaw_core/core.md
-  - Plugins: reference/klaw_plugins/plugin.md
-  - Types: reference/klaw_types/types.md
+- API Reference: reference/
 
 - Tools:
   - CLI: tools/klaw-cli.md

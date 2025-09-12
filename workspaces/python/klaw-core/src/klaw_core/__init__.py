@@ -5,6 +5,16 @@ of the Klaw ecosystem. It includes basic utilities, type definitions, and
 common patterns used across all Klaw packages.
 """
 
+from __future__ import annotations
+
+import klaw_core._another_module as another_module
+import klaw_core._core as core
+
+__all__ = [
+    'another_module',
+    'core',
+]
+
 
 def hello() -> str:
     """Return a greeting from klaw-core.

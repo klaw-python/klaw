@@ -74,6 +74,7 @@
     "python.analysis.regenerateStdLibIndices": true,
     "cSpell.words": [
         "autorefs",
+        "betterem",
         "catppuccin",
         "codehilite",
         "crossrefs",

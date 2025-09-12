@@ -47,4 +47,14 @@
     --catppuccin-mocha-base-bg: #1e1e2e1a;        /* Peach as base */
     --catppuccin-mocha-mantle-bg: #1818251a;
     --catppuccin-mocha-crust-bg: #11111b1a;       /* Crust for top navbar */
+    
+    /* Catppuccin Latte Color Variables -  */
+    --catppuccin-latte-red: #d20f39;
+    --catppuccin-latte-yellow: #df8e1d;
+    --catppuccin-latte-green: #40a02b;
+    --catppuccin-latte-blue: #1e66f5;
+    --catppuccin-latte-mauve: #8839ef;
+    --catppuccin-latte-teal: #179299;
+    --catppuccin-latte-pink: #ea76cb;
+    --catppuccin-latte-lavender: #7287fd;
 }

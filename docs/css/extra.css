@@ -31,18 +31,8 @@ body {
 }
 
 md-header__ellipsis, span.md-ellipsis {
-    font-size: medium;
+    font-size: small;
 }
-
-/* content width */
-/* .md-content {
-    max-width: none;
-} */
-
-
-/* Override Material theme colors with Catppuccin Mocha - Updated per user preferences */
-
-
 
 
 /* Improved annotation styling */
@@ -50,10 +40,7 @@ md-header__ellipsis, span.md-ellipsis {
     background-color: var(--catppuccin-mocha-mantle);
     border: 1px solid color-mix(in srgb, var(--catppuccin-mocha-surface1) 40%, var(--catppuccin-mocha-base) 60%);
     border-radius: 0.2rem;
-    /* padding: 0.75rem; */
-    /* margin: 1rem 0; */
     font-size: 0.7rem;
-    /* line-height: 1.4; */
 }
 
 .doc-signature .highlight {
@@ -63,140 +50,24 @@ md-header__ellipsis, span.md-ellipsis {
     padding: 0 !important;
 }
 
-/* Exact Catppuccin Alt Mocha syntax highlighting for signatures */
-.doc-signature .kc {
-    color: var(--catppuccin-mocha-rosewater);
-}
-
-.doc-signature .nb {
-    color: #74c7ec;
-    font-weight: bold;
-}
-
-.doc-signature .o {
-    color: #9399b2;
-    font-weight: bold;
-}
-
-.doc-signature .p {
-    color: #9399b2;
-}
-
-.doc-signature .k {
-    color: #cba6f7;
-    font-weight: bold;
-}
-
-.doc-signature .s {
-    color: #a6e3a1;
-}
-
-.doc-signature .mi,
-.doc-signature .mf {
-    color: #eba0ac;
-}
-
-.doc-signature .vc,
-.doc-signature .vg,
-.doc-signature .vi {
-    color: #f2cdcd;
-}
-
-.doc-signature .na {
-    color: #89b4fa;
-}
-
-.doc-signature .c,
-.doc-signature .cm,
-.doc-signature .c1 {
-    color: #6c7086;
-    font-style: italic;
-}
-
-/* Type annotations in signatures */
-.doc-signature .annotation {
-    color: #b4befe;
-    font-style: italic;
-}
-
-/* Parameter annotations */
-.doc-signature .parameter .annotation {
-    color: var(--doc-symbol-parameter-fg-color);
-}
-
-/* Return type annotations */
-.doc-signature .return-annotation {
-    color: #a6e3a1;
-    font-weight: bold;
-}
-
-/* Function names */
-.doc-signature .nf,
-.doc-signature .fm {
-    color: #89b4fa;
-    font-weight: bold;
-}
-
-/* Class names */
-.doc-signature .nc {
-    color: #fab387;
-    font-weight: bold;
-}
-
-/* Built-in types */
-.doc-signature .nb {
-    color: #89dceb;
-}
-
-/* Self parameter */
-.doc-signature .bp {
-    color: #fab387;
-    font-style: italic;
-}
-
-
-/* MkDocStrings advanced styling from reference */
-
-/* Symbol styling */
-
-
 
 /* Hide h1 titles in documentation */
 .md-typeset h1 {
     display: none;
 }
 
-/* Fancier color for operators */
-.doc-signature .o {
-    color: var(--md-code-hl-special-color);
-}
 
-/* Fancier color for constants */
-.doc-signature .kc {
-    color: var(--catppuccin-mocha-yellow);
-}
-
-/* Fancier color for built-in types */
-.doc-signature .n>a[href^="https://docs.python.org/"][href*="/functions.html#"]{
-    color: var(--catppuccin-mocha-blue);
-}
-.doc-signature .n>a[href^="https://docs.python.org/"][href*="/class-str.html#"] {
-    color: var(--catppuccin-mocha-peach);
-}
-/* .doc-signature .n>a[href^="https://docs.python.org/"][href*="/stdtypes.html#"] {
-    color: var(--catppuccin-mocha-sky);
-} */
-/* .doc-signature .n>a[href^="https://docs.python.org/"][href*="/constants.html#"] {
-    color: var(--catppuccin-mocha-red);
-}
-.doc-signature .n>a[href^="https://docs.python.org/"][href*="/typing.html#"] {
-    color: var(--catppuccin-mocha-sky);
-} */
 
 /* Indentation for nested content */
 div.doc-contents:not(.first) {
     padding-left: 1.5rem;
 }
+
+
+/* .autorefs, .autorefs-external {
+    color: var(--catppuccin-mocha-lavender);
+    font-weight: bold;
+} */
 
 /* Mark external links */
 a.external::after,
@@ -209,12 +80,12 @@ a.autorefs-external::after {
     position: relative;
     height: 1em;
     width: 1em;
-    background-color: currentColor;
+    background-color: var(--catppuccin-mocha-mauve);
 }
 
 a.external:hover::after,
 a.autorefs-external:hover::after {
-    background-color: var(--md-accent-fg-color);
+    background-color: var(--catppuccin-mocha-green);
 }
 
 /* Quote admonition styling */
@@ -225,7 +96,7 @@ a.autorefs-external:hover::after {
 
 .md-typeset .quote>.admonition-title,
 .md-typeset .quote>summary {
-    background-color: var(--catppuccin-mocha-mantle);
+    background-color: var(--catppuccin-mocha-red);
 }
 
 .md-typeset .quote>.admonition-title::before,
@@ -235,11 +106,6 @@ a.autorefs-external:hover::after {
     mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>file-code-outline</title><path d="M14 2H6C4.89 2 4 2.9 4 4V20C4 21.11 4.89 22 6 22H18C19.11 22 20 21.11 20 20V8L14 2M18 20H6V4H13V9H18V20M9.54 15.65L11.63 17.74L10.35 19L7 15.65L10.35 12.3L11.63 13.56L9.54 15.65M17 15.65L13.65 19L12.38 17.74L14.47 15.65L12.38 13.56L13.65 12.3L17 15.65Z" /></svg>');
 }
 
-/* Code selection improvements */
-.highlight .gp,
-.highlight .go {
-    user-select: none;
-}
 
 /* Code block improvements */
 .highlight pre {
@@ -266,10 +132,11 @@ a.autorefs-external:hover::after {
 
 }
 
+
 /* Navigation improvements */
-.md-nav__link--active {
+/* .md-nav__link--active {
     font-weight: 600;
-}
+} */
 
 /* Custom admonition styles */
 .md-typeset .admonition {
@@ -344,4 +211,8 @@ a.autorefs-external:hover::after {
     left: var(--tree-offset) ;
     translate: calc(var(--tree-thickness) * -1) calc(var(--tree-thickness) * -1);
   }
+/* Fix parameter names in documentation tables */
+.md-typeset h5 {
+  text-transform: none !important;
+}
 }
