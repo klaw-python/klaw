@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any, Self, TypeVar
 
-T: TypeVar('T') = TypeVar('T')
+T = TypeVar('T')
 """Generic type variable for type annotations.
     Note:
         This type variable is used to annotate functions that can return a value of
@@ -20,7 +20,7 @@ T: TypeVar('T') = TypeVar('T')
 """
 
 
-E: TypeVar('E') = TypeVar('E')
+E = TypeVar('E')
 """Generic type variable for exception types.
     Note:
         This type variable is used to annotate functions that can raise exceptions.

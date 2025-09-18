@@ -49,6 +49,9 @@
     --md-admonition-bg-color: var(--catppuccin-mocha-mantle);
     --md-admonition-bg-color--light: var(--catppuccin-mocha-surface1);
     --md-admonition-bg-color--dark: var(--catppuccin-mocha-surface2);
+    .mkdocstrings .admonition.source {
+        margin: 1rem 0 1rem 0;
+    }
 
     /* Footer colors */
     --md-footer-fg-color: var(--catppuccin-mocha-subtext0);
@@ -66,13 +69,15 @@
     --md-nav-link-bg-color: transparent;
     --md-nav-link-bg-color--active: var(--catppuccin-mocha-green);
     --md-nav-link-bg-color--hover: var(--catppuccin-mocha-teal);
+    --md-nav-ling-bg-color--active: var(--catppuccin-mocha-teal);
+
     
     
     --md-cursor-color: var(--catppuccin-mocha-flamingo);
     --md-cursor-line-color: var(--catppuccin-mocha-surface0);
     --md-line-number-color: var(--catppuccin-mocha-surface0);
     --md-active-line-number-color: var(--catppuccin-mocha-sapphire);
-    --md-link-color: var(--catppuccin-mocha-sky);
+    --md-link-color: var(--catppuccin-mocha-lavender);
     --md-link-hover-color: var(--catppuccin-mocha-teal);
     --md-link-visited-color: var(--catppuccin-mocha-lavender);
     --md-link-active-color: var(--catppuccin-mocha-green);
@@ -164,29 +169,26 @@
 .md-code__content .k[data-keyword="def"],
 .md-code__content .k[data-keyword="class"] {
     color: var(--catppuccin-mocha-red);
-    font-weight: bold;
+    font-weight: bolder;
     font-style: italic;
 }
 
 
-/* Functions and methods */
-[data-function] {
-    color: var(--catppuccin-mocha-blue);
-    font-weight: bold;
-}
+
     
 
 /* Class names */
 .doc-signature .nc,
 .md-code__content .nc {
     color: var(--catppuccin-mocha-peach);
+    font-weight: bold;
 }
 
 
 /* Named parameters */
 [data-parameter] {
     color: var(--catppuccin-mocha-rosewater) !important;
-    font-weight: bold;
+    font-weight: bolder;
 }
 
 /* Functions and methods */
@@ -197,20 +199,66 @@
 
 /* Class references */
 [data-class] {
-    color: var(--catppuccin-mocha-teal); /* or your preferred color */
+    color: var(--catppuccin-mocha-sapphire) !important; /* or your preferred color */
+    font-weight: bold;
+}
+/* Enhanced import highlighting */
+.doc-signature .n[data-function],
+.md-code__content .n[data-function] {
+    color: var(--catppuccin-mocha-blue) !important;
     font-weight: bold;
 }
 
-/* Return types */
-[data-return-type] {
-    color: var(--catppuccin-mocha-lavender);
+/* Import-specific class highlighting */
+.doc-signature .n[data-class],
+.md-code__content .n[data-class] {
+    color: var(--catppuccin-mocha-sapphire) ;
     font-weight: bold;
+}
+
+
+/* Return types - distinct from regular classes */
+[data-return-type] {
+    color: var(--catppuccin-mocha-lavender) !important;
+    font-weight: bold;
+}
+
+/* Return types that are also classes - combine both styles */
+[data-return-type][data-class] {
+    color: var(--catppuccin-mocha-lavender) !important;
+    font-weight: bold;
+}
+
+/* Type annotations in parameter lists - similar to return types but different color */
+[data-type-annotation] {
+    color: var(--catppuccin-mocha-lavender) ;
+    font-weight: bold;
+}
+
+/* Type annotations that are built-in types */
+/* [data-type-annotation].nb,
+[data-type-annotation][data-builtin] {
+    color: var(--catppuccin-mocha-sapphire) !important;
+    font-weight: bold;
+} */
+
+/* Type annotations that are also classes - blend the styles */
+[data-type-annotation][data-class] {
+    color: var(--catppuccin-mocha-lavender) !important;
+    font-weight: bold;
+}
+
+[data-attribute], 
+[data-variable] {
+    color: var(--catppuccin-mocha-text);
+    font-weight: normal;
 }
 
 /* Dunder names */
 .doc-signature .vm,
 .md-code__content .vm {
     color: var(--catppuccin-mocha-sky);
+    font-weight: normal;
 }
 
 /* Built-in keywords */
@@ -237,9 +285,8 @@
 /* Standard library types */
 .doc-signature .nb,
 .md-code__content .nb {
-    color: var(--catppuccin-mocha-teal);
+    color: var(--catppuccin-mocha-sapphire) !important;
     font-weight: bold;
-    font-style: italic;
 }
 
 /* Symbols */
@@ -336,8 +383,14 @@
     color: var(--catppuccin-mocha-red);
 }
 .doc-signature .n>a[href^="https://docs.python.org/"][href*="/typing.html#"],
-.tb .n>a[href^="https://docs.python.org/"][href*="/typing.html#"] {
-    color: var(--catppuccin-mocha-lavender);
+.tb .n>a[href^="https://docs.python.org/"][href*="/typing.html#"]{
+    color: var(--catppuccin-mocha-lavender) ;
+}
+
+.doc-signature .n>a[href^="https://docs.python.org/"][href*="/collections.abc.html#"],
+.tb .n>a[href^="https://docs.python.org/"][href*="/collections.abc.html#"]{
+    color: var(--catppuccin-mocha-lavender) ;
+    
 }
 
 }

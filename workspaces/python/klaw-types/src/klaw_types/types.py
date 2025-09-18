@@ -255,11 +255,11 @@ def create_validator[T](rules: list[Callable[[T], str | None]]) -> Validator[T]:
                 if len(value) < min_len:
                     return f"Value must be at least {min_len} characters"
                 return None
-            return validator
+            return validator(min_len)
 
         # Create a validator that checks both conditions
         name_validator = create_validator([
-            not_empty,
+            not_empty(),
             min_length(3)
         ])
 

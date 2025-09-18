@@ -200,7 +200,7 @@ with mkdocs_gen_files.open('reference/SUMMARY.md', 'w') as nav_file:
     nav_file.write('* [API Reference](index.md)\n')
     for module_name, submodules in sorted(submodules_per_package.items()):
         if submodules:
-            display_name = module_name.replace('_', ' ').title()
+            display_name = module_name
             nav_file.write(f'  * {display_name}\n')
             nav_file.write(f'    * [{display_name}]({module_name}/index.md)\n')
             for submodule, _ in sorted(submodules):

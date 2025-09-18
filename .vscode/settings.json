@@ -41,7 +41,7 @@
     "ruff.enable": true,
     "ruff.trace.server": "messages",
     "ruff.showSyntaxErrors": true,
-    
+
     // Python specific settings
     "[python]": {
         "editor.formatOnSave": true,
@@ -54,7 +54,7 @@
 
     "python.terminal.activateEnvInCurrentTerminal": true,
     "debugpy.showPythonInlineValues": true,
-    
+
     // PyLance
     "python.languageServer": "Pylance",
     "python.analysis.diagnosticMode": "openFilesOnly",
@@ -62,6 +62,7 @@
     "python.analysis.diagnosticSeverityOverrides": {
         "reportUndefinedVariable": "none"
     },
+    "python.defaultInterpreterPath": ".venv/bin/python",
     "python.analysis.ignore": [ "*" ],
     "python.analysis.inlayHints.callArgumentNames": "all",
     "python.analysis.inlayHints.functionReturnTypes": true,
@@ -76,6 +77,7 @@
         "autorefs",
         "betterem",
         "catppuccin",
+        "classmethod",
         "codehilite",
         "crossrefs",
         "docstrings",
