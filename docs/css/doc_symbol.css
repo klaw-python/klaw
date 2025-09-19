@@ -1,0 +1,48 @@
+[data-md-color-scheme="slate"] {
+    .doc-symbol-attribute::after {content: "A";}
+    .doc-symbol-parameter::after {content: "P";}
+    .doc-symbol-function::after {content: "F";}
+    .doc-symbol-method::after {content: "M";}
+    .doc-symbol-class::after {content: "C";}
+    .doc-symbol-module::after {content: "M";}
+    .doc-symbol {font-size: small;}
+    .doc-symbol-heading {
+        border-radius: 0.1rem;
+        padding: 0.025rem 0.2rem 0.025rem 0.2rem;
+        font-weight: bold;
+    }
+    .doc-object-name {font-size: small !important;}
+
+    .doc-label { 
+        border-radius: 0.1rem; 
+        padding: 0.1rem 0.2rem;
+        font-weight: semibold; 
+        font-size: 0.6em; 
+        background-color: var(--catppuccin-mocha-mantle);
+    }
+    
+    .doc-heading {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        align-content: center;
+    }
+
+    --doc-symbol-parameter-fg-color: var(--catppuccin-mocha-rosewater);
+    --doc-symbol-type_parameter-fg-color: var(--catppuccin-mocha-sky);
+    --doc-symbol-attribute-fg-color: var(--catppuccin-mocha-teal);
+    --doc-symbol-function-fg-color: var(--catppuccin-mocha-blue);
+    --doc-symbol-method-fg-color: var(--catppuccin-mocha-mauve);
+    --doc-symbol-class-fg-color: var(--catppuccin-mocha-peach);
+    --doc-symbol-type_alias-fg-color: var(--catppuccin-mocha-lavender);
+    --doc-symbol-module-fg-color: var(--catppuccin-mocha-green);
+
+    --doc-symbol-parameter-bg-color: color-mix(in srgb, var(--catppuccin-mocha-rosewater) 30%, var(--catppuccin-mocha-base) 70%);
+    --doc-symbol-type_parameter-bg-color: color-mix(in srgb, var(--catppuccin-mocha-sky) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-attribute-bg-color: color-mix(in srgb, var(--catppuccin-mocha-teal) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-function-bg-color: color-mix(in srgb, var(--catppuccin-mocha-blue) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-method-bg-color: color-mix(in srgb, var(--catppuccin-mocha-mauve) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-class-bg-color: color-mix(in srgb, var(--catppuccin-mocha-peach) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-type_alias-bg-color: color-mix(in srgb, var(--catppuccin-mocha-lavender) 20%, var(--catppuccin-mocha-base) 80%);
+    --doc-symbol-module-bg-color: color-mix(in srgb, var(--catppuccin-mocha-green) 20%, var(--catppuccin-mocha-base) 80%);
+
+}

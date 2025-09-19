@@ -181,6 +181,40 @@ class Result[T, E]:
         error_result = divide(10, 0)
         print(f"Error: {error_result.unwrap_err()}")
         ```
+
+    ??? note "A few notes about Result"
+        This class is inspired by functional programming patterns and provides a type-safe way to handle operations that might fail,
+        as outlined in modern generics approaches. It uses two type variables to track success and error types separately.
+
+    ??? abstract
+        Some other notes about this class
+
+    ??? info "Useful things"
+        - This is a useful thing
+
+    ??? tip "Useful tips"
+        - This is a useful tip
+
+    ??? success "Success"
+        - This is a success
+
+    ??? question "Question"
+        - This is a question
+
+    ??? warning "Warning"
+        - This is a warning
+
+    ??? failure "Failure"
+        - This is a failure
+
+    ??? danger "Danger"
+        - This is a danger
+
+    ??? bug "Bug"
+        - This is a bug
+
+    ??? quote "Quote"
+        - This is a quote
     """
 
     def __init__(self, value: T | None = None, error: E | None = None) -> None:

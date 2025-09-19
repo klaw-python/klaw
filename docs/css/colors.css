@@ -50,11 +50,15 @@
     
     /* Catppuccin Latte Color Variables -  */
     --catppuccin-latte-red: #d20f39;
+    --catppuccin-latte-maroon: #e64553;
     --catppuccin-latte-yellow: #df8e1d;
+    --catppuccin-latte-peach: #fe640b;
     --catppuccin-latte-green: #40a02b;
     --catppuccin-latte-blue: #1e66f5;
     --catppuccin-latte-mauve: #8839ef;
     --catppuccin-latte-teal: #179299;
     --catppuccin-latte-pink: #ea76cb;
     --catppuccin-latte-lavender: #7287fd;
+    --catppuccin-latte-sky: #04a5e5;
+    --catppuccin-latte-sapphire: #209fb5;
 }

@@ -26,7 +26,7 @@
     --md-default-fg-color--dark: var(--catppuccin-mocha-text);
 
     /* Code colors */
-     --md-code-fg-color: var(--catppuccin-mocha-text);
+    --md-code-fg-color: var(--catppuccin-mocha-text);
     --md-code-bg-color: var(--catppuccin-mocha-mantle);
 
     /* Typeset colors */
@@ -39,19 +39,6 @@
     --md-typeset-kbd-color: var(--catppuccin-mocha-text);
     --md-typeset-kbd-accent-color: var(--catppuccin-mocha-surface1);
 
-    /* Table colors */
-    --md-typeset-table-color: var(--catppuccin-mocha-text);
-    --md-typeset-table-color--light: var(--catppuccin-mocha-subtext0);
-    --md-typeset-table-color--dark: var(--catppuccin-mocha-subtext1);
-
-    /* Admonition colors */
-    --md-admonition-fg-color: var(--catppuccin-mocha-text);
-    --md-admonition-bg-color: var(--catppuccin-mocha-mantle);
-    --md-admonition-bg-color--light: var(--catppuccin-mocha-surface1);
-    --md-admonition-bg-color--dark: var(--catppuccin-mocha-surface2);
-    .mkdocstrings .admonition.source {
-        margin: 1rem 0 1rem 0;
-    }
 
     /* Footer colors */
     --md-footer-fg-color: var(--catppuccin-mocha-subtext0);
@@ -75,78 +62,11 @@
     
     --md-cursor-color: var(--catppuccin-mocha-flamingo);
     --md-cursor-line-color: var(--catppuccin-mocha-surface0);
-    --md-line-number-color: var(--catppuccin-mocha-surface0);
-    --md-active-line-number-color: var(--catppuccin-mocha-sapphire);
     --md-link-color: var(--catppuccin-mocha-lavender);
     --md-link-hover-color: var(--catppuccin-mocha-teal);
     --md-link-visited-color: var(--catppuccin-mocha-lavender);
     --md-link-active-color: var(--catppuccin-mocha-green);
     
-    /* Doc symbol colors */
-    --doc-symbol-parameter-fg-color: var(--catppuccin-mocha-rosewater);
-    --doc-symbol-type_parameter-fg-color: var(--catppuccin-mocha-sky);
-    --doc-symbol-attribute-fg-color: var(--catppuccin-mocha-teal);
-    --doc-symbol-function-fg-color: var(--catppuccin-mocha-blue);
-    --doc-symbol-method-fg-color: var(--catppuccin-mocha-mauve);
-    --doc-symbol-class-fg-color: var(--catppuccin-mocha-peach);
-    --doc-symbol-type_alias-fg-color: var(--catppuccin-mocha-lavender);
-    --doc-symbol-module-fg-color: var(--catppuccin-mocha-green);
-
-
-    --doc-symbol-parameter-bg-color: color-mix(in srgb, var(--catppuccin-mocha-rosewater) 30%, var(--catppuccin-mocha-base) 70%);
-    --doc-symbol-type_parameter-bg-color: color-mix(in srgb, var(--catppuccin-mocha-sky) 20%, var(--catppuccin-mocha-base) 80%);
-    --doc-symbol-attribute-bg-color: color-mix(in srgb, var(--catppuccin-mocha-teal) 20%, var(--catppuccin-mocha-base) 80%);
-    --doc-symbol-function-bg-color: color-mix(in srgb, var(--catppuccin-mocha-blue) 20%, var(--catppuccin-mocha-base) 80%);
-    --doc-symbol-method-bg-color: color-mix(in srgb, var(--catppuccin-mocha-mauve) 20%, var(--catppuccin-mocha-base) 80%);
-    --doc-symbol-class-bg-color: color-mix(in srgb, var(--catppuccin-mocha-peach) 20%, var(--catppuccin-mocha-base) 80%);
-    --doc-symbol-type_alias-bg-color: color-mix(in srgb, var(--catppuccin-mocha-lavender) 20%, var(--catppuccin-mocha-base) 80%);
-    --doc-symbol-module-bg-color: color-mix(in srgb, var(--catppuccin-mocha-green) 20%, var(--catppuccin-mocha-base) 80%);
-    
-    
-    .doc-symbol-attribute::after {
-        content: "A";
-        border-radius: 0.2rem;
-        padding: 0.1rem 0.1rem;
-        font-weight: bold;
-    }
-
-    .doc-symbol-parameter::after {
-        content: "P";
-        border-radius: 0.2rem;
-        padding: 0.1rem 0.1rem;
-        font-weight: bold;
-    }
-    
-    
-    .doc-symbol-function::after {
-        content: "F";
-        border-radius: 0.2rem;
-        padding: 0.1rem 0.1rem;
-        font-weight: bold;
-    }
-
-    .doc-symbol-method::after {
-        content: "M";
-        border-radius: 0.2rem;
-        padding: 0.1rem 0.1rem;
-        font-weight: bold;
-    }
-
-    .doc-symbol-class::after {
-        content: "C";
-        border-radius: 0.2rem;
-        padding: 0.1rem 0.1rem;
-    }
-
-    .doc-symbol-module::after {
-        content: "M";
-        border-radius: 0.2rem;
-        padding: 0.1rem 0.1rem;
-        font-weight: bold;
-    }
-
-    .doc-label { border-radius: 5px; padding: 2px 8px; font-weight: semibold; font-size: 0.8em; }
-
 
 /* Names like None, True, False, etc. */
  .doc-signature .kc,
@@ -173,17 +93,12 @@
     font-style: italic;
 }
 
-
-
-    
-
 /* Class names */
 .doc-signature .nc,
 .md-code__content .nc {
     color: var(--catppuccin-mocha-peach);
     font-weight: bold;
 }
-
 
 /* Named parameters */
 [data-parameter] {
@@ -216,7 +131,6 @@
     font-weight: bold;
 }
 
-
 /* Return types - distinct from regular classes */
 [data-return-type] {
     color: var(--catppuccin-mocha-lavender) !important;
@@ -235,12 +149,6 @@
     font-weight: bold;
 }
 
-/* Type annotations that are built-in types */
-/* [data-type-annotation].nb,
-[data-type-annotation][data-builtin] {
-    color: var(--catppuccin-mocha-sapphire) !important;
-    font-weight: bold;
-} */
 
 /* Type annotations that are also classes - blend the styles */
 [data-type-annotation][data-class] {
@@ -317,7 +225,6 @@
     font-weight: bold;
 }
 
-
 /* f"strings" */
 .doc-signature .sa,
 .md-code__content .sa {
@@ -354,7 +261,6 @@
 .md-code__content .kn {
     color: var(--catppuccin-mocha-mauve);
     font-weight: bold;
-
 }
 
 /* Names modules */
@@ -386,11 +292,9 @@
 .tb .n>a[href^="https://docs.python.org/"][href*="/typing.html#"]{
     color: var(--catppuccin-mocha-lavender) ;
 }
-
 .doc-signature .n>a[href^="https://docs.python.org/"][href*="/collections.abc.html#"],
 .tb .n>a[href^="https://docs.python.org/"][href*="/collections.abc.html#"]{
     color: var(--catppuccin-mocha-lavender) ;
-    
 }
 
 }

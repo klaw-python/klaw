@@ -190,14 +190,19 @@ extra_css:
 - css/colors.css
 - css/font.css
 - css/extra.css
-- css/catppuccin_mocha.css
+- css/doc_symbol.css
 - css/mkdocstrings.css
+- css/admonitions.css
+- css/catppuccin_mocha.css
+- css/tables.css
+- css/docstring-fold.css
 
 extra_javascript:
 - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
 - optionalConfig.js
 - extra-loader.js
-- js/extra_selectors.js
+- js/python_docstring_folds.js
+- js/python_syntax_highlight_selectors.js
 
 markdown_extensions:
 - tables
@@ -210,7 +215,7 @@ markdown_extensions:
 - md_in_html
 - pymdownx.highlight:
     use_pygments: true
-    linenums: true
+    linenums: false
     anchor_linenums: true
     line_spans: __span
     linenums_style: pymdownx-inline

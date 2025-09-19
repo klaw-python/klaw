@@ -1,0 +1,144 @@
+/* Docstring Folding - Start Collapsed */
+
+/* Main containers */
+.docstring-fold {
+    display: contents;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+    align-content: baseline;
+    font-size: inherit !important;
+}
+
+.docstring-collapsed {
+    margin: 0;
+    padding: 0;
+}
+
+.docstring-preview {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    white-space: pre-wrap;
+}
+
+.docstring-content {
+    transition: max-height 0.2s ease-out, opacity 0.2s ease-out;
+    display: none; /* Start hidden */
+    margin: 0;
+    padding: 0;
+}
+
+.docstring-expanded {
+    display: contents;
+}
+
+.docstring-expanded .docstring-content {
+    display: contents;
+}
+
+/* Line numbers - base styling */
+.linenos {
+    position: relative;
+    display: inline-block;
+    min-width: 3em;
+    text-align: right;
+    padding-right: 0.5em;
+    margin: 0;
+    user-select: none;
+    cursor: default;
+    line-height: 1.4 !important;
+    white-space: pre-wrap !important;
+}
+
+.linenos::before {
+    box-shadow: none !important;
+    border-right: 1px dashed var(--catppuccin-mocha-lavender) !important;
+}
+
+/* Override any conflicting styles from admonitions */
+.docstring-fold .linenos,
+.docstring-preview .linenos,
+.docstring-line .linenos {
+    margin: 0 !important;
+    padding-right: 0.5em !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+/* Fold indicators on line numbers */
+.fold-indicator {
+    cursor: pointer !important;
+    user-select: none !important;
+}
+.fold-indicator::before,
+.fold-indicator::after
+.fold-indicator {
+    line-height: 1.4 !important;
+}
+
+/* Collapsed state indicators */
+.docstring-collapsed .fold-indicator::after {
+    content: '';
+    position: absolute;
+    right: -1.2em;
+    top: 0;
+    color: var(--catppuccin-mocha-surface2);
+    transition: transform 0.1s ease;
+    font-size: medium !important;
+}
+
+/* Expanded state indicators */
+.docstring-expanded .fold-indicator::after {
+    content: '';
+    position: absolute;
+    right: -1.2em;
+    top: 0;
+    color: var(--catppuccin-mocha-surface1);
+    transition: transform 0.1s ease;
+    font-size: medium !important;
+}
+
+/* Hover feedback */
+.fold-indicator:hover::after {
+    color: var(--catppuccin-mocha-surface0);
+}
+
+/* Focus for accessibility */
+.fold-indicator:focus {
+    outline: 1px dotted var(--catppuccin-mocha-blue);
+    outline-offset: -1px;
+}
+
+/* Preserve docstring text formatting while eliminating gaps */
+.docstring-line .sd,
+.docstring-preview .sd {
+    white-space: pre-wrap;
+    margin: 0;
+    padding: 0;
+    display: contents;
+}
+
+/* Ensure anchors don't create spacing */
+.docstring-fold a,
+.docstring-preview a,
+.docstring-line a {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.docstring-line {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    white-space: pre-wrap;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .docstring-content,
+    .fold-indicator::after {
+        transition: none !important;
+    }
+
+}

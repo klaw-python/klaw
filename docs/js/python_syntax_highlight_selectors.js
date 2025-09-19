@@ -402,7 +402,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const typeAnnotations = document.querySelectorAll('.doc-signature .n, .md-code__content .n, .doc-signature .nb, .md-code__content .nb');
     typeAnnotations.forEach(span => {
         if (!span.closest('.sd')) {
-            const text = span.textContent.trim();
             const previousElement = span.previousElementSibling;
             const nextElement = span.nextElementSibling;
             

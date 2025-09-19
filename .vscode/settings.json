@@ -85,6 +85,7 @@
         "inlinehilite",
         "klaw",
         "kwds",
+        "linenos",
         "linenums",
         "mkdocs",
         "pathlib",
