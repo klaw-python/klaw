@@ -72,7 +72,7 @@
 .md-typeset details.note > ul,
 .md-typeset details.note > ol {
   font-weight: bold;
-  font-size: x-small;
+  font-size: x-small !important;
 }
 
 /* Abstract */
@@ -100,7 +100,7 @@
 .md-typeset details.abstract > ul,
 .md-typeset details.abstract > ol {
   font-weight: bold;
-  font-size: x-small;
+  font-size: x-small !important;
 }
 
 /* Info */

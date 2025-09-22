@@ -114,7 +114,7 @@ with mkdocs_gen_files.open('reference/index.md', 'w') as index:
 
     for module_name, submodules in submodules_per_package.items():
         if submodules:  # Only show packages that have submodules
-            display_name = module_name.replace('_', ' ').title()
+            display_name = module_name
 
             # Get package description from __init__.py
             # Find the correct workspace path for this module
@@ -142,7 +142,7 @@ for module_name, submodules in submodules_per_package.items():
     if submodules:
         package_index_path = Path('reference', module_name, 'index.md')
         with mkdocs_gen_files.open(package_index_path, 'w') as fd:
-            display_name = module_name.replace('_', ' ').title()
+            display_name = module_name
             fd.write(f'# {display_name}\n\n')
             fd.write(f'Package `{module_name}` provides the following modules:\n\n')
 

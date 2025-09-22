@@ -34,6 +34,20 @@ theme:
 
   palette:
     scheme: slate
+  icon:
+    admonition:
+      note: material/sticker-emoji
+      abstract: material/death-star-variant
+      info: material/paw
+      tip: material/television-ambient-light
+      success: material/rocket-launch-outline
+      question: material/hook
+      warning: material/alert-rhombus-outline
+      failure: material/skull-outline
+      danger: material/radioactive
+      bug: material/bee
+      quote: material/comment-quote
+      example: material/fire
 
 plugins:
 - typeset:

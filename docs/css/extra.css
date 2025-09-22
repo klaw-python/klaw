@@ -174,5 +174,4 @@ a.autorefs-external:hover::after {
 /* Indentation. */
 div.doc-contents:not(.first) {
   padding-left: 25px;
-  /* border-left: .05rem solid var(--md-typeset-table-color); */
 }

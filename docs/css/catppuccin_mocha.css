@@ -13,6 +13,8 @@
     .md-source__fact--forks {
         color: var(--catppuccin-mocha-mauve);
     }
+
+
     
     
     --md-default-bg-color: var(--catppuccin-mocha-crust);
@@ -31,13 +33,19 @@
 
     /* Typeset colors */
     --md-typeset-color: var(--catppuccin-mocha-text);
-    --md-typeset-a-color: var(--catppuccin-mocha-red);
+    --md-typeset-a-color: var(--catppuccin-mocha-green);
     --md-typeset-a-color--visited: var(--catppuccin-mocha-lavender);
     --md-typeset-mark-color: var(--catppuccin-mocha-yellow);
     --md-typeset-del-color: var(--catppuccin-mocha-red);
     --md-typeset-ins-color: var(--catppuccin-mocha-green);
     --md-typeset-kbd-color: var(--catppuccin-mocha-text);
     --md-typeset-kbd-accent-color: var(--catppuccin-mocha-surface1);
+    
+    /* Nav Bar colors */
+    --md-nav-fg-color: var(--catppuccin-mocha-text);
+    --md-nav-bg-color: var(--catppuccin-mocha-mantle);  /* Top navbar: crust */
+    --md-nav-bg-color--light: var(--catppuccin-mocha-base);
+    --md-nav-bg-color--dark: var(--catppuccin-mocha-base);
 
 
     /* Footer colors */
@@ -47,10 +55,15 @@
     --md-footer-bg-color--dark: var(--catppuccin-mocha-mantle);
 
     /* Navigation Link colors */
-    --md-nav-fg-color: var(--catppuccin-mocha-text);
-    --md-nav-bg-color: var(--catppuccin-mocha-mantle);  /* Top navbar: crust */
-    --md-nav-bg-color--light: var(--catppuccin-mocha-base);
-    --md-nav-bg-color--dark: var(--catppuccin-mocha-base);
+    .md-nav__link {
+        color: var(--catppuccin-mocha-text);
+        font-weight: bold;
+    }
+    .md-nav__link--active {
+        color: var(--catppuccin-mocha-green);
+        font-weight: bold;
+    }
+    
     --md-nav-link-fg-color: var(--catppuccin-mocha-lavender);
     --md-nav-link-fg-color--visited: var(--catppuccin-mocha-mauve);
     --md-nav-link-bg-color: transparent;

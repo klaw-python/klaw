@@ -6,6 +6,7 @@
     .doc-symbol-class::after {content: "C";}
     .doc-symbol-module::after {content: "M";}
     .doc-symbol {font-size: small;}
+
     .doc-symbol-heading {
         border-radius: 0.1rem;
         padding: 0.025rem 0.2rem 0.025rem 0.2rem;
@@ -20,6 +21,7 @@
         font-size: 0.6em; 
         background-color: var(--catppuccin-mocha-mantle);
     }
+    
     
     .doc-heading {
         margin-top: 0.5rem;
