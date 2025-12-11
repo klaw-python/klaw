@@ -1,0 +1,63 @@
+from __future__ import annotations
+
+from typing import BinaryIO
+from polars import DataFrame
+from polars._typing import SchemaDict
+
+
+class DbaseIter:
+    def next(self) -> DataFrame | None: ...
+
+class DbaseSource:
+    def __init__(
+        self,
+        paths: list[str],
+        buffs: list[BinaryIO],
+        single_col_name: str | None = ...,
+        encoding: str | None = ...,
+        character_trim: str | None = ...,
+        skip_deleted: bool | None = ...,
+        validate_schema: bool | None = ...,
+        compressed: bool | None = ...
+    ) -> None: ...
+    def schema(self) -> SchemaDict: ...
+    def batch_iter(
+        self,
+        batch_size: int,
+        with_columns: list[str] | None = ...
+    ) -> DbaseIter: ...
+    def batch_iter_with_progress(
+        self,
+        batch_size: int,
+        with_columns: list[str] | None = ...,
+        progress: bool = ...
+    ) -> DbaseIter: ...
+    
+
+def write_dbase_file(
+    frames: list[DataFrame],
+    dest: str,
+    encoding: str | None = ...,
+    overwrite: bool | None = ...,
+    memo_threshold: int | None = ...
+) -> None: ...
+
+def write_dbase_buff(
+    frames: list[DataFrame],
+    buff: BinaryIO,
+    encoding: str | None = ...,
+    memo_threshold: int | None = ...
+) -> None: ...
+
+def get_record_count(path: str) -> int: ...
+
+class DbaseError(Exception): 
+    """An error occurred while reading a dBase file."""
+class EmptySources(ValueError): 
+    """No contents found in the dBase file."""
+class SchemaMismatch(ValueError): 
+    """The dBase file contains data with a different schema."""
+class EncodingError(ValueError): 
+    """An error occurred while encoding or decoding a dBase file."""
+class DbcError(ValueError): 
+    """An error occurred while reading a compressed dBase file."""

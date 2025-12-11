@@ -1,0 +1,88 @@
+[package]
+name        = "klaw-dbase"
+version     = "0.1.0"
+edition     = "2024"
+license     = "MIT"
+description = "Fast Polars-based reading/writing of dBase/DBF files with async I/O and compression support"
+repository  = "https://github.com/wrath-codes/klaw"
+homepage    = "https://github.com/wrath-codes/klaw"
+readme      = "README.md"
+keywords    = ["polars", "dbase", "dbf", "dataframe", "datasus"]
+categories  = ["data-structures", "database"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default          = ["pyo3/extension-module"]
+extension-module = ["pyo3/extension-module"]
+
+
+[build-dependencies]
+pyo3-build-config = "0.25.1"
+
+
+[dependencies]
+pyo3 = { version = "0.25.1", features = ["abi3-py310"] }
+
+pyo3-polars = { version = "*", features = ["derive", "lazy"] }
+
+polars = { version = "0.51.0", features = [
+    "lazy",
+    "temporal",
+    "timezones",
+    "strings",
+    "dtype-full",
+    "serde",
+    "serde-lazy",
+    "csv",
+    "parquet",
+    "regex",
+    "fmt",
+], default-features = false }
+
+polars-io    = "0.51.0"
+polars-arrow = "0.51.0"
+
+arrow = { version = "56.0.0", features = [
+    "ipc",
+    "chrono-tz",
+    "ffi",
+    "pyarrow",
+] }
+
+chrono      = { version = "0.4", features = ["serde"] }
+serde       = { version = "1.0", features = ["derive"] }
+serde_json  = { version = "1.0" }
+thiserror   = "2.0"
+anyhow      = "1.0.98"
+reqwest     = { version = "0.12", features = ["json", "stream"] }
+async-trait = "0.1"
+lazy_static = "1.4"
+
+regex = "1.11.1"
+
+
+url = { version = "2.5.4", features = ["serde"] }
+suppaftp = { version = "6.3.0", features = ["async-rustls"] }
+tempfile = "3.20.0"
+tokio = { version = "1.45.1", features = ["full"] }
+tokio-rustls = "0.26.2"
+futures = "0.3.31"
+dbase = { version = "0.6.1", features = [
+    "encoding_rs",
+    "yore",
+    "chrono",
+    "serde",
+] }
+explode = "0.1.2"
+yore = "1.1.0"
+encoding_rs = "0.8"
+rayon = "1.8"
+encoding = "0.2.33"
+glob = "0.3"
+lru = "0.16.1"
+constriction = "0.4.1"
+probability = "0.20.3"
+indicatif = { version = "0.18.0", features = ["rayon"] }
+console = "0.16.1"

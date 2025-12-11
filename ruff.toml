@@ -30,7 +30,7 @@ exclude = [
 ]
 
 target-version = "py313"
-line-length = 120
+line-length    = 120
 
 preview = true
 fix = true
@@ -95,6 +95,7 @@ lint.ignore = [
   "PLR2004", # do not report magic numbers
   "PLR6301", # do not require classmethod / staticmethod when self not used
   "TRY003",  # long exception messages from `tryceratops`
+  "E501",    # line too long
 ]
 # lint.per-file-ignores."*.pyi" = [ "D103" ]
 # lint.per-file-ignores."returns/context/__init__.py" = [ "F401", "PLC0414" ]
@@ -123,9 +124,8 @@ lint.per-file-ignores."tests/test_examples/*" = ["D102"]
 #   "D103",
 # ]
 # lint.per-file-ignores."tests/test_pattern_matching.py" = [ "S101" ]
-lint.external = ["WPS"]
+lint.external                    = ["WPS"]
 lint.flake8-quotes.inline-quotes = "single"
-lint.mccabe.max-complexity = 6
+lint.mccabe.max-complexity       = 6
 # lint.pep8-naming.staticmethod-decorators = [ "law_definition", "staticmethod" ]
 lint.pydocstyle.convention = "google"
-

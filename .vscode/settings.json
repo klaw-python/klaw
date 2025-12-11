@@ -92,6 +92,7 @@
         "pycon",
         "pygments",
         "pymdownx",
+        "rmap",
         "superfences",
         "twemoji"
     ],

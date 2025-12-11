@@ -1,24 +1,18 @@
 [project]
-name = "klaw"
-version = "0.1.0"
-description = "Type-safe, performant tools, meant to work together to better the python ecosystem."
-readme = "README.md"
-requires-python = ">=3.12"
-dependencies = []
-authors = [
-    {name = "klaw team"}
-]
+name            = "klaw"
+version         = "0.1.0"
+description     = "Type-safe, performant tools, meant to work together to better the python ecosystem."
+readme          = "README.md"
+requires-python = ">=3.13"
+dependencies    = []
+authors         = [{ name = "klaw team" }]
 
 [tool.uv.workspace]
-members = [
-    "workspaces/python/*",
-    "workspaces/rust/*",
-    "workspaces/tools/*"
-]
+members = ["workspaces/python/*", "workspaces/rust/*", "workspaces/tools/*"]
 
 [tool.uv.sources]
 mkdocstrings-python = { git = "ssh://git@github.com/pawamoy-insiders/mkdocstrings-python.git" }
-mkdocs-material = { git = "ssh://git@github.com/squidfunk/mkdocs-material-insiders.git", rev = "9.4.2-insiders-4.42.0" }
+mkdocs-material     = { git = "ssh://git@github.com/squidfunk/mkdocs-material-insiders.git", rev = "9.4.2-insiders-4.42.0" }
 
 [dependency-groups]
 docs = [

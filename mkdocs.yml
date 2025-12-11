@@ -46,7 +46,7 @@ theme:
       failure: material/skull-outline
       danger: material/radioactive
       bug: material/bee
-      quote: material/comment-quote
+      quote: material/comment-quote-outline
       example: material/fire
 
 plugins:

@@ -95,6 +95,8 @@ cython_debug/
 # ============== RUST ==============
 /target
 Cargo.lock
+target/
+*target/
 
 # ============== NODE ==============
 node_modules
