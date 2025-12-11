@@ -41,13 +41,18 @@ jobs:
           workspaces: workspaces/rust/klaw-dbase
 
       - name: Build and install (dev)
+        shell: bash
         run: |
           uv venv
+          source .venv/bin/activate || source .venv/Scripts/activate
           uv pip install maturin pytest polars-lts-cpu pyarrow psutil
-          uv run maturin develop --release
+          maturin develop --release
 
       - name: Run Python tests
-        run: uv run pytest -v
+        shell: bash
+        run: |
+          source .venv/bin/activate || source .venv/Scripts/activate
+          pytest -v
 
       - name: Run Rust tests
         run: cargo test --release
