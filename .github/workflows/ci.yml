@@ -40,10 +40,10 @@ jobs:
           workspaces: workspaces/rust/klaw-dbase
 
       - name: Build and install (dev)
-        run: uv run maturin develop --release
+        run: uv run --package klaw-dbase maturin develop --release
 
       - name: Run Python tests
-        run: uv run pytest -v
+        run: uv run --package klaw-dbase pytest -v
 
       - name: Run Rust tests
         run: cargo test --release
@@ -74,4 +74,4 @@ jobs:
         uses: astral-sh/setup-uv@v4
 
       - name: Run ruff
-        run: uv run ruff check klaw_dbase/
+        run: uv run --package klaw-dbase ruff check klaw_dbase/
