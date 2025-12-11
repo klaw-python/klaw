@@ -7,6 +7,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  UV_CACHE_DIR: ${{ github.workspace }}/.cache/uv
 
 jobs:
   test:
@@ -15,22 +16,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [blacksmith-4vcpu-ubuntu-2404, blacksmith-4vcpu-macos-sequoia, blacksmith-4vcpu-windows-2025]
+        os:
+          [
+            blacksmith-4vcpu-ubuntu-2404,
+            blacksmith-4vcpu-macos-sequoia,
+            blacksmith-4vcpu-windows-2025,
+          ]
 
     defaults:
       run:
         working-directory: workspaces/rust/klaw-dbase
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v4
+        uses: astral-sh/setup-uv@v7
         with:
           version: "0.9.17"
           python-version: "3.13"
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -51,3 +55,6 @@ jobs:
 
       - name: Run Rust tests
         run: cargo test --release
+
+      - name: Minimize uv cache
+        run: uv cache prune --ci
