@@ -10,13 +10,12 @@ env:
 
 jobs:
   test:
-    name: Test (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    name: Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [blacksmith-4vcpu-ubuntu-2404, blacksmith-4vcpu-macos-sequoia, blacksmith-4vcpu-windows-2025]
-        python-version: ["3.13"]
     
     defaults:
       run:
@@ -28,7 +27,12 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          version: "0.9.17"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        run: uv python install
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -38,11 +42,11 @@ jobs:
         with:
           workspaces: workspaces/rust/klaw-dbase
 
-      - name: Sync klaw-dbase dependencies
+      - name: Sync dependencies
         run: uv sync --package klaw-dbase
 
       - name: Build extension
-        run: uv run --package klaw-dbase maturin develop --release -- --no-default-features
+        run: uv run --package klaw-dbase maturin develop --release
 
       - name: Run Python tests
         run: uv run --package klaw-dbase pytest -v
@@ -74,6 +78,13 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.9.17"
 
-      - name: Run ruff
-        run: uv run --package klaw-dbase ruff check klaw_dbase/
+      - name: Set up Python
+        run: uv python install
+
+      - name: Sync and run ruff
+        run: |
+          uv sync --package klaw-dbase
+          uv run --package klaw-dbase ruff check klaw_dbase/
