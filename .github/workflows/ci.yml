@@ -43,13 +43,11 @@ jobs:
       - name: Build and install (dev)
         run: |
           uv venv
-          uv pip install maturin pytest
-          maturin develop --release
+          uv pip install maturin pytest polars-lts-cpu pyarrow psutil
+          uv run maturin develop --release
 
       - name: Run Python tests
-        run: |
-          uv pip install polars-lts-cpu pyarrow psutil
-          .venv/bin/pytest -v || .venv/Scripts/pytest -v
+        run: uv run pytest -v
 
       - name: Run Rust tests
         run: cargo test --release
