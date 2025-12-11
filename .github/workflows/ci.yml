@@ -54,13 +54,13 @@ jobs:
           workspaces: workspaces/rust/klaw-dbase
 
       - name: Sync dependencies
-        run: uv sync --package klaw-dbase
+        run: uv sync --package klaw-dbase --group test
 
       - name: Build extension
-        run: uv run --package klaw-dbase maturin develop --release
+        run: uv run --package klaw-dbase --group test maturin develop --release
 
       - name: Run Python tests
-        run: uv run --package klaw-dbase pytest -v
+        run: uv run --package klaw-dbase --group test pytest -v
 
       - name: Run Rust tests
         run: cargo test --release
