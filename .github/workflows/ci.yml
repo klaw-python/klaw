@@ -42,7 +42,7 @@ jobs:
         run: uv sync --package klaw-dbase
 
       - name: Build extension
-        run: uv run --package klaw-dbase maturin develop --release
+        run: uv run --package klaw-dbase maturin develop --release -- --no-default-features
 
       - name: Run Python tests
         run: uv run --package klaw-dbase pytest -v
