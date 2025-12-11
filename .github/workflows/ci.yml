@@ -16,9 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [depot-ubuntu-24.04-4]
-        # Full matrix for releases:
-        # os: [depot-ubuntu-24.04-4, depot-macos-14, depot-windows-2022-4]
+        os: [depot-ubuntu-24.04-4, depot-macos-14, depot-windows-2022-4]
 
     defaults:
       run:
