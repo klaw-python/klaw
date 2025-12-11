@@ -7,6 +7,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  UV_NO_WORKSPACE: "1"
 
 jobs:
   test:
@@ -40,10 +41,15 @@ jobs:
           workspaces: workspaces/rust/klaw-dbase
 
       - name: Build and install (dev)
-        run: uv run --package klaw-dbase maturin develop --release
+        run: |
+          uv venv
+          uv pip install maturin pytest
+          maturin develop --release
 
       - name: Run Python tests
-        run: uv run --package klaw-dbase pytest -v
+        run: |
+          uv pip install polars-lts-cpu pyarrow psutil
+          .venv/bin/pytest -v || .venv/Scripts/pytest -v
 
       - name: Run Rust tests
         run: cargo test --release
@@ -55,6 +61,9 @@ jobs:
     defaults:
       run:
         working-directory: workspaces/rust/klaw-dbase
+
+    env:
+      UV_NO_WORKSPACE: "1"
 
     steps:
       - uses: actions/checkout@v4
@@ -74,4 +83,6 @@ jobs:
         uses: astral-sh/setup-uv@v4
 
       - name: Run ruff
-        run: uv run --package klaw-dbase ruff check klaw_dbase/
+        run: |
+          uv pip install ruff --system
+          ruff check klaw_dbase/
