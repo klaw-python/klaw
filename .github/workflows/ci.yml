@@ -63,7 +63,7 @@ jobs:
         run: uv run --package klaw-dbase --group test pytest -v
 
       - name: Run Rust tests
-        run: cargo test --release --no-default-features
+        run: uv run --package klaw-dbase --group test cargo test --release --no-default-features
 
       - name: Minimize uv cache
         run: uv cache prune --ci
