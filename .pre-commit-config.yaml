@@ -1,3 +1,6 @@
+# prek configuration (https://prek.j178.dev)
+# Install: uv tool install prek && prek install -f
+
 exclude: |
   (?x)^(
       .*\{\{.*\}\}.*|     # Exclude any files with cookiecutter variables
@@ -5,77 +8,90 @@ exclude: |
       \.history/.*|       # Exclude history files
       .*cache.*/.*|       # Exclude cache directories
       .*venv.*/.*|        # Exclude virtual environment directories
+      docs-build/.*|      # Exclude docs-build (private deps)
   )$
 fail_fast: true
 default_language_version:
-  python: python3.12
+  python: python3.13
 default_install_hook_types:
 - pre-commit
 - commit-msg
 
 repos:
-# Linting & Formatting
+# Built-in prek hooks (Rust-native, zero-setup, instant)
+- repo: builtin
+  hooks:
+  - id: check-toml
+    name: ✅ toml · validate
+  - id: check-yaml
+    name: ✅ yaml · validate
+  - id: check-json
+    name: ✅ json · validate
+  - id: trailing-whitespace
+    name: 🧹 whitespace · trim trailing
+  - id: end-of-file-fixer
+    name: 🧹 eof · ensure newline
+  - id: check-merge-conflict
+    name: 🚫 git · check merge conflicts
+  - id: detect-private-key
+    name: 🔒 security · detect private keys
+  - id: check-added-large-files
+    name: 📦 git · check large files
+
+# Linting & Formatting - Python
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  # Ruff version.
   rev: v0.11.13
   hooks:
-  # Run the linter.
   - id: ruff
     name: 🔧 ruff · lint
-    types_or: [ python, pyi ]
-    args: [ --fix ]
-  # Run the formatter.
+    types_or: [python, pyi]
+    args: [--fix]
   - id: ruff-format
     name: 🔧 ruff · format
-    types_or: [ python, pyi ]
+    types_or: [python, pyi]
+
+# Linting & Formatting - Rust
+- repo: local
+  hooks:
+  - id: cargo-fmt
+    name: 🦀 rust · format
+    entry: cargo fmt --all --manifest-path workspaces/rust/klaw-dbase/Cargo.toml --
+    language: system
+    types: [rust]
+    pass_filenames: false
+  - id: cargo-clippy
+    name: 🦀 rust · clippy
+    entry: cargo clippy --manifest-path workspaces/rust/klaw-dbase/Cargo.toml --all-targets -- -D warnings
+    language: system
+    types: [rust]
+    pass_filenames: false
 
 # Data & Config Validation
 - repo: https://github.com/python-jsonschema/check-jsonschema
   rev: 0.33.0
   hooks:
   - id: check-github-workflows
-    name: "🐙 github-actions · Validate gh workflow files"
-    args: [ "--verbose" ]
-  - id: check-taskfile
-    name: "✅ taskfile · Validate Task configuration"
+    name: 🐙 github-actions · validate workflows
+    args: [--verbose]
 
 # Markdown
 - repo: https://github.com/hukkin/mdformat
   rev: 0.7.22
   hooks:
   - id: mdformat
-    name: "📝 markdown · Format markdown"
+    name: 📝 markdown · format
     additional_dependencies:
     - mdformat-gfm
     - mdformat-ruff
     - mdformat-frontmatter
     - ruff
-  # Test formatting
-- repo: local
-  hooks:
-  - id: pytest-collect
-    name: 🧪 test · Validate test formatting
-    entry: ./.venv/bin/pytest test
-    language: system
-    types: [ python ]
-    args: [ "--collect-only" ]
-    pass_filenames: false
-    always_run: true
-    # Tests Fast
-  - id: pytest-fast
-    name: 🧪 test · Run fast tests
-    entry: ./.venv/bin/pytest test
-    language: system
-    types: [ python ]
-    pass_filenames: false
-    always_run: true
 
 # Verify web stuff
 - repo: https://github.com/biomejs/pre-commit
-  rev: v2.0.0-beta.5 # Use the sha / tag you want to point at
+  rev: v2.0.0-beta.5
   hooks:
   - id: biome-check
-    name: "🕸️ javascript · Lint, format, and safe fixes with Biome"
+    name: 🕸️ biome · lint & format
 
 # Optimize images
 - repo: https://github.com/shssoichiro/oxipng
@@ -83,14 +99,11 @@ repos:
   hooks:
   - id: oxipng
     name: 📸 images · optimize
-    args: [ "-o", "4", "--strip", "safe", "--alpha" ]
+    args: [-o, "4", --strip, safe, --alpha]
 
 # Dependency management
 - repo: https://github.com/astral-sh/uv-pre-commit
-  # uv version.
   rev: 0.7.13
   hooks:
   - id: uv-lock
-    name: "🔒 uv-lock · Lock dependencies"
-  - id: uv-export
-    name: "🔗 uv-export · Export dependencies"
+    name: 🔒 uv · lock dependencies

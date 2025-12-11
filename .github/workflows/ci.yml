@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [blacksmith-4vcpu-ubuntu-2404, blacksmith-4vcpu-macos-sequoia, blacksmith-4vcpu-windows-2025]
-    
+
     defaults:
       run:
         working-directory: workspaces/rust/klaw-dbase
@@ -53,38 +53,3 @@ jobs:
 
       - name: Run Rust tests
         run: cargo test --release
-
-  lint:
-    name: Lint & Format
-    runs-on: blacksmith-4vcpu-ubuntu-2404
-    
-    defaults:
-      run:
-        working-directory: workspaces/rust/klaw-dbase
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
-
-      - name: Check formatting
-        run: cargo fmt --check
-
-      - name: Run clippy
-        run: cargo clippy --all-targets -- -D warnings
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v4
-        with:
-          version: "0.9.17"
-
-      - name: Set up Python
-        run: uv python install
-
-      - name: Sync and run ruff
-        run: |
-          uv sync --package klaw-dbase
-          uv run --package klaw-dbase ruff check klaw_dbase/
