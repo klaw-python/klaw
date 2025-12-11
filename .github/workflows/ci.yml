@@ -54,7 +54,7 @@ jobs:
           workspaces: workspaces/rust/klaw-dbase
 
       - name: Sync dependencies
-        run: uv sync --package klaw-dbase --group test
+        run: uv sync --package klaw-dbase --group test --verbose
 
       - name: Build extension
         run: uv run --package klaw-dbase --group test maturin develop --release
