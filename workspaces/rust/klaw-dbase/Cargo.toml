@@ -23,7 +23,7 @@ pyo3-build-config = "0.25.1"
 
 
 [dependencies]
-pyo3 = { version = "0.25.1", features = ["abi3-py310"] }
+pyo3 = { version = "0.25.1", features = ["abi3-py313"] }
 
 pyo3-polars = { version = "*", features = ["derive", "lazy"] }
 
