@@ -285,17 +285,19 @@ def test_overwrite_behavior() -> None:
 
 def test_invalid_encoding() -> None:
     """Test handling of invalid encoding names."""
+    import os
+    import shutil
+    
     df = pl.from_dict({"x": [1, 2, 3]})
     
-    with tempfile.NamedTemporaryFile(suffix='.dbf', delete=False) as temp_file:
-        temp_path = temp_file.name
+    temp_dir = tempfile.mkdtemp()
+    temp_path = os.path.join(temp_dir, "test.dbf")
 
-        try:
-            with pytest.raises(RuntimeError):
-                write_dbase(df, temp_path, encoding="invalid-encoding-12345", overwrite=True)
-        finally:
-            import os
-            os.unlink(temp_path)
+    try:
+        with pytest.raises(RuntimeError):
+            write_dbase(df, temp_path, encoding="invalid-encoding-12345", overwrite=True)
+    finally:
+        shutil.rmtree(temp_dir, ignore_errors=True)
 
 
 

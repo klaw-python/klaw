@@ -7,7 +7,6 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  UV_NO_WORKSPACE: "1"
 
 jobs:
   test:
@@ -40,19 +39,14 @@ jobs:
         with:
           workspaces: workspaces/rust/klaw-dbase
 
-      - name: Build and install (dev)
-        shell: bash
-        run: |
-          uv venv
-          source .venv/bin/activate || source .venv/Scripts/activate
-          uv pip install maturin pytest polars-lts-cpu pyarrow psutil
-          maturin develop --release
+      - name: Sync klaw-dbase dependencies
+        run: uv sync --package klaw-dbase --no-group docs
+
+      - name: Build extension
+        run: uv run --package klaw-dbase maturin develop --release
 
       - name: Run Python tests
-        shell: bash
-        run: |
-          source .venv/bin/activate || source .venv/Scripts/activate
-          pytest -v
+        run: uv run --package klaw-dbase pytest -v
 
       - name: Run Rust tests
         run: cargo test --release
@@ -64,9 +58,6 @@ jobs:
     defaults:
       run:
         working-directory: workspaces/rust/klaw-dbase
-
-    env:
-      UV_NO_WORKSPACE: "1"
 
     steps:
       - uses: actions/checkout@v4

@@ -127,24 +127,21 @@ def test_directory() -> None:
 
 def test_dbase_list_arg(sample_dataframe) -> None:
     """Test that scan works when passing a list."""
-    # Create multiple temporary files
     import tempfile
     import os
+    import shutil
 
-    temp_files = []
+    temp_dir = tempfile.mkdtemp()
     try:
+        temp_file_1 = os.path.join(temp_dir, "test1.dbf")
+        temp_file_2 = os.path.join(temp_dir, "test2.dbf")
+        temp_file_3 = os.path.join(temp_dir, "test3.dbf")
         
-        temp_file_1 = tempfile.NamedTemporaryFile(suffix='.dbf', delete=False)
-        temp_file_2 = tempfile.NamedTemporaryFile(suffix='.dbf', delete=False)
-        temp_file_3 = tempfile.NamedTemporaryFile(suffix='.dbf', delete=False)
+        write_dbase(sample_dataframe, temp_file_1, overwrite=True)
+        write_dbase(sample_dataframe, temp_file_2, overwrite=True)
+        write_dbase(sample_dataframe, temp_file_3, overwrite=True)
         
-        write_dbase(sample_dataframe, temp_file_1.name, overwrite=True)
-        write_dbase(sample_dataframe, temp_file_2.name, overwrite=True)
-        write_dbase(sample_dataframe, temp_file_3.name, overwrite=True)
-        
-        temp_files.append(temp_file_1.name)
-        temp_files.append(temp_file_2.name)
-        temp_files.append(temp_file_3.name)
+        temp_files = [temp_file_1, temp_file_2, temp_file_3]
 
         # Test scanning list of files
         frame = scan_dbase(temp_files).collect()
@@ -152,10 +149,7 @@ def test_dbase_list_arg(sample_dataframe) -> None:
         assert frames_equal(frame, expected)
                 
     finally:
-        # Clean up
-        for temp_file in temp_files:
-            if os.path.exists(temp_file):
-                os.unlink(temp_file)
+        shutil.rmtree(temp_dir, ignore_errors=True)
                 
 
 def test_glob_single_scan() -> None:

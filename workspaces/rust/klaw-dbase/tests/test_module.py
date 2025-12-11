@@ -50,19 +50,19 @@ def test_error_types() -> None:
         scan_dbase([]).collect()
     
     # Test invalid encoding
-    with tempfile.NamedTemporaryFile(suffix='.dbf', delete=False) as f:
-        temp_path = f.name
+    import os
+    temp_dir = tempfile.mkdtemp()
+    temp_path = os.path.join(temp_dir, "test.dbf")
     
-        try:
-            write_dbase(df, temp_path, overwrite=True)
+    try:
+        write_dbase(df, temp_path, overwrite=True)
+        
+        with pytest.raises((EncodingError, DbaseError)):
+            read_dbase(temp_path, encoding="invalid-encoding")
             
-            with pytest.raises((EncodingError, DbaseError)):
-                read_dbase(temp_path, encoding="invalid-encoding")
-                
-        finally:
-            import os
-            if os.path.exists(temp_path):
-                os.unlink(temp_path)
+    finally:
+        import shutil
+        shutil.rmtree(temp_dir, ignore_errors=True)
 
 
 if __name__ == "__main__":
