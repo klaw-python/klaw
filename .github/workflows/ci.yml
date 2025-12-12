@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [depot-ubuntu-24.04-4, depot-macos-14, depot-windows-2022-4]
+        os: [depot-ubuntu-24.04-4, macos-14, depot-windows-2022-4]
 
     defaults:
       run:
@@ -56,6 +56,18 @@ jobs:
 
       - name: Run Python tests
         run: uv run --package klaw-dbase --group test pytest -v
+
+      - name: Run Rust tests
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            export PATH="$(dirname $(uv run python -c 'import sys; print(sys.executable)')):$PATH"
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            export DYLD_LIBRARY_PATH="$(uv run python -c 'import sysconfig; print(sysconfig.get_config_var(\"LIBDIR\"))')"
+          else
+            export LD_LIBRARY_PATH="$(uv run python -c 'import sysconfig; print(sysconfig.get_config_var(\"LIBDIR\"))')"
+          fi
+          uv run --package klaw-dbase --group test cargo test --release
 
       - name: Minimize uv cache
         run: uv cache prune --ci
