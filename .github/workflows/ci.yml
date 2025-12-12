@@ -63,9 +63,9 @@ jobs:
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             export PATH="$(dirname $(uv run python -c 'import sys; print(sys.executable)')):$PATH"
           elif [[ "$RUNNER_OS" == "macOS" ]]; then
-            export DYLD_LIBRARY_PATH="$(uv run python -c 'import sysconfig; print(sysconfig.get_config_var(\"LIBDIR\"))')"
+            export DYLD_LIBRARY_PATH="$(uv run python -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))")"
           else
-            export LD_LIBRARY_PATH="$(uv run python -c 'import sysconfig; print(sysconfig.get_config_var(\"LIBDIR\"))')"
+            export LD_LIBRARY_PATH="$(uv run python -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))")"
           fi
           uv run --package klaw-dbase --group test cargo test --release
 
