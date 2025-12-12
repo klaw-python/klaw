@@ -60,13 +60,17 @@ jobs:
       - name: Run Rust tests
         shell: bash
         run: |
+          PYTHON_LIBDIR=$(uv run python -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))")
+          echo "Python LIBDIR: $PYTHON_LIBDIR"
+          echo "RUNNER_OS: $RUNNER_OS"
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             export PATH="$(dirname $(uv run python -c 'import sys; print(sys.executable)')):$PATH"
           elif [[ "$RUNNER_OS" == "macOS" ]]; then
-            export DYLD_LIBRARY_PATH="$(uv run python -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))")"
+            export DYLD_LIBRARY_PATH="$PYTHON_LIBDIR"
           else
-            export LD_LIBRARY_PATH="$(uv run python -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))")"
+            export LD_LIBRARY_PATH="$PYTHON_LIBDIR"
           fi
+          echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
           uv run --package klaw-dbase --group test cargo test --release
 
       - name: Minimize uv cache
