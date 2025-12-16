@@ -35,7 +35,7 @@ from klaw_result.decorators import (
 )
 
 # Composition
-from klaw_result.compose import Deref
+from klaw_result.compose import Deref, DerefOk, DerefSome
 from klaw_result.compose import pipe as pipe_fn
 
 # Typeclass
@@ -53,6 +53,8 @@ from klaw_result.async_ import AsyncResult, async_collect, async_lru_safe
 __all__ = [
     "AsyncResult",
     "Deref",
+    "DerefOk",
+    "DerefSome",
     "Err",
     "Nothing",
     "NothingType",
