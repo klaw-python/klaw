@@ -99,28 +99,28 @@
   - [x] 1.8 Add dev dependencies: pytest, pytest-asyncio, hypothesis, pytest-benchmark, mutmut, returns (for comparison)
   - [x] 1.9 Update root `pyproject.toml` workspace members to include `klaw-result`
 
-- [ ] 2.0 Core Types Implementation
+- [x] 2.0 Core Types Implementation
 
-  - [ ] 2.1 Create `Propagate` exception class in `types/propagate.py` for `.bail()` mechanism
-  - [ ] 2.2 Implement `Ok[T]` as `msgspec.Struct` with `frozen=True`, `__match_args__`
-  - [ ] 2.3 Implement `Err[E]` as `msgspec.Struct` with `frozen=True`, `__match_args__`
-  - [ ] 2.4 Define `Result[T, E]` type alias as `Ok[T] | Err[E]` with PEP 696 default `E=Exception`
-  - [ ] 2.5 Implement querying methods: `is_ok() -> TypeIs[Ok[T]]`, `is_err() -> TypeIs[Err[E]]`
-  - [ ] 2.6 Implement extracting methods: `unwrap()`, `unwrap_or()`, `unwrap_or_else()`, `expect()`
-  - [ ] 2.7 Implement transforming methods: `map()`, `map_err()`, `and_then()`, `or_else()`
-  - [ ] 2.8 Implement converting methods: `ok() -> Option[T]`, `err() -> Option[E]`, `transpose()`
-  - [ ] 2.9 Implement combining methods: `and_()`, `or_()`, `zip()`, `flatten()`
-  - [ ] 2.10 Implement `collect(Iterable[Result[T, E]]) -> Result[list[T], E]` class method
-  - [ ] 2.11 Implement `.bail()` and `.unwrap_or_return()` methods that raise `Propagate`
-  - [ ] 2.12 Implement `Some[T]` as `msgspec.Struct` with `frozen=True`, `__match_args__`
-  - [ ] 2.13 Implement `Nothing` as singleton (frozen Struct or sentinel)
-  - [ ] 2.14 Define `Option[T]` type alias as `Some[T] | Nothing`
-  - [ ] 2.15 Implement Option querying: `is_some() -> TypeIs[Some[T]]`, `is_none() -> TypeIs[Nothing]`
-  - [ ] 2.16 Implement Option extracting, transforming methods (mirror Result API)
-  - [ ] 2.17 Implement Option converting: `ok_or()`, `ok_or_else()` returning Result
-  - [ ] 2.18 Implement Option `.bail()` and `.unwrap_or_return()` methods
-  - [ ] 2.19 Add `__repr__`, `__eq__`, `__hash__` via msgspec.Struct defaults
-  - [ ] 2.20 Export all types from `types/__init__.py`
+  - [x] 2.1 Create `Propagate` exception class in `types/propagate.py` for `.bail()` mechanism
+  - [x] 2.2 Implement `Ok[T]` as `msgspec.Struct` with `frozen=True`, `__match_args__`
+  - [x] 2.3 Implement `Err[E]` as `msgspec.Struct` with `frozen=True`, `__match_args__`
+  - [x] 2.4 Define `Result[T, E]` type alias as `Ok[T] | Err[E]` with PEP 696 default `E=Exception`
+  - [x] 2.5 Implement querying methods: `is_ok() -> TypeIs[Ok[T]]`, `is_err() -> TypeIs[Err[E]]`
+  - [x] 2.6 Implement extracting methods: `unwrap()`, `unwrap_or()`, `unwrap_or_else()`, `expect()`
+  - [x] 2.7 Implement transforming methods: `map()`, `map_err()`, `and_then()`, `or_else()`
+  - [x] 2.8 Implement converting methods: `ok() -> Option[T]`, `err() -> Option[E]`, `transpose()`
+  - [x] 2.9 Implement combining methods: `and_()`, `or_()`, `zip()`, `flatten()`
+  - [x] 2.10 Implement `collect(Iterable[Result[T, E]]) -> Result[list[T], E]` class method
+  - [x] 2.11 Implement `.bail()` and `.unwrap_or_return()` methods that raise `Propagate`
+  - [x] 2.12 Implement `Some[T]` as `msgspec.Struct` with `frozen=True`, `__match_args__`
+  - [x] 2.13 Implement `Nothing` as singleton (frozen Struct or sentinel)
+  - [x] 2.14 Define `Option[T]` type alias as `Some[T] | Nothing`
+  - [x] 2.15 Implement Option querying: `is_some() -> TypeIs[Some[T]]`, `is_none() -> TypeIs[Nothing]`
+  - [x] 2.16 Implement Option extracting, transforming methods (mirror Result API)
+  - [x] 2.17 Implement Option converting: `ok_or()`, `ok_or_else()` returning Result
+  - [x] 2.18 Implement Option `.bail()` and `.unwrap_or_return()` methods
+  - [x] 2.19 Add `__repr__`, `__eq__`, `__hash__` via msgspec.Struct defaults
+  - [x] 2.20 Export all types from `types/__init__.py`
 
 - [ ] 3.0 Decorators & Propagation
 

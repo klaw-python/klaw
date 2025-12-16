@@ -14,11 +14,13 @@ Submodule imports (for organization):
 from klaw_result.types import (
     Err,
     Nothing,
+    NothingType,
     Ok,
     Option,
     Propagate,
     Result,
     Some,
+    collect,
 )
 
 # Decorators
@@ -53,11 +55,13 @@ __all__ = [
     "Deref",
     "Err",
     "Nothing",
+    "NothingType",
     "Ok",
     "Option",
     "Propagate",
     "Result",
     "Some",
+    "collect",
     "assert_result",
     "async_collect",
     "async_lru_safe",
