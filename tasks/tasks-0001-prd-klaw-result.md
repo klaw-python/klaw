@@ -136,17 +136,17 @@
   - [x] 3.10 Add context manager support to Result/Option for `with result.ctx as value:` unwrapping
   - [x] 3.11 Export all decorators from `decorators/__init__.py`
 
-- [ ] 4.0 Composition & Operators
+- [x] 4.0 Composition & Operators
 
-  - [ ] 4.1 Implement `__or__` (`|`) operator on Result for chaining: `Ok(x) | f` calls `f(x)` and wraps
-  - [ ] 4.2 Implement `__or__` on Option for same behavior
-  - [ ] 4.3 Implement `pipe(value, *fns)` function — applies functions in sequence, auto-wrapping
-  - [ ] 4.4 Detect if piped function already returns Result/Option to avoid double-wrapping
-  - [ ] 4.5 Create `Deref` mixin/protocol for `__getattr__` forwarding to wrapped value
-  - [ ] 4.6 Implement auto-wrapping of forwarded method return values
-  - [ ] 4.7 Detect if forwarded method returns Result/Option to avoid double-wrapping
-  - [ ] 4.8 Make deref forwarding opt-in (separate `DerefResult`/`DerefOption` classes or `.deref` property)
-  - [ ] 4.9 Export composition utilities from `compose/__init__.py`
+  - [x] 4.1 Implement `__or__` (`|`) operator on Result for chaining: `Ok(x) | f` calls `f(x)` and wraps
+  - [x] 4.2 Implement `__or__` on Option for same behavior
+  - [x] 4.3 Implement `pipe(value, *fns)` function — applies functions in sequence, auto-wrapping
+  - [x] 4.4 Detect if piped function already returns Result/Option to avoid double-wrapping
+  - [x] 4.5 Create `Deref` mixin/protocol for `__getattr__` forwarding to wrapped value
+  - [x] 4.6 Implement auto-wrapping of forwarded method return values
+  - [x] 4.7 Detect if forwarded method returns Result/Option to avoid double-wrapping
+  - [x] 4.8 Make deref forwarding opt-in (separate `DerefResult`/`DerefOption` classes or `.deref` property)
+  - [x] 4.9 Export composition utilities from `compose/__init__.py`
 
 - [ ] 5.0 Typeclasses
 
