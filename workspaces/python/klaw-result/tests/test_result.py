@@ -444,6 +444,22 @@ class TestResultCopy:
         assert copied is not err
 
 
+class TestResultContextManager:
+    """Tests for context manager support."""
+
+    def test_ok_context_manager(self):
+        """Ok works as context manager, yielding value."""
+        with Ok(42) as value:
+            assert value == 42
+
+    def test_err_context_manager_raises(self):
+        """Err context manager raises Propagate."""
+        with pytest.raises(Propagate) as exc_info:
+            with Err("error") as _value:
+                pass  # Never reached
+        assert exc_info.value.value == Err("error")
+
+
 class TestResultMonadLaws:
     """Property-based tests for monad laws."""
 

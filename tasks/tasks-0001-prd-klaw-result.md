@@ -122,19 +122,19 @@
   - [x] 2.19 Add `__repr__`, `__eq__`, `__hash__` via msgspec.Struct defaults
   - [x] 2.20 Export all types from `types/__init__.py`
 
-- [ ] 3.0 Decorators & Propagation
+- [x] 3.0 Decorators & Propagation
 
-  - [ ] 3.1 Implement `@safe` decorator using `wrapt.decorator` — catches exceptions, returns `Err(exception)`
-  - [ ] 3.2 Implement `@safe_async` decorator for async functions
-  - [ ] 3.3 Implement `@pipe` decorator — wraps return value in `Ok()`
-  - [ ] 3.4 Implement `@pipe_async` decorator for async functions
-  - [ ] 3.5 Implement `@result` decorator — catches `Propagate` exception, returns contained `Err`
-  - [ ] 3.6 Implement `@result` for async functions (same decorator, detect async)
-  - [ ] 3.7 Implement `@do` decorator — generator-based do-notation with `yield` for Result extraction
-  - [ ] 3.8 Implement `@do_async` decorator — async generator do-notation
-  - [ ] 3.9 Ensure all decorators preserve function signatures and type hints via `wrapt`
-  - [ ] 3.10 Add context manager support to Result/Option for `with result.ctx as value:` unwrapping
-  - [ ] 3.11 Export all decorators from `decorators/__init__.py`
+  - [x] 3.1 Implement `@safe` decorator using `wrapt.decorator` — catches exceptions, returns `Err(exception)`
+  - [x] 3.2 Implement `@safe_async` decorator for async functions
+  - [x] 3.3 Implement `@pipe` decorator — wraps return value in `Ok()`
+  - [x] 3.4 Implement `@pipe_async` decorator for async functions
+  - [x] 3.5 Implement `@result` decorator — catches `Propagate` exception, returns contained `Err`
+  - [x] 3.6 Implement `@result` for async functions (same decorator, detect async)
+  - [x] 3.7 Implement `@do` decorator — generator-based do-notation with `yield` for Result extraction
+  - [x] 3.8 Implement `@do_async` decorator — async generator do-notation
+  - [x] 3.9 Ensure all decorators preserve function signatures and type hints via `wrapt`
+  - [x] 3.10 Add context manager support to Result/Option for `with result.ctx as value:` unwrapping
+  - [x] 3.11 Export all decorators from `decorators/__init__.py`
 
 - [ ] 4.0 Composition & Operators
 

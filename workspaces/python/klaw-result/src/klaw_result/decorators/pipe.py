@@ -1,15 +1,82 @@
 """@pipe and @pipe_async decorators for wrapping return values in Ok."""
 
-# Placeholder - implementation in Task 3.0
+from __future__ import annotations
+
+from collections.abc import Awaitable, Callable
+from typing import Any, ParamSpec, TypeVar
+
+import wrapt
+
+from klaw_result.types.result import Ok
 
 __all__ = ["pipe", "pipe_async"]
 
-
-def pipe(fn):
-    """Placeholder for @pipe decorator."""
-    return fn
+P = ParamSpec("P")
+T = TypeVar("T")
 
 
-def pipe_async(fn):
-    """Placeholder for @pipe_async decorator."""
-    return fn
+def pipe(func: Callable[P, T]) -> Callable[P, Ok[T]]:
+    """Decorator that wraps the return value in Ok.
+
+    Useful for functions that never fail, to make them compatible
+    with Result-based pipelines.
+
+    Args:
+        func: The function to wrap.
+
+    Returns:
+        A wrapped function that returns Ok[T] instead of T.
+
+    Examples:
+        >>> @pipe
+        ... def add(a: int, b: int) -> int:
+        ...     return a + b
+        >>> add(2, 3)
+        Ok(value=5)
+    """
+
+    @wrapt.decorator
+    def wrapper(
+        wrapped: Callable[P, T],
+        instance: Any,  # noqa: ARG001
+        args: tuple[Any, ...],
+        kwargs: dict[str, Any],
+    ) -> Ok[T]:
+        return Ok(wrapped(*args, **kwargs))
+
+    return wrapper(func)  # type: ignore[return-value]
+
+
+def pipe_async(
+    func: Callable[P, Awaitable[T]],
+) -> Callable[P, Awaitable[Ok[T]]]:
+    """Async decorator that wraps the return value in Ok.
+
+    Useful for async functions that never fail, to make them compatible
+    with Result-based pipelines.
+
+    Args:
+        func: The async function to wrap.
+
+    Returns:
+        A wrapped async function that returns Ok[T] instead of T.
+
+    Examples:
+        >>> @pipe_async
+        ... async def fetch_data() -> str:
+        ...     return "data"
+        >>> await fetch_data()
+        Ok(value='data')
+    """
+
+    @wrapt.decorator
+    async def wrapper(
+        wrapped: Callable[P, Awaitable[T]],
+        instance: Any,  # noqa: ARG001
+        args: tuple[Any, ...],
+        kwargs: dict[str, Any],
+    ) -> Ok[T]:
+        result = await wrapped(*args, **kwargs)
+        return Ok(result)
+
+    return wrapper(func)  # type: ignore[return-value]

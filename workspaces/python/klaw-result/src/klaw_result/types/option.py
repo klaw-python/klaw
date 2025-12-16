@@ -28,9 +28,20 @@ class Some[T](msgspec.Struct, frozen=True, gc=False):
         42
         >>> some.map(lambda x: x * 2)
         Some(value=84)
+        >>> with some as value:
+        ...     print(value)
+        42
     """
 
     value: T
+
+    def __enter__(self) -> T:
+        """Context manager entry - returns the contained value."""
+        return self.value
+
+    def __exit__(self, *_: object) -> None:
+        """Context manager exit - no cleanup needed."""
+        pass
 
     def is_some(self) -> TypeIs[Some[T]]:
         """Return True if the option is Some.
@@ -198,6 +209,14 @@ class NothingType(msgspec.Struct, frozen=True, gc=False):
         >>> Nothing.unwrap_or(0)
         0
     """
+
+    def __enter__(self) -> NoReturn:
+        """Context manager entry - raises Propagate for Nothing."""
+        raise Propagate(self)
+
+    def __exit__(self, *_: object) -> None:
+        """Context manager exit - never called since __enter__ raises."""
+        pass
 
     def is_some(self) -> TypeIs[Some[object]]:
         """Return False since this is Nothing."""

@@ -28,9 +28,20 @@ class Ok[T](msgspec.Struct, frozen=True, gc=False):
         42
         >>> ok.map(lambda x: x * 2)
         Ok(value=84)
+        >>> with ok as value:
+        ...     print(value)
+        42
     """
 
     value: T
+
+    def __enter__(self) -> T:
+        """Context manager entry - returns the contained value."""
+        return self.value
+
+    def __exit__(self, *_: object) -> None:
+        """Context manager exit - no cleanup needed."""
+        pass
 
     def is_ok(self) -> TypeIs[Ok[T]]:
         """Return True if the result is Ok.
@@ -177,6 +188,14 @@ class Err[E](msgspec.Struct, frozen=True, gc=False):
     """
 
     error: E
+
+    def __enter__(self) -> NoReturn:
+        """Context manager entry - raises Propagate for Err."""
+        raise Propagate(self)
+
+    def __exit__(self, *_: object) -> None:
+        """Context manager exit - never called since __enter__ raises."""
+        pass
 
     def is_ok(self) -> TypeIs[Ok[object]]:
         """Return False since this is Err."""

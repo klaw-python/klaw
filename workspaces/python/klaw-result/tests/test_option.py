@@ -420,6 +420,22 @@ class TestOptionCopy:
         assert copied == Nothing
 
 
+class TestOptionContextManager:
+    """Tests for context manager support."""
+
+    def test_some_context_manager(self):
+        """Some works as context manager, yielding value."""
+        with Some(42) as value:
+            assert value == 42
+
+    def test_nothing_context_manager_raises(self):
+        """Nothing context manager raises Propagate."""
+        with pytest.raises(Propagate) as exc_info:
+            with Nothing as _value:
+                pass  # Never reached
+        assert exc_info.value.value is Nothing
+
+
 class TestOptionMonadLaws:
     """Property-based tests for monad laws."""
 
