@@ -148,26 +148,26 @@
   - [x] 4.8 Make deref forwarding opt-in (separate `DerefResult`/`DerefOption` classes or `.deref` property)
   - [x] 4.9 Export composition utilities from `compose/__init__.py`
 
-- [ ] 5.0 Typeclasses
+- [x] 5.0 Typeclasses
 
-  - [ ] 5.1 Design typeclass interface: `@typeclass` decorator that returns a dispatchable function
-  - [ ] 5.2 Implement `.instance(Type)` decorator for registering type-specific implementations
-  - [ ] 5.3 Implement type-safe dispatch based on first argument's type
-  - [ ] 5.4 Support generic types in dispatch (e.g., `list[int]` vs `list[str]`)
-  - [ ] 5.5 Ensure full type inference without mypy plugin (use overloads, TypeVar, Protocol)
-  - [ ] 5.6 Add runtime error for missing instance implementations
-  - [ ] 5.7 Export typeclass utilities from `typeclass/__init__.py`
+  - [x] 5.1 Design typeclass interface: `@typeclass` decorator that returns a dispatchable function
+  - [x] 5.2 Implement `.instance(Type)` decorator for registering type-specific implementations
+  - [x] 5.3 Implement type-safe dispatch based on first argument's type
+  - [x] 5.4 Support generic types in dispatch (e.g., `list[int]` vs `list[str]`)
+  - [x] 5.5 Ensure full type inference without mypy plugin (use overloads, TypeVar, Protocol)
+  - [x] 5.6 Add runtime error for missing instance implementations
+  - [x] 5.7 Export typeclass utilities from `typeclass/__init__.py`
 
 - [ ] 6.0 Lambda Helpers (`fn`)
 
-  - [ ] 6.1 Create `FnPlaceholder` class with operator overloads (`__add__`, `__sub__`, `__mul__`, etc.)
-  - [ ] 6.2 Implement `__getitem__` for `fn['key']` dict/list access
-  - [ ] 6.3 Implement `__getattr__` for `fn.method()` method calls (returns callable placeholder)
-  - [ ] 6.4 Implement `__call__` to produce the actual lambda function
-  - [ ] 6.5 Create `fn` singleton instance of `FnPlaceholder`
-  - [ ] 6.6 Add type stubs/overloads for common operations to enable type inference
-  - [ ] 6.7 Test with mypy/pyright to verify type inference works without plugin
-  - [ ] 6.8 Export `fn` from `fn/__init__.py`
+  - [x] 6.1 Create `FnPlaceholder` class with operator overloads (`__add__`, `__sub__`, `__mul__`, etc.)
+  - [x] 6.2 Implement `__getitem__` for `fn['key']` dict/list access
+  - [x] 6.3 Implement `__getattr__` for `fn.method()` method calls (returns callable placeholder)
+  - [x] 6.4 Implement `__call__` to produce the actual lambda function
+  - [x] 6.5 Create `fn` singleton instance of `FnPlaceholder`
+  - [x] 6.6 Add type stubs/overloads for common operations to enable type inference
+  - [x] 6.7 Test with mypy/pyright to verify type inference works without plugin
+  - [x] 6.8 Export `fn` from `fn/__init__.py`
 
 - [ ] 7.0 Assertion Utilities
 
