@@ -16,7 +16,7 @@ import aiologic
 
 from klaw_result.types.result import Err, Ok, Result
 
-__all__ = ["OnceCell", "Lazy"]
+__all__ = ["OnceCell", "Lazy", "ResultOnce"]
 
 T = TypeVar("T")
 
@@ -24,11 +24,21 @@ T = TypeVar("T")
 class OnceCell[T]:
     """A cell that can be written to exactly once.
 
-    Thread-safe and async-safe. Once a value is set, it cannot be changed.
-    Attempts to get the value before it's set will block/await.
+    Thread-safe and async-safe using aiologic.Lock. Once a value is set,
+    it cannot be changed.
+
+    The `get()` method is non-blocking and returns None if the value hasn't
+    been set. Use `get_or_init()` or `get_or_init_async()` for blocking/awaiting
+    initialization with concurrent access safety.
+
+    Note:
+        Storing None is allowed, but `get()` cannot distinguish "unset" from
+        "set to None". Use `is_set()` to check if the cell has been initialized.
 
     Examples:
         >>> cell: OnceCell[int] = OnceCell()
+        >>> cell.get()  # Non-blocking, returns None if unset
+        None
         >>> cell.set(42)
         True
         >>> cell.get()
@@ -153,17 +163,26 @@ class Lazy[T]:
 
 
 class ResultOnce[T, E]:
-    """A Result that is computed exactly once.
+    """A Result that is computed exactly once with retry on failure.
 
     Similar to Lazy but for fallible initialization that returns Result.
     If initialization fails (returns Err), subsequent calls will retry.
+    Thread-safe and async-safe using aiologic.Lock.
+
+    Note:
+        The initializer must be a synchronous function. The `get_async()`
+        method provides async-safe concurrent access but does NOT await
+        the initializer - it only ensures thread-safe access to the cached
+        result.
 
     Examples:
-        >>> async def fetch_config() -> Result[Config, Error]:
-        ...     ...
+        >>> def fetch_config() -> Result[Config, Error]:
+        ...     # Synchronous initialization
+        ...     return Ok(Config(...))
         >>>
         >>> config_once: ResultOnce[Config, Error] = ResultOnce(fetch_config)
-        >>> config = await config_once.get_async()
+        >>> result = config_once.get()  # Sync access
+        >>> result = await config_once.get_async()  # Async-safe access
     """
 
     __slots__ = ("_lock", "_result", "_init")

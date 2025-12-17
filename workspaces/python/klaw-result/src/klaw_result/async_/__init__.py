@@ -28,6 +28,7 @@ from klaw_result.async_.itertools import (
     async_iter_ok,
     async_map,
     async_partition,
+    async_race_ok,
 )
 from klaw_result.async_.result import AsyncResult
 
@@ -41,4 +42,5 @@ __all__ = [
     "async_lru_safe",
     "async_map",
     "async_partition",
+    "async_race_ok",
 ]

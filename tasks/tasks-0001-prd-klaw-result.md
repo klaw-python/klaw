@@ -188,24 +188,24 @@
   - [x] 8.8 Integrate `aiologic` for thread-safe internal operations in `_internal/sync.py`
   - [x] 8.9 Export async utilities from `async_/__init__.py`
 
-- [ ] 9.0 Testing & Quality
+- [x] 9.0 Testing & Quality
 
-  - [ ] 9.1 Create `conftest.py` with common fixtures (sample Ok/Err/Some/Nothing instances)
-  - [ ] 9.2 Create `strategies.py` with Hypothesis strategies for Result and Option
-  - [ ] 9.3 Write unit tests for all Result methods (test_result.py)
-  - [ ] 9.4 Write unit tests for all Option methods (test_option.py)
-  - [ ] 9.5 Write unit tests for all decorators (test_decorators.py)
-  - [ ] 9.6 Write unit tests for pipe operator and composition (test_compose.py)
-  - [ ] 9.7 Write unit tests for typeclasses (test_typeclass.py)
-  - [ ] 9.8 Write unit tests for fn placeholder (test_fn.py)
-  - [ ] 9.9 Write unit tests for assertion utilities (test_assertions.py)
-  - [ ] 9.10 Write async tests with pytest-asyncio (test_async.py)
-  - [ ] 9.11 Add property-based tests with Hypothesis for all core operations
-  - [ ] 9.12 Set up mutation testing with mutmut
-  - [ ] 9.13 Create benchmark suite comparing against `returns` library
-  - [ ] 9.14 Benchmark Result/Option creation, method calls, chaining
-  - [ ] 9.15 Verify 100% type coverage with mypy strict mode
-  - [ ] 9.16 Verify pyright compatibility
+  - [x] 9.1 Create `conftest.py` with common fixtures (sample Ok/Err/Some/Nothing instances)
+  - [x] 9.2 Create `strategies.py` with Hypothesis strategies for Result and Option
+  - [x] 9.3 Write unit tests for all Result methods (test_result.py)
+  - [x] 9.4 Write unit tests for all Option methods (test_option.py)
+  - [x] 9.5 Write unit tests for all decorators (test_decorators.py)
+  - [x] 9.6 Write unit tests for pipe operator and composition (test_compose.py)
+  - [x] 9.7 Write unit tests for typeclasses (test_typeclass.py)
+  - [x] 9.8 Write unit tests for fn placeholder (test_fn.py)
+  - [x] 9.9 Write unit tests for assertion utilities (test_assertions.py)
+  - [x] 9.10 Write async tests with pytest-asyncio (test_async.py)
+  - [x] 9.11 Add property-based tests with Hypothesis for all core operations
+  - [x] 9.12 Set up mutation testing with mutmut
+  - [x] 9.13 Create benchmark suite comparing against `returns` library
+  - [x] 9.14 Benchmark Result/Option creation, method calls, chaining
+  - [x] 9.15 Verify 100% type coverage with mypy strict mode
+  - [x] 9.16 Verify pyright compatibility
 
 - [ ] 10.0 Documentation
 

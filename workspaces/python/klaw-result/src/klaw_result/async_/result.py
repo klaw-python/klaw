@@ -17,9 +17,10 @@ Examples:
 
 from __future__ import annotations
 
-import asyncio
 from collections.abc import Awaitable, Callable, Coroutine
 from typing import TYPE_CHECKING, Any, Generator
+
+import anyio
 
 from klaw_result.types.result import Err, Ok, Result
 
@@ -38,6 +39,17 @@ class AsyncResult[T, E]:
     Unlike regular Result, AsyncResult methods return new AsyncResult
     instances, allowing you to build up a chain of async operations
     that only execute when awaited.
+
+    Note:
+        AsyncResult is single-shot when wrapping a coroutine object.
+        Coroutines can only be awaited once; awaiting the same AsyncResult
+        multiple times will raise RuntimeError. Use from_ok/from_err/from_result
+        for reusable values, or wrap a Task/Future for multi-await scenarios.
+
+    Note:
+        Some methods like `azip()` use asyncio.gather internally and are
+        asyncio-specific. The core transformation methods (amap, aand_then, etc.)
+        are backend-agnostic.
 
     Attributes:
         _awaitable: The underlying awaitable that produces a Result.
@@ -389,7 +401,8 @@ class AsyncResult[T, E]:
         """Combine two AsyncResults into a tuple.
 
         Runs both awaitables concurrently. If both are Ok, returns
-        Ok((self.value, other.value)). If either is Err, returns the first Err.
+        Ok((self.value, other.value)). If either is Err, returns the
+        first Err (by position: self first, then other).
 
         Args:
             other: Another AsyncResult to combine with.
@@ -399,7 +412,24 @@ class AsyncResult[T, E]:
         """
 
         async def _zipped() -> Result[tuple[T, U], E]:
-            result1, result2 = await asyncio.gather(self._awaitable, other._awaitable)
+            result1: Result[T, E] | None = None
+            result2: Result[U, E] | None = None
+
+            async with anyio.create_task_group() as tg:
+
+                async def run_self() -> None:
+                    nonlocal result1
+                    result1 = await self._awaitable
+
+                async def run_other() -> None:
+                    nonlocal result2
+                    result2 = await other._awaitable
+
+                tg.start_soon(run_self)
+                tg.start_soon(run_other)
+
+            assert result1 is not None and result2 is not None
+
             if isinstance(result1, Err):
                 return result1
             if isinstance(result2, Err):

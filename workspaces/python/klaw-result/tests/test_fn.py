@@ -908,9 +908,12 @@ class TestFnPropertyBased:
         halved = fn.floordiv(2)(doubled)
         assert halved == n
 
-    @given(st.text(min_size=1))
+    @given(st.text(alphabet=st.characters(max_codepoint=127), min_size=1))
     def test_upper_lower_preserves_casefold(self, s: str):
-        """upper then lower produces same casefold as original."""
+        """upper then lower produces same casefold as original (ASCII only).
+
+        Note: This property doesn't hold for all Unicode (e.g., Turkish ı).
+        """
         result = fn.lower()(fn.upper()(s))
         assert result.casefold() == s.casefold()
 

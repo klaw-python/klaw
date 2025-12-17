@@ -1,7 +1,7 @@
 """Async iteration utilities for Result types.
 
-Provides Result-aware async iteration functions that integrate with
-aioitertools for efficient async processing of Result streams.
+Provides Result-aware async iteration functions with proper concurrency
+control using aiologic for thread-safe operations.
 
 Examples:
     >>> async def fetch_items(ids: list[int]) -> list[Result[Item, Error]]:
@@ -11,8 +11,10 @@ Examples:
 
 from __future__ import annotations
 
-import asyncio
 from collections.abc import AsyncIterable, Awaitable, Callable, Iterable
+
+import aiologic
+import anyio
 
 from klaw_result.types.result import Err, Ok, Result
 
@@ -22,6 +24,9 @@ __all__ = [
     "async_map",
     "async_filter_ok",
     "async_partition",
+    "async_first_ok",
+    "async_iter_ok",
+    "async_race_ok",
 ]
 
 
@@ -30,15 +35,20 @@ async def async_collect[T, E](
 ) -> Result[list[T], E]:
     """Collect awaitables of Results into a Result of list.
 
-    Runs all awaitables concurrently using asyncio.gather, then
-    collects the results. Short-circuits to return the first Err
-    encountered (in order of the original iterable).
+    Runs all awaitables concurrently and waits for all to complete.
+    Then returns Ok(list[T]) if all succeeded, or the first Err
+    encountered (by original order).
+
+    Note:
+        This does NOT short-circuit/cancel on first error. All awaitables
+        run to completion before checking results. Use async_race_ok if
+        you need early termination on success.
 
     Args:
         awaitables: An iterable of awaitables that produce Result values.
 
     Returns:
-        Ok(list[T]) if all results are Ok, otherwise the first Err.
+        Ok(list[T]) if all results are Ok, otherwise the first Err (by order).
 
     Examples:
         >>> async def get_value(n: int) -> Result[int, str]:
@@ -47,12 +57,21 @@ async def async_collect[T, E](
         >>> async def example():
         ...     results = await async_collect([get_value(1), get_value(2)])
         ...     assert results == Ok([2, 4])
-        >>>
-        >>> asyncio.run(example())
     """
-    results = await asyncio.gather(*awaitables)
+    awaitable_list = list(awaitables)
+    results: list[Result[T, E] | None] = [None] * len(awaitable_list)
+
+    async with anyio.create_task_group() as tg:
+
+        async def run_one(i: int, aw: Awaitable[Result[T, E]]) -> None:
+            results[i] = await aw
+
+        for i, aw in enumerate(awaitable_list):
+            tg.start_soon(run_one, i, aw)
+
     values: list[T] = []
     for result in results:
+        assert result is not None
         if isinstance(result, Err):
             return result
         values.append(result.value)
@@ -67,14 +86,19 @@ async def async_collect_concurrent[T, E](
     """Collect awaitables with optional concurrency limit.
 
     Like async_collect but allows limiting the number of concurrent
-    operations using a semaphore.
+    operations using aiologic.CapacityLimiter for thread-safe limiting.
+
+    Note:
+        The awaitables iterable is eagerly materialized into a list before
+        processing. If the iterable has side effects on iteration, those
+        effects happen immediately.
 
     Args:
         awaitables: An iterable of awaitables that produce Result values.
         limit: Maximum number of concurrent operations. None means unlimited.
 
     Returns:
-        Ok(list[T]) if all results are Ok, otherwise the first Err.
+        Ok(list[T]) if all results are Ok, otherwise the first Err (by order).
 
     Examples:
         >>> async def fetch(id: int) -> Result[dict, str]:
@@ -89,16 +113,22 @@ async def async_collect_concurrent[T, E](
     if limit is None:
         return await async_collect(awaitables)
 
-    semaphore = asyncio.Semaphore(limit)
+    limiter = aiologic.CapacityLimiter(limit)
     awaitable_list = list(awaitables)
+    results: list[Result[T, E] | None] = [None] * len(awaitable_list)
 
-    async def limited(aw: Awaitable[Result[T, E]]) -> Result[T, E]:
-        async with semaphore:
-            return await aw
+    async with anyio.create_task_group() as tg:
 
-    results = await asyncio.gather(*[limited(aw) for aw in awaitable_list])
+        async def run_one(i: int, aw: Awaitable[Result[T, E]]) -> None:
+            async with limiter:
+                results[i] = await aw
+
+        for i, aw in enumerate(awaitable_list):
+            tg.start_soon(run_one, i, aw)
+
     values: list[T] = []
     for result in results:
+        assert result is not None
         if isinstance(result, Err):
             return result
         values.append(result.value)
@@ -156,7 +186,17 @@ async def async_filter_ok[T, E](
         ...     values = await async_filter_ok(tasks)
         ...     assert values == [2, 4]
     """
-    results = await asyncio.gather(*awaitables)
+    awaitable_list = list(awaitables)
+    results: list[Result[T, E] | None] = [None] * len(awaitable_list)
+
+    async with anyio.create_task_group() as tg:
+
+        async def run_one(i: int, aw: Awaitable[Result[T, E]]) -> None:
+            results[i] = await aw
+
+        for i, aw in enumerate(awaitable_list):
+            tg.start_soon(run_one, i, aw)
+
     return [r.value for r in results if isinstance(r, Ok)]
 
 
@@ -183,10 +223,21 @@ async def async_partition[T, E](
         ...     assert oks == [2, 4]
         ...     assert errs == ["-1 is negative", "-3 is negative"]
     """
-    results = await asyncio.gather(*awaitables)
+    awaitable_list = list(awaitables)
+    results: list[Result[T, E] | None] = [None] * len(awaitable_list)
+
+    async with anyio.create_task_group() as tg:
+
+        async def run_one(i: int, aw: Awaitable[Result[T, E]]) -> None:
+            results[i] = await aw
+
+        for i, aw in enumerate(awaitable_list):
+            tg.start_soon(run_one, i, aw)
+
     oks: list[T] = []
     errs: list[E] = []
     for r in results:
+        assert r is not None
         if isinstance(r, Ok):
             oks.append(r.value)
         else:
@@ -201,6 +252,9 @@ async def async_first_ok[T, E](
 
     Runs awaitables sequentially and returns as soon as one succeeds.
     If all fail, returns Err with a list of all errors.
+
+    Note: Any remaining awaitables after finding an Ok are properly
+    cancelled/closed to avoid "coroutine was never awaited" warnings.
 
     Args:
         awaitables: An iterable of awaitables that produce Result values.
@@ -217,12 +271,94 @@ async def async_first_ok[T, E](
         ...     result = await async_first_ok(tasks)
         ...     assert result == Ok("source2")
     """
+    awaitable_list = list(awaitables)
     errors: list[E] = []
-    for aw in awaitables:
+
+    for i, aw in enumerate(awaitable_list):
         result = await aw
         if isinstance(result, Ok):
+            # Clean up remaining unawaited coroutines
+            for remaining in awaitable_list[i + 1 :]:
+                if hasattr(remaining, "close"):
+                    remaining.close()  # type: ignore[union-attr]
             return result
         errors.append(result.error)
+    return Err(errors)
+
+
+async def async_race_ok[T, E](
+    awaitables: Iterable[Awaitable[Result[T, E]]],
+) -> Result[T, list[E]]:
+    """Race awaitables concurrently, return first Ok or all errors.
+
+    Unlike async_first_ok which runs sequentially, this runs all
+    awaitables concurrently and returns as soon as any succeeds.
+    Remaining tasks are cancelled.
+
+    Uses aiologic.Event for thread-safe signaling and anyio for
+    backend-agnostic task orchestration.
+
+    Args:
+        awaitables: An iterable of awaitables that produce Result values.
+
+    Returns:
+        First Ok result (by completion time), or Err with all errors.
+
+    Examples:
+        >>> async def slow_source(n: int, delay: float) -> Result[str, str]:
+        ...     await anyio.sleep(delay)
+        ...     return Ok(f"source{n}") if n == 2 else Err(f"fail{n}")
+        >>>
+        >>> async def example():
+        ...     # Source 2 succeeds fastest
+        ...     tasks = [slow_source(1, 0.1), slow_source(2, 0.01), slow_source(3, 0.1)]
+        ...     result = await async_race_ok(tasks)
+        ...     assert result == Ok("source2")
+    """
+    awaitable_list = list(awaitables)
+    if not awaitable_list:
+        return Err([])
+
+    # Use aiologic primitives for thread-safe, free-threaded compatible operation
+    success_event = aiologic.Event()
+    state_lock = aiologic.Lock()
+    first_ok: Result[T, list[E]] | None = None
+    errors: list[E] = []
+    error_count = 0
+    total = len(awaitable_list)
+
+    # Backend-agnostic cancellation exception
+    cancelled_exc = anyio.get_cancelled_exc_class()
+
+    async def run_one(aw: Awaitable[Result[T, E]]) -> None:
+        nonlocal first_ok, error_count
+        try:
+            result = await aw
+            async with state_lock:
+                if isinstance(result, Ok):
+                    if first_ok is None:
+                        first_ok = result  # type: ignore[assignment]
+                        success_event.set()
+                else:
+                    errors.append(result.error)
+                    error_count += 1
+                    if error_count == total:
+                        success_event.set()
+        except cancelled_exc:
+            pass
+
+    async with anyio.create_task_group() as tg:
+
+        async def monitor() -> None:
+            await success_event
+            tg.cancel_scope.cancel()
+
+        for aw in awaitable_list:
+            tg.start_soon(run_one, aw)
+        tg.start_soon(monitor)
+
+    if first_ok is not None:
+        return first_ok
     return Err(errors)
 
 

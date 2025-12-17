@@ -203,6 +203,11 @@ class NothingType(msgspec.Struct, frozen=True, gc=False):
     This is a singleton - use the `Nothing` constant instead of
     instantiating directly.
 
+    Note:
+        While msgspec.Struct doesn't enforce singleton at __new__ level,
+        all NothingType instances are equal and compare as identical due
+        to frozen Struct semantics. Use the `Nothing` constant for clarity.
+
     Examples:
         >>> Nothing.is_none()
         True

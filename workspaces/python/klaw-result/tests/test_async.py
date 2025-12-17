@@ -15,6 +15,7 @@ from klaw_result.async_ import (
     async_lru_safe,
     async_map,
     async_partition,
+    async_race_ok,
 )
 
 
@@ -266,6 +267,8 @@ class TestAsyncResult:
         """AsyncResult has repr."""
         ar = AsyncResult.from_ok(42)
         assert "AsyncResult" in repr(ar)
+        # Close the coroutine to avoid warning
+        ar._awaitable.close()
 
 
 class TestAsyncCollect:
@@ -449,6 +452,79 @@ class TestAsyncIterOk:
 
         values = [v async for v in async_iter_ok(generate())]
         assert values == [1, 2, 3]
+
+
+class TestAsyncRaceOk:
+    """Tests for async_race_ok function."""
+
+    @pytest.mark.asyncio
+    async def test_returns_fastest_ok(self):
+        """Returns the first Ok to complete (by time, not order)."""
+
+        async def slow_source(n: int, delay: float) -> Result[str, str]:
+            await asyncio.sleep(delay)
+            return Ok(f"source{n}") if n == 2 else Err(f"fail{n}")
+
+        # Source 2 is fastest and succeeds
+        result = await async_race_ok(
+            [
+                slow_source(1, 0.1),
+                slow_source(2, 0.01),
+                slow_source(3, 0.1),
+            ]
+        )
+        assert result == Ok("source2")
+
+    @pytest.mark.asyncio
+    async def test_cancels_remaining_on_success(self):
+        """Cancels remaining tasks when one succeeds."""
+        cancelled = []
+
+        async def trackable(n: int, delay: float) -> Result[str, str]:
+            try:
+                await asyncio.sleep(delay)
+                return Ok(f"ok{n}") if n == 1 else Err(f"err{n}")
+            except asyncio.CancelledError:
+                cancelled.append(n)
+                raise
+
+        await async_race_ok(
+            [
+                trackable(1, 0.01),  # Succeeds first
+                trackable(2, 0.1),  # Should be cancelled
+                trackable(3, 0.1),  # Should be cancelled
+            ]
+        )
+
+        assert 2 in cancelled or 3 in cancelled
+
+    @pytest.mark.asyncio
+    async def test_returns_all_errors_when_all_fail(self):
+        """Returns all errors when no Ok is found."""
+
+        async def fail(n: int) -> Result[str, str]:
+            await asyncio.sleep(0.01)
+            return Err(f"fail{n}")
+
+        result = await async_race_ok([fail(1), fail(2), fail(3)])
+        assert isinstance(result, Err)
+        assert set(result.error) == {"fail1", "fail2", "fail3"}
+
+    @pytest.mark.asyncio
+    async def test_empty_list(self):
+        """Empty list returns Err([])."""
+        result = await async_race_ok([])
+        assert result == Err([])
+
+    @pytest.mark.asyncio
+    async def test_single_ok(self):
+        """Single Ok returns immediately."""
+
+        async def ok() -> Result[int, str]:
+            return Ok(42)
+
+        result = await async_race_ok([ok()])
+        assert result == Ok(42)
 
 
 class TestAsyncLruSafe:
