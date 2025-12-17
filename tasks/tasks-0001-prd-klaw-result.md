@@ -169,24 +169,24 @@
   - [x] 6.7 Test with mypy/pyright to verify type inference works without plugin
   - [x] 6.8 Export `fn` from `fn/__init__.py`
 
-- [ ] 7.0 Assertion Utilities
+- [x] 7.0 Assertion Utilities
 
-  - [ ] 7.1 Implement `safe_assert(condition, message)` — raises `AssertionError` even in `-O` mode
-  - [ ] 7.2 Implement `assert_result(condition, error) -> Result[None, E]` — returns `Ok(None)` or `Err(error)`
-  - [ ] 7.3 Add overloads for `assert_result` with callable error factory
-  - [ ] 7.4 Export assertion utilities from `assertions/__init__.py`
+  - [x] 7.1 Implement `safe_assert(condition, message)` — raises `AssertionError` even in `-O` mode
+  - [x] 7.2 Implement `assert_result(condition, error) -> Result[None, E]` — returns `Ok(None)` or `Err(error)`
+  - [x] 7.3 Add overloads for `assert_result` with callable error factory
+  - [x] 7.4 Export assertion utilities from `assertions/__init__.py`
 
-- [ ] 8.0 Async Variants
+- [x] 8.0 Async Variants
 
-  - [ ] 8.1 Design `AsyncResult[T, E]` — wrapper that holds `Awaitable[Result[T, E]]`
-  - [ ] 8.2 Implement async methods: `amap()`, `amap_err()`, `aand_then()`, `aor_else()`
-  - [ ] 8.3 Implement `await` support via `__await__` to get underlying `Result`
-  - [ ] 8.4 Ensure compatibility with asyncio, uvloop, and other asyncio-compatible loops
-  - [ ] 8.5 Create `async_collect()` for `Iterable[Awaitable[Result[T, E]]]`
-  - [ ] 8.6 Wrap/re-export relevant `aioitertools` functions with Result-aware versions
-  - [ ] 8.7 Create `@async_lru_safe` decorator combining `async-lru` with `@safe_async`
-  - [ ] 8.8 Integrate `aiologic` for thread-safe internal operations in `_internal/sync.py`
-  - [ ] 8.9 Export async utilities from `async_/__init__.py`
+  - [x] 8.1 Design `AsyncResult[T, E]` — wrapper that holds `Awaitable[Result[T, E]]`
+  - [x] 8.2 Implement async methods: `amap()`, `amap_err()`, `aand_then()`, `aor_else()`
+  - [x] 8.3 Implement `await` support via `__await__` to get underlying `Result`
+  - [x] 8.4 Ensure compatibility with asyncio, uvloop, and other asyncio-compatible loops
+  - [x] 8.5 Create `async_collect()` for `Iterable[Awaitable[Result[T, E]]]`
+  - [x] 8.6 Wrap/re-export relevant `aioitertools` functions with Result-aware versions
+  - [x] 8.7 Create `@async_lru_safe` decorator combining `async-lru` with `@safe_async`
+  - [x] 8.8 Integrate `aiologic` for thread-safe internal operations in `_internal/sync.py`
+  - [x] 8.9 Export async utilities from `async_/__init__.py`
 
 - [ ] 9.0 Testing & Quality
 
