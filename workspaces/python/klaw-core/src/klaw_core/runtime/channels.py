@@ -40,23 +40,22 @@ import anyio
 from anyio.streams.memory import MemoryObjectReceiveStream, MemoryObjectSendStream
 
 from klaw_core.result import Err, Ok, Result
-from klaw_core.runtime.errors import ChannelClosed, ChannelClosedError, ChannelEmpty, ChannelFull
+from klaw_core.runtime.errors import ChannelClosed, ChannelEmpty, ChannelFull
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
 __all__ = [
-    "Sender",
-    "Receiver",
-    "channel",
-    "oneshot",
-    "broadcast",
-    "watch",
-    "select",
+    'Receiver',
+    'Sender',
+    'broadcast',
+    'channel',
+    'oneshot',
+    'select',
+    'watch',
 ]
 
-T = TypeVar("T")
-T_co = TypeVar("T_co", covariant=True)
+T = TypeVar('T')
 
 
 # --- Sender Protocol ---
@@ -95,13 +94,10 @@ class Sender(Protocol[T]):
         ...
 
     @abstractmethod
-    async def try_send(self, value: T) -> Any:
+    async def try_send(self, value: T) -> Result[None, ChannelFull | ChannelClosed]:
         """Send a value without blocking.
 
         Returns `Ok(None)` if queued, or `Err(ChannelFull | ChannelClosed)`.
-
-        Returns:
-            Result[None, ChannelFull | ChannelClosed]
 
         Example:
             ```python
@@ -157,7 +153,7 @@ class Sender(Protocol[T]):
 # --- Receiver Protocol ---
 
 
-class Receiver(Protocol[T_co]):
+class Receiver(Protocol[T]):
     """Protocol for receiving values from a channel.
 
     Receiver is the receive half of a channel. Multiple receivers can exist
@@ -165,11 +161,11 @@ class Receiver(Protocol[T_co]):
     are dropped, `recv()` returns `Err(ChannelClosed)` after draining.
 
     Type Parameters:
-        T_co: The type of values received (covariant).
+        T: The type of values received (covariant).
     """
 
     @abstractmethod
-    async def recv(self) -> T_co:
+    async def recv(self) -> T:
         """Receive the next value, blocking if channel is empty.
 
         Awaits until a value is available or all senders close.
@@ -192,13 +188,10 @@ class Receiver(Protocol[T_co]):
         ...
 
     @abstractmethod
-    async def try_recv(self) -> Any:
+    async def try_recv(self) -> Result[T, ChannelEmpty | ChannelClosed]:
         """Receive the next value without blocking.
 
         Returns `Ok(value)` if available, or `Err(ChannelEmpty | ChannelClosed)`.
-
-        Returns:
-            Result[T, ChannelEmpty | ChannelClosed]
 
         Example:
             ```python
@@ -212,7 +205,7 @@ class Receiver(Protocol[T_co]):
         ...
 
     @abstractmethod
-    def clone(self) -> Receiver[T_co]:
+    def clone(self) -> Receiver[T]:
         """Clone this receiver for multi-consumer use.
 
         Returns a new receiver that shares the same underlying channel.
@@ -237,14 +230,14 @@ class Receiver(Protocol[T_co]):
         ...
 
     @abstractmethod
-    def __aiter__(self) -> AsyncIterator[T_co]:
+    def __aiter__(self) -> AsyncIterator[T]:
         """Iterate over messages as they arrive.
 
         Enables `async for` syntax. Iteration ends when channel closes
         and queue is drained.
 
         Returns:
-            AsyncIterator yielding T_co values.
+            AsyncIterator yielding T values.
 
         Example:
             ```python
@@ -253,7 +246,7 @@ class Receiver(Protocol[T_co]):
                 for i in range(3):
                     await tx.send(i)
                 await tx.close()
-            
+
             async for value in rx:
                 print(value)
             # prints: 0, 1, 2
@@ -262,7 +255,7 @@ class Receiver(Protocol[T_co]):
         ...
 
     @abstractmethod
-    async def __anext__(self) -> T_co:
+    async def __anext__(self) -> T:
         """Get next message for `async for` iteration.
 
         Called internally by async iteration. Raises `StopAsyncIteration`
@@ -282,7 +275,7 @@ class Receiver(Protocol[T_co]):
 
 class LocalSender(Generic[T]):
     """Local channel sender using anyio memory object streams.
-    
+
     Thread-safe and task-safe via anyio.MemoryObjectSendStream.
     Automatically signals closure when all sender clones are closed.
     """
@@ -388,7 +381,7 @@ class LocalSender(Generic[T]):
 
 class LocalReceiver(Generic[T]):
     """Local channel receiver using anyio memory object streams.
-    
+
     Thread-safe and task-safe via anyio.MemoryObjectReceiveStream.
     Supports async iteration and both blocking/non-blocking receive.
     """
@@ -493,10 +486,10 @@ class LocalReceiver(Generic[T]):
 
     def __aiter__(self) -> LocalReceiver[T]:
         """Start async iteration.
-        
+
         Enables `async for value in rx:` syntax. Iteration ends when
         all senders close (yields StopAsyncIteration).
-        
+
         Returns:
             Self as async iterator.
         """
@@ -549,7 +542,7 @@ async def channel(
     """
     if distributed:
         raise NotImplementedError(
-            "Distributed channels (distributed=True) not yet implemented"
+            'Distributed channels (distributed=True) not yet implemented'
         )
 
     # Determine buffer size (anyio requires int or math.inf)
@@ -586,7 +579,7 @@ async def oneshot[T]() -> tuple[Sender[T], Receiver[T]]:
         value = await rx.recv()
         ```
     """
-    raise NotImplementedError("oneshot() factory not yet implemented")
+    raise NotImplementedError('oneshot() factory not yet implemented')
 
 
 async def broadcast[T](capacity: int = 10000) -> tuple[Sender[T], Receiver[T]]:
@@ -614,7 +607,7 @@ async def broadcast[T](capacity: int = 10000) -> tuple[Sender[T], Receiver[T]]:
         v2b = await rx2.recv()  # 2
         ```
     """
-    raise NotImplementedError("broadcast() factory not yet implemented")
+    raise NotImplementedError('broadcast() factory not yet implemented')
 
 
 async def watch[T](initial: T) -> tuple[Sender[T], Receiver[T]]:
@@ -637,7 +630,7 @@ async def watch[T](initial: T) -> tuple[Sender[T], Receiver[T]]:
         # value == 42
         ```
     """
-    raise NotImplementedError("watch() factory not yet implemented")
+    raise NotImplementedError('watch() factory not yet implemented')
 
 
 async def select(*receivers: Receiver[Any], timeout: float | None = None) -> Any:
@@ -664,4 +657,4 @@ async def select(*receivers: Receiver[Any], timeout: float | None = None) -> Any
         # Returns first message from either rx1 or rx2
         ```
     """
-    raise NotImplementedError("select() function not yet implemented")
+    raise NotImplementedError('select() function not yet implemented')

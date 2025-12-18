@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 
 import pytest
-
 from klaw_core.runtime import Executor, ExitReason, init
 from klaw_core.runtime.errors import Cancelled
 
@@ -33,7 +32,6 @@ class TestTaskHandleBasics:
 
     async def test_is_running_after_completion(self) -> None:
         """is_running() returns False after task completes."""
-
         async with Executor() as ex:
             handle = await ex.submit(lambda: 42)
             await handle
@@ -41,7 +39,6 @@ class TestTaskHandleBasics:
 
     async def test_exit_reason_success(self) -> None:
         """exit_reason is SUCCESS for successful tasks."""
-
         async with Executor() as ex:
             handle = await ex.submit(lambda: 42)
             await handle
@@ -62,7 +59,6 @@ class TestTaskHandleBasics:
 
     async def test_await_returns_result(self) -> None:
         """Awaiting handle returns the task result."""
-
         async with Executor() as ex:
             handle = await ex.submit(lambda: 'hello')
             result = await handle
@@ -112,7 +108,6 @@ class TestTaskHandleCancel:
 
     async def test_cancel_completed_task_is_noop(self) -> None:
         """cancel() on completed task does nothing."""
-
         async with Executor() as ex:
             handle = await ex.submit(lambda: 42)
             await handle
@@ -126,7 +121,6 @@ class TestTaskHandleResult:
 
     async def test_result_returns_ok_on_success(self) -> None:
         """result() returns Ok for successful task."""
-
         async with Executor() as ex:
             handle = await ex.submit(lambda: 42)
             await handle
@@ -177,3 +171,126 @@ class TestTaskHandleResult:
             with pytest.raises(RuntimeError, match='not yet complete'):
                 handle.result()
             handle.cancel()
+
+
+class TestTaskHandleCancellationRaces:
+    """Tests for TaskHandle 'first terminal state wins' semantics."""
+
+    async def test_cancel_after_complete_is_noop(self) -> None:
+        """cancel() after _complete() does not change state."""
+        async with Executor() as ex:
+            handle = await ex.submit(lambda: 42)
+            await handle  # Wait for completion
+            assert handle.exit_reason == ExitReason.SUCCESS
+
+            # Cancel should be a no-op
+            handle.cancel('Too late')
+            assert handle.exit_reason == ExitReason.SUCCESS
+            assert handle._result == 42
+
+    async def test_complete_after_cancel_is_noop(self) -> None:
+        """_complete() after cancel() does not change state."""
+        from klaw_core.runtime.executor import TaskHandle
+
+        handle: TaskHandle[int] = TaskHandle()
+
+        # Cancel first
+        handle.cancel('User cancelled')
+        assert handle.exit_reason == ExitReason.CANCELLED
+
+        # Attempt to complete - should be ignored
+        handle._complete(42, ExitReason.SUCCESS)
+        assert handle.exit_reason == ExitReason.CANCELLED
+        assert handle._result is None
+
+    async def test_fail_after_cancel_is_noop(self) -> None:
+        """_fail() after cancel() does not change state."""
+        from klaw_core.runtime.executor import TaskHandle
+
+        handle: TaskHandle[int] = TaskHandle()
+
+        # Cancel first
+        handle.cancel('User cancelled')
+        assert handle.exit_reason == ExitReason.CANCELLED
+
+        # Attempt to fail - should be ignored
+        handle._fail(ValueError('Too late'), ExitReason.ERROR)
+        assert handle.exit_reason == ExitReason.CANCELLED
+
+    async def test_complete_after_fail_is_noop(self) -> None:
+        """_complete() after _fail() does not change state."""
+        from klaw_core.runtime.executor import TaskHandle
+
+        handle: TaskHandle[int] = TaskHandle()
+
+        # Fail first
+        handle._fail(ValueError('First error'), ExitReason.ERROR)
+        assert handle.exit_reason == ExitReason.ERROR
+
+        # Attempt to complete - should be ignored
+        handle._complete(42, ExitReason.SUCCESS)
+        assert handle.exit_reason == ExitReason.ERROR
+        assert handle._result is None
+
+    async def test_double_cancel_is_safe(self) -> None:
+        """Calling cancel() twice is safe."""
+
+        async def slow_task() -> int:
+            await asyncio.sleep(10)
+            return 42
+
+        async with Executor() as ex:
+            handle = await ex.submit(slow_task)
+            await asyncio.sleep(0.01)
+
+            handle.cancel('First cancel')
+            handle.cancel('Second cancel')  # Should be no-op
+
+            assert handle.exit_reason == ExitReason.CANCELLED
+
+    async def test_on_cancel_callback_invoked(self) -> None:
+        """_on_cancel callback is invoked when cancel() is called."""
+        from klaw_core.runtime.executor import TaskHandle
+
+        handle: TaskHandle[int] = TaskHandle()
+        callback_args: list[str | None] = []
+
+        def on_cancel(reason: str | None) -> None:
+            callback_args.append(reason)
+
+        handle._set_on_cancel(on_cancel)
+        handle.cancel('Test reason')
+
+        assert callback_args == ['Test reason']
+
+    async def test_on_cancel_callback_not_invoked_if_completed(self) -> None:
+        """_on_cancel callback is NOT invoked if task already completed."""
+        from klaw_core.runtime.executor import TaskHandle
+
+        handle: TaskHandle[int] = TaskHandle()
+        callback_invoked = False
+
+        def on_cancel(reason: str | None) -> None:
+            nonlocal callback_invoked
+            callback_invoked = True
+
+        handle._set_on_cancel(on_cancel)
+        handle._complete(42)  # Complete first
+
+        handle.cancel('Too late')
+        assert not callback_invoked
+
+    async def test_on_cancel_callback_exception_is_suppressed(self) -> None:
+        """Exceptions from _on_cancel callback are suppressed."""
+        from klaw_core.runtime.executor import TaskHandle
+
+        handle: TaskHandle[int] = TaskHandle()
+
+        def bad_callback(reason: str | None) -> None:
+            raise RuntimeError('Callback failed')
+
+        handle._set_on_cancel(bad_callback)
+
+        # Should not raise
+        handle.cancel('Test')
+        assert handle.exit_reason == ExitReason.CANCELLED

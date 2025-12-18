@@ -99,21 +99,23 @@ Generated from: `0003-prd-klaw-runtime.md`
 - [ ] 4.0 Channels (mpmc, oneshot, broadcast, watch, select)
   - [x] 4.1 Create `runtime/channels.py` with `Sender[T]` and `Receiver[T]` protocols
   - [x] 4.2 Implement `channel(capacity, distributed, unbounded)` returning `tuple[Sender, Receiver]`
-  - [ ] 4.3 Implement `LocalChannel` using `aiologic.Queue` with capacity limiting (default 10,000)
-  - [ ] 4.4 Implement `Sender.send()` (async, raises ChannelClosed), `try_send()` (returns Result)
-  - [ ] 4.5 Implement `Receiver.recv()` (async, raises ChannelClosed), `try_recv()` (returns Result)
-  - [ ] 4.6 Implement `Sender.clone()`, `Receiver.clone()` for mpmc
-  - [ ] 4.7 Implement `Receiver.__aiter__` for `async for item in rx` pattern
-  - [ ] 4.8 Implement `Sender.close()` and closed state propagation
+  - [x] 4.3 Implement `LocalChannel` using `anyio.MemoryObjectStream` with capacity limiting (default 10,000)
+        **Note:** Changed from aiologic.Queue to anyio - provides MPMC with ref-counted clones, native cancellation
+  - [x] 4.4 Implement `Sender.send()` (async, raises ChannelClosed), `try_send()` (returns Result)
+  - [x] 4.5 Implement `Receiver.recv()` (async, raises ChannelClosed), `try_recv()` (returns Result)
+  - [x] 4.6 Implement `Sender.clone()`, `Receiver.clone()` for mpmc
+  - [x] 4.7 Implement `Receiver.__aiter__` for `async for item in rx` pattern
+  - [x] 4.8 Implement `Sender.close()` and closed state propagation
   - [ ] 4.9 Implement `oneshot[T]()` for single-value, single-use channels
   - [ ] 4.10 Implement `broadcast[T](capacity)` where all receivers get every message
   - [ ] 4.11 Implement `watch[T](initial)` for latest-value observation with `borrow()` and `changed()`
   - [ ] 4.12 Implement `select(*receivers, timeout)` for multiplexing multiple receivers
-  - [ ] 4.13 Implement `DistributedChannel` using msgspec serialization with tagged union framing
-  - [ ] 4.14 Implement distributed channel backpressure (sender blocks at capacity)
+  - [ ] 4.13 Implement `RayChannel` wrapping `ray.util.queue.Queue` for `distributed=True`
+        **Note:** Changed from custom msgspec IPC to Ray - cross-platform, already a dependency, handles serialization
+  - [ ] 4.14 Implement RayChannel Sender/Receiver adapters matching local channel API
   - [ ] 4.15 Write Hypothesis property tests: no data loss, FIFO order, capacity respected
   - [ ] 4.16 Write tests for oneshot, broadcast, watch, select
-  - [ ] 4.17 Write tests for distributed channels with msgspec serialization
+  - [ ] 4.17 Write tests for distributed channels (RayChannel)
 
 - [ ] 5.0 Cancellation, Timeout & Retry
   - [ ] 5.1 Create `runtime/cancel.py` with `CancelScope` class wrapping anyio cancel scope

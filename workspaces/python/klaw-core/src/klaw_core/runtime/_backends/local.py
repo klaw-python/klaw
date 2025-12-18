@@ -99,10 +99,21 @@ class LocalBackend:
         # Increment task counter before spawning
         self._task_count.up()
 
+        # Create CancelScope BEFORE scheduling so cancel() works immediately
+        scope = anyio.CancelScope()
+        handle._set_cancel_scope(scope)
+
         async def _execute() -> None:
             try:
-                with anyio.CancelScope() as scope:
-                    handle._set_cancel_scope(scope)
+                with scope:
+                    # Check if already cancelled before starting work
+                    if scope.cancel_called:
+                        handle._fail(
+                            CancelledError('Task cancelled before start'),
+                            ExitReason.CANCELLED,
+                        )
+                        return
+
                     try:
                         if inspect.iscoroutinefunction(fn):
                             result = await fn(*args, **kwargs)
@@ -111,11 +122,21 @@ class LocalBackend:
                                 lambda: fn(*args, **kwargs),
                                 limiter=self._limiter,
                             )
+
+                        # Only complete if not cancelled during execution
                         if not scope.cancel_called:
                             handle._complete(result)
+                        else:
+                            handle._fail(
+                                CancelledError('Task cancelled'),
+                                ExitReason.CANCELLED,
+                            )
                     except Exception as e:
                         if scope.cancel_called:
-                            handle._fail(CancelledError('Task cancelled'), ExitReason.CANCELLED)
+                            handle._fail(
+                                CancelledError('Task cancelled'),
+                                ExitReason.CANCELLED,
+                            )
                         else:
                             handle._fail(e, ExitReason.ERROR)
             finally:

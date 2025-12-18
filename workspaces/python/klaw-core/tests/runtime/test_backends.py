@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 
 import pytest
-
 from klaw_core.runtime import ExitReason, init
 from klaw_core.runtime._backends.local import LocalBackend
 
@@ -123,3 +122,81 @@ class TestRayBackendImport:
 
         backend = RayBackend(num_cpus=2)
         assert backend._kwargs == {'num_cpus': 2}
+
+
+class TestLocalBackendCancelScope:
+    """Tests for LocalBackend CancelScope timing."""
+
+    async def test_cancel_immediately_after_run(self) -> None:
+        """CancelScope is available immediately after run() returns."""
+        backend = LocalBackend()
+
+        async def slow_task() -> int:
+            await asyncio.sleep(10)
+            return 42
+
+        handle = await backend.run(slow_task)
+
+        # Cancel immediately - should work without waiting
+        handle.cancel('Immediate cancel')
+
+        assert handle.exit_reason == ExitReason.CANCELLED
+        await backend.shutdown()
+
+    async def test_cancel_before_task_starts_execution(self) -> None:
+        """Cancel works even if task hasn't started executing yet."""
+        backend = LocalBackend()
+
+        started = False
+
+        async def slow_task() -> int:
+            nonlocal started
+            started = True
+            await asyncio.sleep(10)
+            return 42
+
+        handle = await backend.run(slow_task)
+        handle.cancel('Before start')
+
+        # Give a moment for the task to potentially run
+        await asyncio.sleep(0.05)
+
+        assert handle.exit_reason == ExitReason.CANCELLED
+        await backend.shutdown()
+
+    async def test_cancel_scope_set_before_schedule(self) -> None:
+        """TaskHandle has cancel_scope set before task is scheduled."""
+        backend = LocalBackend()
+
+        async def slow_task() -> int:
+            await asyncio.sleep(10)
+            return 42
+
+        handle = await backend.run(slow_task)
+
+        # Verify cancel scope is immediately available
+        assert handle._cancel_scope is not None
+
+        handle.cancel()
+        await backend.shutdown()
+
+    async def test_cancel_during_execution(self) -> None:
+        """Cancel works while task is actively running."""
+        backend = LocalBackend()
+        reached_checkpoint = asyncio.Event()
+
+        async def interruptible_task() -> int:
+            reached_checkpoint.set()
+            await asyncio.sleep(10)
+            return 42
+
+        handle = await backend.run(interruptible_task)
+
+        # Wait for task to start
+        await reached_checkpoint.wait()
+
+        # Now cancel
+        handle.cancel('During execution')
+
+        assert handle.exit_reason == ExitReason.CANCELLED
+        await backend.shutdown()

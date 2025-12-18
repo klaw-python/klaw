@@ -45,6 +45,7 @@ class TaskHandle[T]:
         '_event',
         '_exception',
         '_exit_reason',
+        '_on_cancel',
         '_result',
     )
 
@@ -54,38 +55,57 @@ class TaskHandle[T]:
         self._event: aiologic.Event = aiologic.Event()
         self._exit_reason: ExitReason | None = None
         self._cancel_scope: anyio.CancelScope | None = None
+        self._on_cancel: Callable[[str | None], None] | None = None
         self._completed = False
 
     def _set_cancel_scope(self, scope: anyio.CancelScope) -> None:
         """Set the cancel scope for this task."""
         self._cancel_scope = scope
 
+    def _set_on_cancel(self, cb: Callable[[str | None], None]) -> None:
+        """Set callback for cancellation (used by RayBackend)."""
+        self._on_cancel = cb
+
     def _complete(self, result: T, exit_reason: ExitReason = ExitReason.SUCCESS) -> None:
-        """Mark task as complete with a result."""
+        """Mark task as complete with a result, unless already completed/cancelled."""
+        if self._completed:
+            return  # First terminal state wins
         self._result = result
         self._exit_reason = exit_reason
         self._completed = True
         self._event.set()
 
     def _fail(self, exc: BaseException, exit_reason: ExitReason = ExitReason.ERROR) -> None:
-        """Mark task as failed with an exception."""
+        """Mark task as failed with an exception, unless already completed/cancelled."""
+        if self._completed:
+            return  # First terminal state wins
         self._exception = exc
         self._exit_reason = exit_reason
         self._completed = True
         self._event.set()
 
     def cancel(self, reason: str | None = None) -> None:
-        """Cancel the task.
+        """Cancel the task. First terminal state wins.
 
         Args:
             reason: Optional reason for cancellation.
         """
-        if self._cancel_scope is not None and not self._completed:
+        if self._completed:
+            return
+        # Call backend-specific cancel hook (e.g., ray.cancel)
+        if self._on_cancel is not None:
+            try:
+                self._on_cancel(reason)
+            except Exception:
+                pass  # Best effort
+        # Cancel via scope if available
+        if self._cancel_scope is not None:
             self._cancel_scope.cancel()
-            self._exit_reason = ExitReason.CANCELLED
-            self._exception = CancelledError(reason)
-            self._completed = True
-            self._event.set()
+        # Set terminal state
+        self._exit_reason = ExitReason.CANCELLED
+        self._exception = CancelledError(reason or 'Task cancelled')
+        self._completed = True
+        self._event.set()
 
     def is_running(self) -> bool:
         """Check if the task is still running.
