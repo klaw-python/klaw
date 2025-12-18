@@ -194,9 +194,7 @@ def clear_log_hooks() -> None:
 def _create_hook_processor() -> Callable[[Any, str, dict[str, Any]], dict[str, Any]]:
     """Create a processor that invokes log hooks."""
 
-    def hook_processor(
-        logger: Any, method_name: str, event_dict: dict[str, Any]
-    ) -> dict[str, Any]:
+    def hook_processor(logger: Any, method_name: str, event_dict: dict[str, Any]) -> dict[str, Any]:
         for hook in _log_hooks:
             try:
                 hook(event_dict.copy())

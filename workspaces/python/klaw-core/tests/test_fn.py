@@ -709,7 +709,7 @@ class TestFnConversions:
     def test_float(self):
         """fn.float_() creates float conversion function."""
         to_float = fn.float_()
-        assert to_float('3.14') == math.pi
+        assert to_float('3.14') == 3.14
         assert to_float(3) == 3.0
 
     def test_str(self):

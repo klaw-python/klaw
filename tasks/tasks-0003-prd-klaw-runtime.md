@@ -23,8 +23,8 @@ Generated from: `0003-prd-klaw-runtime.md`
 - `src/klaw_core/runtime/errors.py` - ChannelClosed, Timeout, Cancelled, ActorStopped, ActorNotFound, etc.
 - `src/klaw_core/runtime/checkpoint.py` - Checkpointer protocol, LocalCheckpointer (diskcache)
 - `src/klaw_core/runtime/workflow.py` - Workflow context manager, checkpointed steps
-- `src/klaw_core/runtime/result.py` - AsyncResult (moved from async_/)
-- `src/klaw_core/runtime/itertools.py` - async_collect, async_race_ok, etc. (moved from async_/)
+- `src/klaw_core/runtime/result.py` - AsyncResult (moved from async\_/)
+- `src/klaw_core/runtime/itertools.py` - async*collect, async_race_ok, etc. (moved from async*/)
 - `src/klaw_core/runtime/_runtime.py` - Runtime unified wrapper class
 
 ### Test Files (to create)
@@ -41,11 +41,11 @@ Generated from: `0003-prd-klaw-runtime.md`
 - `tests/runtime/test_context.py` - Tests for Context, context propagation
 - `tests/runtime/test_checkpoint.py` - Tests for Checkpointer, Workflow
 - `tests/runtime/test_runtime.py` - Tests for unified Runtime wrapper
-- `tests/runtime/test_migration.py` - Tests verifying async_/ migration works
+- `tests/runtime/test_migration.py` - Tests verifying async\_/ migration works
 
 ### Files to Modify
 
-- `src/klaw_core/__init__.py` - Add runtime re-exports, remove async_ imports
+- `src/klaw_core/__init__.py` - Add runtime re-exports, remove async\_ imports
 - `pyproject.toml` - Add new dependencies (psutil, tenacity, structlog, diskcache, ray optional)
 
 ### Files to Delete
@@ -83,22 +83,22 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [x] 2.6 Implement `get_config()` to retrieve current global config
   - [x] 2.7 Write tests for `runtime.init()`, auto-detection, and environment variable handling
 
-- [ ] 3.0 Executor & Backends
-  - [ ] 3.1 Create `runtime/_backends/__init__.py` with `ExecutorBackend` protocol
-  - [ ] 3.2 Implement `runtime/_backends/local.py` `LocalBackend` using anyio task groups and aiologic
-  - [ ] 3.3 Implement `LocalBackend.run()` for CPU-bound work using `anyio.to_thread.run_sync()`
-  - [ ] 3.4 Implement `runtime/executor.py` `TaskHandle` class with `cancel()`, `is_running()`, `exit_reason`, `__await__`
-  - [ ] 3.5 Implement `Executor` class as async context manager with `map()`, `imap()`, `submit()`, `gather()`
-  - [ ] 3.6 Implement per-task backend kwargs override (merge with global config)
-  - [ ] 3.7 Create `runtime/_backends/ray.py` `RayBackend` with lazy Ray import and passthrough kwargs
-  - [ ] 3.8 Implement Ray backend `run()` using `ray.remote()` and async `ray.get()`
-  - [ ] 3.9 Write tests for Executor with LocalBackend (map, imap, submit, gather)
-  - [ ] 3.10 Write tests for TaskHandle (cancel, is_running, exit_reason)
-  - [ ] 3.11 Write tests for RayBackend (can be skipped if Ray not installed)
+- [x] 3.0 Executor & Backends
+  - [x] 3.1 Create `runtime/_backends/__init__.py` with `ExecutorBackend` protocol
+  - [x] 3.2 Implement `runtime/_backends/local.py` `LocalBackend` using anyio task groups and aiologic
+  - [x] 3.3 Implement `LocalBackend.run()` for CPU-bound work using `anyio.to_thread.run_sync()`
+  - [x] 3.4 Implement `runtime/executor.py` `TaskHandle` class with `cancel()`, `is_running()`, `exit_reason`, `__await__`
+  - [x] 3.5 Implement `Executor` class as async context manager with `map()`, `imap()`, `submit()`, `gather()`
+  - [x] 3.6 Implement per-task backend kwargs override (merge with global config)
+  - [x] 3.7 Create `runtime/_backends/ray.py` `RayBackend` with lazy Ray import and passthrough kwargs
+  - [x] 3.8 Implement Ray backend `run()` using `ray.remote()` and async `ray.get()`
+  - [x] 3.9 Write tests for Executor with LocalBackend (map, imap, submit, gather)
+  - [x] 3.10 Write tests for TaskHandle (cancel, is_running, exit_reason)
+  - [x] 3.11 Write tests for RayBackend (can be skipped if Ray not installed)
 
 - [ ] 4.0 Channels (mpmc, oneshot, broadcast, watch, select)
-  - [ ] 4.1 Create `runtime/channels.py` with `Sender[T]` and `Receiver[T]` protocols
-  - [ ] 4.2 Implement `channel[T](capacity, distributed, unbounded)` returning `tuple[Sender, Receiver]`
+  - [x] 4.1 Create `runtime/channels.py` with `Sender[T]` and `Receiver[T]` protocols
+  - [x] 4.2 Implement `channel(capacity, distributed, unbounded)` returning `tuple[Sender, Receiver]`
   - [ ] 4.3 Implement `LocalChannel` using `aiologic.Queue` with capacity limiting (default 10,000)
   - [ ] 4.4 Implement `Sender.send()` (async, raises ChannelClosed), `try_send()` (returns Result)
   - [ ] 4.5 Implement `Receiver.recv()` (async, raises ChannelClosed), `try_recv()` (returns Result)
@@ -191,7 +191,7 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [ ] 9.12 Write tests for actor checkpointing and restore
   - [ ] 9.13 Write tests for Workflow step checkpointing and resume
 
-- [ ] 10.0 Migration: Move async_/ to runtime/
+- [ ] 10.0 Migration: Move async\_/ to runtime/
   - [ ] 10.1 Copy `async_/result.py` to `runtime/result.py`, update imports
   - [ ] 10.2 Copy `async_/itertools.py` to `runtime/itertools.py`, update to use runtime config for concurrency
   - [ ] 10.3 Copy `async_/cache.py` contents (async_lru_safe) to appropriate location
