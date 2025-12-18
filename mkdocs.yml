@@ -12,25 +12,26 @@ theme:
   logo: klaw_brand/klaw_written.svg
   favicon: klaw_brand/klaw_favicon/favicon.ico
   features:
-  - navigation.path
-  - navigation.instant
-  - navigation.instant.progress
-  - navigation.instant.prefetch
-  - navigation.footer
-  - navigation.tabs
-  - navigation.tabs.sticky
-  - navigation.tracking
-  - navigation.indexes
-  - navigation.sections
-  - navigation.top
-  - content.tabs.link
-  - content.code.annotate
-  - content.code.copy
-  - content.tooltips
-  - search.highlight
-  - search.suggest
-  - search.share
-  - toc.follow
+    - navigation.path
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.instant.prefetch
+    - navigation.footer
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.tracking
+    # - navigation.indexes
+    - navigation.sections
+    - navigation.top
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+    - content.tooltips
+    - search.highlight
+    - search.suggest
+    - search.share
+    - toc.follow
+    - toc.integrate
 
   palette:
     scheme: slate
@@ -50,238 +51,232 @@ theme:
       example: material/fire
 
 plugins:
-- typeset:
-    enabled: true
-- optimize
-- search
-- autorefs:
-    resolve_closest: true
-- gen-files:
-    scripts: [ docs/scripts/gen_ref_pages.py ]
-- literate-nav:
-    nav_file: SUMMARY.md
-    implicit_index: true
-- section-index
+  - typeset:
+      enabled: true
+  - optimize
+  - search
+  - autorefs:
+      resolve_closest: true
+  - gen-files:
+      scripts: [docs/scripts/gen_ref_pages.py]
+  - literate-nav:
+      nav_file: SUMMARY.md
+      implicit_index: true
+  - section-index
 
-- mkdocstrings:
-    handlers:
-      python:
-        options:
-          docstring_style: google
-          docstring_section_style: table
-          show_bases: true
-          show_source: true
-          show_labels: true
-          heading_level: 3
-          members: true
-          inherited_members: true
-          summary:
-            functions: false
-            classes: false
-            methods: false
-            attributes: false
-            modules: true
-            type_aliases: false
-          modernize_annotations: true
-          annotations_path: brief
-          members_order: source
-          allow_inspection: true
-          find_stubs_package: true
-          group_by_category: true
-          show_root_heading: false
-          show_root_toc_entry: true
-          show_docstring_functions: true
-          show_docstring_modules: false
-          show_docstring_type_aliases: true
-          show_docstring_attributes: true
-          show_docstring_parameters: true
-          show_docstring_returns: true
-          show_docstring_yields: true
-          show_docstring_classes: true
-          show_docstring_examples: true
-          show_docstring_other_parameters: true
-          show_docstring_raises: true
-          show_docstring_receives: true
-          show_category_heading: false
-          show_docstring_type_parameters: true
-          show_docstring_description: true
-          show_docstring_warns: true
-          show_if_no_docstring: false
-          show_root_full_path: false
-          show_root_members_full_path: false
-          show_object_full_path: false
-          parameter_headings: false
-          show_overloads: true
-          overloads_only: true
-          line_length: 120
-          show_signature: true
-          show_signature_annotations: true
-          show_signature_type_parameters: true
-          show_attribute_values: true
-          unwrap_annotated: false
-          separate_signature: true
-          signature_crossrefs: true
-          relative_crossrefs: true
-          scoped_crossrefs: true
-          show_inheritance_diagram: true
-          show_submodules: false
-          show_symbol_type_heading: true
-          show_symbol_type_toc: true
-          merge_init_into_class: false
-          docstring_options:
-            ignore_init_summary: false
-            method: true
-            class: true
-            attribute: true
-            property: true
-            function: true
-            warnings: true
-            receives_named_value: true
-            returns_multiple_items: true
-            returns_type_in_property_summary: true
-            receives_multiple_items: true
-            returns_named_value: true
-            trim_doctest_flags: true
-            warn_missing_types: true
-            warn_unknown_params: true
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            docstring_section_style: table
+            show_bases: true
+            show_source: true
+            show_labels: true
+            heading_level: 3
+            members: false
+            inherited_members: false
+            summary:
+              functions: false
+              classes: false
+              methods: false
+              attributes: false
+              modules: false
+              type_aliases: false
+            modernize_annotations: true
+            annotations_path: brief
+            members_order: source
+            allow_inspection: true
+            find_stubs_package: true
+            group_by_category: true
+            show_root_heading: false
+            show_root_toc_entry: false
+            show_docstring_functions: true
+            show_docstring_modules: false
+            show_docstring_type_aliases: true
+            show_docstring_attributes: true
+            show_docstring_parameters: true
+            show_docstring_returns: true
+            show_docstring_yields: true
+            show_docstring_classes: true
+            show_docstring_examples: true
+            show_docstring_other_parameters: true
+            show_docstring_raises: true
+            show_docstring_receives: true
+            show_category_heading: false
+            show_docstring_type_parameters: true
+            show_docstring_description: true
+            show_docstring_warns: true
+            show_if_no_docstring: false
+            show_root_full_path: false
+            show_root_members_full_path: false
+            show_object_full_path: false
+            parameter_headings: false
+            show_overloads: true
+            overloads_only: true
+            line_length: 120
+            show_signature: true
+            show_signature_annotations: true
+            show_signature_type_parameters: true
+            show_attribute_values: true
+            unwrap_annotated: false
+            separate_signature: true
+            signature_crossrefs: true
+            relative_crossrefs: true
+            scoped_crossrefs: true
+            show_inheritance_diagram: true
+            show_submodules: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            merge_init_into_class: false
+            docstring_options:
+              ignore_init_summary: true
+              method: true
+              class: true
+              attribute: true
+              property: true
+              function: true
+              warnings: true
+              receives_named_value: true
+              returns_multiple_items: true
+              returns_type_in_property_summary: true
+              receives_multiple_items: true
+              returns_named_value: true
+              trim_doctest_flags: true
+              warn_missing_types: true
+              warn_unknown_params: true
 
-        options.extra:
-          show_inheritance: true
-          templates: material
-          exclude_patterns:
-            filters: [ '!^_', ^__ ]
-          enable_inventory: true
-          markdown_extensions:
-          - attr_list
-          - griffe_fieldz
-          - griffe_modernized-annotations
-          - griffe_autodocstringstyle
-          - griffe-warnings-deprecated:
-            - kind: danger
-            - title: Deprecated
-          - griffe_pydantic:
-              schema: true
+          options.extra:
+            show_inheritance: true
+            templates: material
+            exclude_patterns:
+              filters: ["!^_", ^__]
+            enable_inventory: true
+            markdown_extensions:
+              - attr_list
+              - griffe_fieldz
+              - griffe_modernized-annotations
+              - griffe_autodocstringstyle
+              - griffe-warnings-deprecated:
+                  - kind: danger
+                  - title: Deprecated
+              - griffe_pydantic:
+                  schema: true
 
-        inventories:
-        - https://docs.python.org/3.13/objects.inv
-        - https://wrapt.readthedocs.io/en/master/objects.inv
-        - https://returns.readthedocs.io/en/latest/objects.inv
-        - https://docs.pola.rs/api/python/stable/objects.inv
-        - https://pandas.pydata.org/docs/objects.inv
-        - https://docs.sqlalchemy.org/en/20/objects.inv
-        - https://sfu-db.github.io/connector-x/objects.inv
-        - https://docs.pydantic.dev/latest/objects.inv
-        - https://rich.readthedocs.io/en/stable/objects.inv
-        - https://textual.textualize.io/objects.inv
-        - https://sh.readthedocs.io/en/latest/objects.inv
-        - https://docs.pytest.org/en/stable/objects.inv
-        - https://mypy.readthedocs.io/en/stable/objects.inv
-        - https://jcristharif.com/msgspec/objects.inv
-        - https://whenever.readthedocs.io/en/latest/objects.inv
-        - https://pandera.readthedocs.io/en/stable/objects.inv
-        - https://narwhals-dev.github.io/narwhals/objects.inv
-        - https://ripgrepy.readthedocs.io/en/latest/objects.inv
+          inventories:
+            - https://docs.python.org/3.13/objects.inv
+            - https://wrapt.readthedocs.io/en/master/objects.inv
+            - https://returns.readthedocs.io/en/latest/objects.inv
+            - https://docs.pola.rs/api/python/stable/objects.inv
+            - https://pandas.pydata.org/docs/objects.inv
+            - https://docs.sqlalchemy.org/en/20/objects.inv
+            - https://sfu-db.github.io/connector-x/objects.inv
+            - https://docs.pydantic.dev/latest/objects.inv
+            - https://rich.readthedocs.io/en/stable/objects.inv
+            - https://textual.textualize.io/objects.inv
+            - https://sh.readthedocs.io/en/latest/objects.inv
+            - https://docs.pytest.org/en/stable/objects.inv
+            - https://mypy.readthedocs.io/en/stable/objects.inv
+            - https://jcristharif.com/msgspec/objects.inv
+            - https://whenever.readthedocs.io/en/latest/objects.inv
+            - https://pandera.readthedocs.io/en/stable/objects.inv
+            - https://narwhals-dev.github.io/narwhals/objects.inv
+            - https://ripgrepy.readthedocs.io/en/latest/objects.inv
 
-        load_external_modules: true
-        paths:
-        - workspaces/python/klaw-core/src
-        - workspaces/python/klaw-plugins/src
-        - workspaces/python/klaw-polars/src
-        - workspaces/python/klaw-returns/src
-        - workspaces/python/klaw-testing/src
-        - workspaces/python/klaw-types/src
-# - mermaid2:
-#   javascript: https://cdn.jsdelivr.net/npm/mermaid@11.5.0/dist/mermaid.min.js
-- macros
-- minify:
-    minify_html: true
-- exclude:
-    glob: [ '*.tmp', '*.bak' ]
+          load_external_modules: true
+          paths:
+            - workspaces/python/klaw-core/src
+            - workspaces/rust/klaw-dbase/klaw_dbase
+  # - mermaid2:
+  #   javascript: https://cdn.jsdelivr.net/npm/mermaid@11.5.0/dist/mermaid.min.js
+  - macros
+  - minify:
+      minify_html: true
+  - exclude:
+      glob: ["*.tmp", "*.bak"]
 
-- include-markdown
+  - include-markdown
 
 extra_css:
-- css/colors.css
-- css/font.css
-- css/extra.css
-- css/doc_symbol.css
-- css/mkdocstrings.css
-- css/admonitions.css
-- css/catppuccin_mocha.css
-- css/tables.css
-- css/docstring-fold.css
+  - css/colors.css
+  - css/font.css
+  - css/extra.css
+  - css/doc_symbol.css
+  - css/mkdocstrings.css
+  - css/admonitions.css
+  - css/catppuccin_mocha.css
+  - css/tables.css
+  - css/docstring-fold.css
 
 extra_javascript:
-- https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
-- optionalConfig.js
-- extra-loader.js
-- js/python_docstring_folds.js
-- js/python_syntax_highlight_selectors.js
+  - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
+  - js/python_docstring_folds.js
+  - js/python_syntax_highlight_selectors.js
 
 markdown_extensions:
-- tables
-- attr_list
+  - tables
+  - attr_list
 
-- pymdownx.emoji:
-    emoji_index: !!python/name:material.extensions.emoji.twemoji ""
-    emoji_generator: !!python/name:material.extensions.emoji.to_svg ""
-- abbr
-- md_in_html
-- pymdownx.highlight:
-    use_pygments: true
-    linenums: false
-    anchor_linenums: true
-    line_spans: __span
-    linenums_style: pymdownx-inline
-    pygments_lang_class: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji ""
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg ""
+  - abbr
+  - md_in_html
+  - pymdownx.highlight:
+      use_pygments: true
+      linenums: false
+      anchor_linenums: true
+      line_spans: __span
+      linenums_style: pymdownx-inline
+      pygments_lang_class: true
 
-- pymdownx.inlinehilite
-- pymdownx.snippets
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
 
-- pymdownx.smartsymbols:
-    trademark: true
-    copyright: true
-    registered: true
-    care_of: true
-    plusminus: true
-    arrows: true
-    notequal: true
-    fractions: true
-    ordinal_numbers: true
+  - pymdownx.smartsymbols:
+      trademark: true
+      copyright: true
+      registered: true
+      care_of: true
+      plusminus: true
+      arrows: true
+      notequal: true
+      fractions: true
+      ordinal_numbers: true
 
-- pymdownx.superfences:
-    custom_fences:
-    - name: mermaid
-      class: mermaid
-      format: !!python/name:pymdownx.superfences.fence_code_format ""
-- admonition
-- pymdownx.details
-- pymdownx.caret
-- pymdownx.mark
-- pymdownx.tilde
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format ""
+  - admonition
+  - pymdownx.details
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
 
-- pymdownx.betterem:
-    smart_enable: all
+  - pymdownx.betterem:
+      smart_enable: all
 
-- toc:
-    title: Contents
-    toc_depth: 5
-    permalink: 
+  - toc:
+      title: Contents
+      toc_depth: 5
+      permalink: 
 
-- pymdownx.tabbed:
-    alternate_style: true
-    combine_header_slug: true
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
 
 nav:
-- Home: index.md
-- API Reference: reference/
+  - Home: index.md
+  - API Reference: reference/
 
-- Tools:
-  - CLI: tools/klaw-cli.md
-  - TUI: tools/klaw-tui.md
-  - Benchmarks: tools/klaw-benchmarks.md
-  - Examples: tools/klaw-examples.md
-- Contributing: contributing.md
+  - Tools:
+      - CLI: tools/klaw-cli.md
+      - TUI: tools/klaw-tui.md
+      - Benchmarks: tools/klaw-benchmarks.md
+      - Examples: tools/klaw-examples.md
+  - Contributing: contributing.md
 
 exclude_docs: |
   /tests/
@@ -292,14 +287,14 @@ exclude_docs: |
   reference/SUMMARY.md
 
 watch:
-- workspaces/python/klaw-core/src
-- workspaces/python/klaw-plugins/src
-- workspaces/python/klaw-polars/src
-- workspaces/python/klaw-returns/src
-- workspaces/python/klaw-testing/src
-- workspaces/python/klaw-types/src
-- workspaces/rust/klaw-core-ext/src
-- workspaces/rust/klaw-polars-ext/src
+  - workspaces/python/klaw-core/src
+  - workspaces/python/klaw-plugins/src
+  - workspaces/python/klaw-polars/src
+  - workspaces/python/klaw-returns/src
+  - workspaces/python/klaw-testing/src
+  - workspaces/python/klaw-types/src
+  - workspaces/rust/klaw-core-ext/src
+  - workspaces/rust/klaw-polars-ext/src
 
 validation:
   nav:

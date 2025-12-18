@@ -1,2 +1,2 @@
 def hello() -> str:
-    return "Hello from klaw-returns!"
+    return 'Hello from klaw-returns!'

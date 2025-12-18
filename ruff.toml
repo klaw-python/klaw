@@ -106,13 +106,17 @@ lint.ignore = [
 # lint.per-file-ignores."returns/pipeline.py" = [ "F401", "PLC0414" ]
 # lint.per-file-ignores."returns/pointfree/__init__.py" = [ "F401", "PLC0414" ]
 # lint.per-file-ignores."returns/primitives/asserts.py" = [ "S101" ]
-lint.per-file-ignores."tests/*.py" = [
+lint.per-file-ignores."**/tests/**/*.py" = [
+  "C901",   # complexity in tests is fine
+  "PLC0415", # imports inside functions are fine in tests
   "RUF029", # allow async functions to not use `await`
   "S101",   # asserts
   "S105",   # hardcoded passwords
+  "S110",   # try-except-pass is fine in cleanup
   "S404",   # subprocess calls are for tests
   "S603",   # do not require `shell=True`
   "S607",   # partial executable paths
+  "SIM105", # contextlib.suppress not required
 ]
 lint.per-file-ignores."tests/test_examples/*" = ["D102"]
 # lint.per-file-ignores."tests/test_examples/test_maybe/test_maybe_pattern_matching.py" = [

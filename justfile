@@ -3,22 +3,22 @@
 
 # Documentation tasks
 docs-install:
-    uv sync --group docs
+    uv sync --project docs-build
 
 docs-serve:
-    uv run --group docs mkdocs serve --dev-addr 127.0.0.1:8000 || \
-    uv run --group docs mkdocs serve --dev-addr 127.0.0.1:8001 || \
-    uv run --group docs mkdocs serve --dev-addr 127.0.0.1:8002 || \
-    uv run --group docs mkdocs serve --dev-addr 127.0.0.1:8003
+    uv run --project docs-build mkdocs serve --dev-addr 127.0.0.1:8000 || \
+    uv run --project docs-build mkdocs serve --dev-addr 127.0.0.1:8001 || \
+    uv run --project docs-build mkdocs serve --dev-addr 127.0.0.1:8002 || \
+    uv run --project docs-build mkdocs serve --dev-addr 127.0.0.1:8003
 
 docs-build:
-    uv run --group docs mkdocs build
+    uv run --project docs-build mkdocs build
 
 docs-clean:
     rm -rf site/
 
 docs-deploy:
-    uv run --group docs mkdocs gh-deploy --clean --force
+    uv run --project docs-build mkdocs gh-deploy --clean --force
 
 # Development tasks
 lint:
