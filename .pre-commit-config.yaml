@@ -9,101 +9,104 @@ exclude: |
       .*cache.*/.*|       # Exclude cache directories
       .*venv.*/.*|        # Exclude virtual environment directories
       docs-build/.*|      # Exclude docs-build (private deps)
+      \.vscode/.*|        # Exclude vscode settings (JSONC)
+      .*\.dbc$|           # Exclude dbc database files
+      .*\.DBC$|           # Exclude DBC database files (uppercase)
   )$
 fail_fast: true
 default_language_version:
   python: python3.13
 default_install_hook_types:
-- pre-commit
-- commit-msg
+  - pre-commit
+  - commit-msg
 
 repos:
-# Built-in prek hooks (Rust-native, zero-setup, instant)
-- repo: builtin
-  hooks:
-  - id: check-toml
-    name: ✅ toml · validate
-  - id: check-yaml
-    name: ✅ yaml · validate
-  - id: check-json
-    name: ✅ json · validate
-  - id: trailing-whitespace
-    name: 🧹 whitespace · trim trailing
-  - id: end-of-file-fixer
-    name: 🧹 eof · ensure newline
-  - id: check-merge-conflict
-    name: 🚫 git · check merge conflicts
-  - id: detect-private-key
-    name: 🔒 security · detect private keys
-  - id: check-added-large-files
-    name: 📦 git · check large files
+  # Built-in prek hooks (Rust-native, zero-setup, instant)
+  - repo: builtin
+    hooks:
+      - id: check-toml
+        name: ✅ toml · validate
+      - id: check-yaml
+        name: ✅ yaml · validate
+      - id: check-json
+        name: ✅ json · validate
+      - id: trailing-whitespace
+        name: 🧹 whitespace · trim trailing
+      - id: end-of-file-fixer
+        name: 🧹 eof · ensure newline
+      - id: check-merge-conflict
+        name: 🚫 git · check merge conflicts
+      - id: detect-private-key
+        name: 🔒 security · detect private keys
+      - id: check-added-large-files
+        name: 📦 git · check large files
 
-# Linting & Formatting - Python
-- repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.11.13
-  hooks:
-  - id: ruff
-    name: 🔧 ruff · lint
-    types_or: [python, pyi]
-    args: [--fix]
-  - id: ruff-format
-    name: 🔧 ruff · format
-    types_or: [python, pyi]
+  # Linting & Formatting - Python
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.13
+    hooks:
+      - id: ruff
+        name: 🔧 ruff · lint
+        types_or: [python, pyi]
+        args: [--fix]
+      - id: ruff-format
+        name: 🔧 ruff · format
+        types_or: [python, pyi]
 
-# Linting & Formatting - Rust
-- repo: local
-  hooks:
-  - id: cargo-fmt
-    name: 🦀 rust · format
-    entry: cargo fmt --all --manifest-path workspaces/rust/klaw-dbase/Cargo.toml --
-    language: system
-    types: [rust]
-    pass_filenames: false
-  - id: cargo-clippy
-    name: 🦀 rust · clippy
-    entry: cargo clippy --manifest-path workspaces/rust/klaw-dbase/Cargo.toml --all-targets -- -D warnings
-    language: system
-    types: [rust]
-    pass_filenames: false
+  # Linting & Formatting - Rust
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: 🦀 rust · format
+        entry: cargo fmt --all --manifest-path workspaces/rust/klaw-dbase/Cargo.toml --
+        language: system
+        types: [rust]
+        pass_filenames: false
+      - id: cargo-clippy
+        name: 🦀 rust · clippy
+        entry: cargo clippy --manifest-path workspaces/rust/klaw-dbase/Cargo.toml --all-targets -- -D warnings
+        language: system
+        types: [rust]
+        pass_filenames: false
 
-# Data & Config Validation
-- repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.33.0
-  hooks:
-  - id: check-github-workflows
-    name: 🐙 github-actions · validate workflows
-    args: [--verbose]
+  # Data & Config Validation
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.33.0
+    hooks:
+      - id: check-github-workflows
+        name: 🐙 github-actions · validate workflows
+        args: [--verbose]
 
-# Markdown
-- repo: https://github.com/hukkin/mdformat
-  rev: 0.7.22
-  hooks:
-  - id: mdformat
-    name: 📝 markdown · format
-    additional_dependencies:
-    - mdformat-gfm
-    - mdformat-ruff
-    - mdformat-frontmatter
-    - ruff
+  # Markdown
+  - repo: https://github.com/hukkin/mdformat
+    rev: 0.7.22
+    hooks:
+      - id: mdformat
+        name: 📝 markdown · format
+        additional_dependencies:
+          - mdformat-gfm
+          - mdformat-ruff
+          - mdformat-frontmatter
+          - ruff
 
-# Verify web stuff
-- repo: https://github.com/biomejs/pre-commit
-  rev: v2.0.0-beta.5
-  hooks:
-  - id: biome-check
-    name: 🕸️ biome · lint & format
+  # Verify web stuff
+  - repo: https://github.com/biomejs/pre-commit
+    rev: v2.0.0-beta.5
+    hooks:
+      - id: biome-check
+        name: 🕸️ biome · lint & format
 
-# Optimize images
-- repo: https://github.com/shssoichiro/oxipng
-  rev: v9.1.4
-  hooks:
-  - id: oxipng
-    name: 📸 images · optimize
-    args: [-o, "4", --strip, safe, --alpha]
+  # Optimize images
+  - repo: https://github.com/shssoichiro/oxipng
+    rev: v9.1.4
+    hooks:
+      - id: oxipng
+        name: 📸 images · optimize
+        args: [-o, "4", --strip, safe, --alpha]
 
-# Dependency management
-- repo: https://github.com/astral-sh/uv-pre-commit
-  rev: 0.7.13
-  hooks:
-  - id: uv-lock
-    name: 🔒 uv · lock dependencies
+  # Dependency management
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.7.13
+    hooks:
+      - id: uv-lock
+        name: 🔒 uv · lock dependencies

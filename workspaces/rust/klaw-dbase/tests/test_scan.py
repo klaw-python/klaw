@@ -7,7 +7,8 @@ from io import BytesIO
 import polars as pl
 import pytest
 from klaw_dbase import DbaseError, EmptySources, read_dbase, scan_dbase, write_dbase
-from utils import frames_equal
+
+from .utils import frames_equal
 
 
 @pytest.fixture
@@ -335,8 +336,11 @@ def test_real_dbc_files() -> None:
     """Test with actual .dbc files."""
     try:
         dbc_files = [
-            'data/sids.dbc', 'data/DNAC1996.DBC', 'data/PAPA2501.dbc',
-            'data/RDPA2401.dbc', 'data/ABMG1112.dbc'
+            'data/sids.dbc',
+            'data/DNAC1996.DBC',
+            'data/PAPA2501.dbc',
+            'data/RDPA2401.dbc',
+            'data/ABMG1112.dbc',
         ]
 
         for dbc_file in dbc_files:
@@ -408,12 +412,7 @@ def test_read_options() -> None:
         write_dbase(df, temp_path, overwrite=True)
 
         # Test with options
-        frame = read_dbase(
-            temp_path,
-            row_index_name='row_index',
-            columns=['x'],
-            n_rows=3
-        )
+        frame = read_dbase(temp_path, row_index_name='row_index', columns=['x'], n_rows=3)
         assert frame.shape == (3, 2)  # 3 rows, 2 columns (x + row_index)
         assert 'row_index' in frame.columns
         assert frame['row_index'].to_list() == [0, 1, 2]

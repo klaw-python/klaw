@@ -42,9 +42,7 @@ SCRIPT_SUFFIX = '"'
 class TestDetectContainerCpuLimit:
     """Tests for _detect_container_cpu_limit() inside containers."""
 
-    def test_detects_cpu_limit_with_cpus_flag(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_detects_cpu_limit_with_cpus_flag(self, docker: DockerClient, unique_name: str) -> None:
         """_detect_container_cpu_limit() returns correct value with --cpus=2."""
         script = f"""{SETUP_SCRIPT}
 from klaw_core.runtime._config import _detect_container_cpu_limit
@@ -74,9 +72,7 @@ else:
         except Exception as e:
             pytest.skip(f'Docker not available: {e}')
 
-    def test_returns_none_without_cpu_limit(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_returns_none_without_cpu_limit(self, docker: DockerClient, unique_name: str) -> None:
         """_detect_container_cpu_limit() returns None when no limit set."""
         script = f"""{SETUP_SCRIPT}
 from klaw_core.runtime._config import _detect_container_cpu_limit
@@ -107,9 +103,7 @@ print('PASS: _detect_container_cpu_limit() returned None (no limit)')
 class TestDetectConcurrency:
     """Tests for _detect_concurrency() inside containers."""
 
-    def test_respects_cpu_limit(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_respects_cpu_limit(self, docker: DockerClient, unique_name: str) -> None:
         """_detect_concurrency() respects container CPU limit."""
         script = f"""{SETUP_SCRIPT}
 from klaw_core.runtime._config import _detect_concurrency
@@ -136,9 +130,7 @@ print('PASS: _detect_concurrency() respects CPU limit')
         except Exception as e:
             pytest.skip(f'Docker not available: {e}')
 
-    def test_respects_memory_limit(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_respects_memory_limit(self, docker: DockerClient, unique_name: str) -> None:
         """_detect_concurrency() considers memory constraints."""
         script = f"""{SETUP_SCRIPT}
 from klaw_core.runtime._config import _detect_concurrency
@@ -171,9 +163,7 @@ print('PASS: _detect_concurrency() returned valid value')
 class TestDetectBackend:
     """Tests for _detect_backend() inside containers."""
 
-    def test_detects_backend_from_env(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_detects_backend_from_env(self, docker: DockerClient, unique_name: str) -> None:
         """_detect_backend() reads KLAW_BACKEND env var."""
         script = f"""{SETUP_SCRIPT}
 from klaw_core.runtime._config import _detect_backend, Backend
@@ -199,9 +189,7 @@ print('PASS: _detect_backend() detected ray from env')
         except Exception as e:
             pytest.skip(f'Docker not available: {e}')
 
-    def test_defaults_to_local(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_defaults_to_local(self, docker: DockerClient, unique_name: str) -> None:
         """_detect_backend() defaults to LOCAL without env var."""
         script = f"""{SETUP_SCRIPT}
 from klaw_core.runtime._config import _detect_backend, Backend
@@ -241,9 +229,7 @@ def _get_ray_image() -> str:
 class TestRayCluster:
     """Tests for Ray cluster resource detection."""
 
-    def test_detects_cluster_cpus(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_detects_cluster_cpus(self, docker: DockerClient, unique_name: str) -> None:
         """_detect_ray_concurrency() returns total CPUs across cluster nodes."""
         import time
 
@@ -348,9 +334,7 @@ ray.shutdown()
 class TestInit:
     """Tests for init() inside containers."""
 
-    def test_init_auto_detection(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_init_auto_detection(self, docker: DockerClient, unique_name: str) -> None:
         """init() with auto-detection works in container."""
         script = f"""{SETUP_SCRIPT}
 from klaw_core.runtime import init, get_config, Backend
@@ -378,9 +362,7 @@ print('PASS: init() auto-detection works')
         except Exception as e:
             pytest.skip(f'Docker not available: {e}')
 
-    def test_init_with_explicit_config(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_init_with_explicit_config(self, docker: DockerClient, unique_name: str) -> None:
         """init() with explicit config overrides detection."""
         script = f"""{SETUP_SCRIPT}
 from klaw_core.runtime import init, get_config, Backend

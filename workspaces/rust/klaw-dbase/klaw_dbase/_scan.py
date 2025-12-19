@@ -16,12 +16,13 @@ from ._utils import validate_encoding
 
 def expand_str(source: str | Path, *, glob: bool) -> Iterator[str]:
     expanded = Path(source).expanduser()
-    if glob and '*' in expanded:
-        yield from sorted(iglob(expanded))
-    elif Path(expanded).is_dir():
-        yield from sorted(iglob(path.join(expanded, '*')))
+    expanded_str = str(expanded)
+    if glob and '*' in expanded_str:
+        yield from sorted(iglob(expanded_str))
+    elif expanded.is_dir():
+        yield from sorted(iglob(path.join(expanded_str, '*')))
     else:
-        yield expanded
+        yield expanded_str
 
 
 def scan_dbase(

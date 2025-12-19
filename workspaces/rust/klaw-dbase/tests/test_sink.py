@@ -8,7 +8,8 @@ from pathlib import Path
 import polars as pl
 import pytest
 from klaw_dbase import read_dbase, write_dbase
-from utils import frames_equal
+
+from .utils import frames_equal
 
 
 @pytest.fixture

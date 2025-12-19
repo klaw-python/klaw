@@ -86,9 +86,7 @@ class Some[T](msgspec.Struct, frozen=True, gc=False):
         """
         return Some(f(self.value))
 
-    def and_then[U](
-        self, f: Callable[[T], Some[U] | NothingType]
-    ) -> Some[U] | NothingType:
+    def and_then[U](self, f: Callable[[T], Some[U] | NothingType]) -> Some[U] | NothingType:
         """Apply a function that returns an Option to the contained value.
 
         Also known as flatmap or bind.
@@ -270,9 +268,7 @@ class NothingType(msgspec.Struct, frozen=True, gc=False):
         """Return Nothing since there's no value to bind."""
         return self
 
-    def or_else[T](
-        self, f: Callable[[], Some[T] | NothingType]
-    ) -> Some[T] | NothingType:
+    def or_else[T](self, f: Callable[[], Some[T] | NothingType]) -> Some[T] | NothingType:
         """Apply a recovery function since this is Nothing.
 
         Args:

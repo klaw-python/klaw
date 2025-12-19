@@ -20,7 +20,7 @@ use dbase::File as DbaseFile;
 use crate::read_compressed::{DbcReader, create_dbf_reader_from_dbc};
 use crate::{
     error::Error,
-    progress::{DbaseFileInfo, DbaseProgressTracker, create_multi_file_progress},
+    progress::{DbaseFileInfo, create_multi_file_progress},
     read::{DbfIter, DbfReadOptions, DbfReader},
     write::{WriteOptions, write_dbase, write_dbase_file as write_dbase_file_internal},
 };
@@ -401,6 +401,7 @@ impl DbaseSource {
 impl DbaseSource {
     #[new]
     #[pyo3(signature = (paths, buffs, single_col_name, encoding, character_trim, skip_deleted, validate_schema, compressed))]
+    #[allow(clippy::too_many_arguments)]
     fn new(
         paths: Vec<String>,
         buffs: Vec<PyObject>,
@@ -450,10 +451,9 @@ impl DbaseSource {
                             Some(options.clone()),
                         ) {
                             Ok(dbc_reader) => {
-                                let schema = dbc_reader.schema();
                                 // Note: We don't store the DBC reader as last_scanner
                                 // because it has a different type than our regular scanner
-                                schema
+                                dbc_reader.schema()
                             }
                             Err(_e) => {
                                 // Fall back to regular scanner if DBC fails
@@ -717,13 +717,13 @@ fn get_record_count(path: String) -> PyResult<usize> {
             let dbase_file = DbaseFile::open_read_only(path).map_err(|e| {
                 PyRuntimeError::new_err(format!("Failed to open dBase file: {}", e))
             })?;
-            Ok(dbase_file.num_records() as usize)
+            Ok(dbase_file.num_records())
         }
         None => {
             let dbase_file = DbaseFile::open_read_only(file_as_path).map_err(|e| {
                 PyRuntimeError::new_err(format!("Failed to open dBase file: {}", e))
             })?;
-            Ok(dbase_file.num_records() as usize)
+            Ok(dbase_file.num_records())
         }
     }
 }

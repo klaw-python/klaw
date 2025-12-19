@@ -72,14 +72,14 @@ def write_dbase(
         print(df)
         raise EmptySources
 
-    frames = [df] if batch_size is None else [df[i:i + batch_size].rechunk() for i in range(0, len(df), batch_size)]
+    frames = [df] if batch_size is None else [df[i : i + batch_size].rechunk() for i in range(0, len(df), batch_size)]
 
     if memo_threshold is not None:
         memo_threshold = None
 
     match dest:
         case str() | Path():
-            expanded = Path(dest).expanduser()
+            expanded = str(Path(dest).expanduser())
 
             write_dbase_file(
                 frames=frames,

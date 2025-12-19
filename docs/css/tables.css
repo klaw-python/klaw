@@ -1,29 +1,32 @@
 [data-md-color-scheme="slate"] {
-    /* Base table colors */
-    --md-typeset-table-color: var(--catppuccin-mocha-text);
-    --md-typeset-table-color--dark: var(--catppuccin-mocha-subtext1);
+	/* Base table colors */
+	--md-typeset-table-color: var(--catppuccin-mocha-text);
+	--md-typeset-table-color--dark: var(--catppuccin-mocha-subtext1);
 }
 
 /* Table improvements */
 .md-typeset table {
-    font-size: small !important;
+	font-size: small !important;
 }
 .md-typeset table:not([class]) {
-    border-radius: 0.2rem;
-    /* border-color: var(--catppuccin-mocha-lavender); */
-    border-color: color-mix(in srgb, var(--catppuccin-mocha-base) 50%, var(--catppuccin-mocha-lavender) 30%);
-    overflow: hidden;
-    color: var(--catppuccin-mocha-text);
+	border-radius: 0.2rem;
+	/* border-color: var(--catppuccin-mocha-lavender); */
+	border-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 50%,
+		var(--catppuccin-mocha-lavender) 30%
+	);
+	overflow: hidden;
+	color: var(--catppuccin-mocha-text);
 }
 
 .md-typeset table:not([class]) th {
-    color: var(--catppuccin-mocha-subtext1);
-    background-color: var(--catppuccin-mocha-mantle);
+	color: var(--catppuccin-mocha-subtext1);
+	background-color: var(--catppuccin-mocha-mantle);
 }
 
 .md-typeset table:not([class]) td {
-    color: var(--catppuccin-mocha-subtext0);
-    border: var(--catppuccin-mocha-surface1);
-    background-color: var(--catppuccin-mocha-base);
-
+	color: var(--catppuccin-mocha-subtext0);
+	border: var(--catppuccin-mocha-surface1);
+	background-color: var(--catppuccin-mocha-base);
 }

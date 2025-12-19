@@ -67,6 +67,7 @@ Generated from: `0003-prd-klaw-runtime.md`
 ## Tasks
 
 - [x] 1.0 Project Setup & Dependencies
+
   - [x] 1.1 Update `pyproject.toml` to add required dependencies: `psutil>=5.9`, `tenacity>=8.2`, `structlog>=24.0`, `diskcache>=5.6`
   - [x] 1.2 Add Ray dependency (required): `ray>=2.52.1` to main dependencies
   - [x] 1.3 Add `mimesis>=18.0.0` to dev dependencies for testing
@@ -75,6 +76,7 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [x] 1.6 Run `uv sync` to install new dependencies and verify no conflicts
 
 - [x] 2.0 Runtime Core: Configuration & Initialization
+
   - [x] 2.1 Create `runtime/errors.py` with dual struct+exception error types: `ChannelClosed`, `ChannelFull`, `ChannelEmpty`, `Timeout`, `Cancelled`, `BackendError`, `ActorStopped`, `ActorNotFound`
   - [x] 2.2 Create `runtime/_config.py` with `RuntimeConfig` dataclass and `Backend` enum (LOCAL, RAY)
   - [x] 2.3 Implement `_detect_backend()` using environment variables (`KLAW_BACKEND`) and Ray cluster detection
@@ -84,6 +86,7 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [x] 2.7 Write tests for `runtime.init()`, auto-detection, and environment variable handling
 
 - [x] 3.0 Executor & Backends
+
   - [x] 3.1 Create `runtime/_backends/__init__.py` with `ExecutorBackend` protocol
   - [x] 3.2 Implement `runtime/_backends/local.py` `LocalBackend` using anyio task groups and aiologic
   - [x] 3.3 Implement `LocalBackend.run()` for CPU-bound work using `anyio.to_thread.run_sync()`
@@ -97,27 +100,29 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [x] 3.11 Write tests for RayBackend (can be skipped if Ray not installed)
 
 - [ ] 4.0 Channels (mpmc, oneshot, broadcast, watch, select)
+
   - [x] 4.1 Create `runtime/channels.py` with `Sender[T]` and `Receiver[T]` protocols
   - [x] 4.2 Implement `channel(capacity, distributed, unbounded)` returning `tuple[Sender, Receiver]`
   - [x] 4.3 Implement `LocalChannel` using `anyio.MemoryObjectStream` with capacity limiting (default 10,000)
-        **Note:** Changed from aiologic.Queue to anyio - provides MPMC with ref-counted clones, native cancellation
+    **Note:** Changed from aiologic.Queue to anyio - provides MPMC with ref-counted clones, native cancellation
   - [x] 4.4 Implement `Sender.send()` (async, raises ChannelClosed), `try_send()` (returns Result)
   - [x] 4.5 Implement `Receiver.recv()` (async, raises ChannelClosed), `try_recv()` (returns Result)
   - [x] 4.6 Implement `Sender.clone()`, `Receiver.clone()` for mpmc
   - [x] 4.7 Implement `Receiver.__aiter__` for `async for item in rx` pattern
   - [x] 4.8 Implement `Sender.close()` and closed state propagation
-  - [ ] 4.9 Implement `oneshot[T]()` for single-value, single-use channels
-  - [ ] 4.10 Implement `broadcast[T](capacity)` where all receivers get every message
-  - [ ] 4.11 Implement `watch[T](initial)` for latest-value observation with `borrow()` and `changed()`
-  - [ ] 4.12 Implement `select(*receivers, timeout)` for multiplexing multiple receivers
+  - [x] 4.9 Implement `oneshot[T]()` for single-value, single-use channels
+  - [x] 4.10 Implement `broadcast[T](capacity)` where all receivers get every message
+  - [x] 4.11 Implement `watch[T](initial)` for latest-value observation with `borrow()` and `changed()`
+  - [x] 4.12 Implement `select(*receivers, timeout)` for multiplexing multiple receivers
   - [ ] 4.13 Implement `RayChannel` wrapping `ray.util.queue.Queue` for `distributed=True`
-        **Note:** Changed from custom msgspec IPC to Ray - cross-platform, already a dependency, handles serialization
+    **Note:** Changed from custom msgspec IPC to Ray - cross-platform, already a dependency, handles serialization
   - [ ] 4.14 Implement RayChannel Sender/Receiver adapters matching local channel API
   - [ ] 4.15 Write Hypothesis property tests: no data loss, FIFO order, capacity respected
   - [ ] 4.16 Write tests for oneshot, broadcast, watch, select
   - [ ] 4.17 Write tests for distributed channels (RayChannel)
 
 - [ ] 5.0 Cancellation, Timeout & Retry
+
   - [ ] 5.1 Create `runtime/cancel.py` with `CancelScope` class wrapping anyio cancel scope
   - [ ] 5.2 Implement `cancel_scope(timeout)` as async context manager
   - [ ] 5.3 Implement `CancelScope.cancel()` for explicit cancellation
@@ -131,6 +136,7 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [ ] 5.11 Write tests for retry() with various retry policies
 
 - [ ] 6.0 Context Propagation & Structured Logging
+
   - [ ] 6.1 Create `runtime/context.py` with `Context` dataclass (request_id, trace_id, span_id, extra)
   - [ ] 6.2 Implement `context(**values)` as async context manager using contextvars
   - [ ] 6.3 Implement `current_context()` to retrieve current context
@@ -143,6 +149,7 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [ ] 6.10 Write tests for structlog integration and context injection
 
 - [ ] 7.0 Actors, Supervision & Pools
+
   - [ ] 7.1 Create `runtime/actor.py` with `Actor[Msg, Reply]` protocol and `handle()` method
   - [ ] 7.2 Implement `ActorRef[Msg, Reply]` with `send()` (fire-and-forget) and `ask()` (request/response)
   - [ ] 7.3 Implement `spawn_actor(actor, name, capacity, restart, ...)` returning `ActorRef`
@@ -165,6 +172,7 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [ ] 7.20 Write tests for ActorPool (send, map, broadcast, auto-replace)
 
 - [ ] 8.0 Named Actors, Registry & Fault Tolerance
+
   - [ ] 8.1 Implement named actor registration: `spawn_actor(actor, name="foo")`
   - [ ] 8.2 Implement `rt.get_actor(name)` returning `Result[ActorRef, ActorNotFound]`
   - [ ] 8.3 Implement `rt.whereis(name)` returning `Option[ActorRef]`
@@ -179,6 +187,7 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [ ] 8.12 Write tests for health monitoring hooks
 
 - [ ] 9.0 Persistence & Checkpointing
+
   - [ ] 9.1 Create `runtime/checkpoint.py` with `Checkpointer` protocol
   - [ ] 9.2 Implement `LocalCheckpointer` using diskcache (default path: `~/.klaw/checkpoints/`)
   - [ ] 9.3 Implement state serialization using msgspec for fast, compact storage
@@ -194,6 +203,7 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [ ] 9.13 Write tests for Workflow step checkpointing and resume
 
 - [ ] 10.0 Migration: Move async\_/ to runtime/
+
   - [ ] 10.1 Copy `async_/result.py` to `runtime/result.py`, update imports
   - [ ] 10.2 Copy `async_/itertools.py` to `runtime/itertools.py`, update to use runtime config for concurrency
   - [ ] 10.3 Copy `async_/cache.py` contents (async_lru_safe) to appropriate location
@@ -205,6 +215,7 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [ ] 10.9 Run mypy to verify type checking passes
 
 - [ ] 11.0 Unified Runtime Wrapper
+
   - [ ] 11.1 Create `runtime/_runtime.py` with `Runtime` class as async context manager
   - [ ] 11.2 Implement `Runtime.executor()` returning managed Executor
   - [ ] 11.3 Implement `Runtime.channel()`, `Runtime.oneshot()`, etc. for auto-cleanup registration
@@ -217,6 +228,7 @@ Generated from: `0003-prd-klaw-runtime.md`
   - [ ] 11.10 Write tests for graceful vs immediate shutdown
 
 - [ ] 12.0 Documentation & Final Integration
+
   - [ ] 12.1 Update `klaw_core/__init__.py` with complete runtime re-exports for flat imports
   - [ ] 12.2 Add docstrings to all public APIs following existing conventions
   - [ ] 12.3 Create usage examples in docstrings for key APIs (Executor, channels, actors)

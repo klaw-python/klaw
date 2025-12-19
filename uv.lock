@@ -18,6 +18,7 @@ members = [
     "klaw-plugins",
     "klaw-polars",
     "klaw-polars-ext",
+    "klaw-random",
     "klaw-returns",
     "klaw-testing",
     "klaw-tui",
@@ -480,6 +481,49 @@ source = { editable = "workspaces/python/klaw-polars" }
 name = "klaw-polars-ext"
 version = "0.1.0"
 source = { editable = "workspaces/rust/klaw-polars-ext" }
+
+[[package]]
+name = "klaw-random"
+version = "0.1.0"
+source = { editable = "workspaces/rust/klaw-random" }
+
+[package.dev-dependencies]
+dev = [
+    { name = "maturin" },
+    { name = "maturin-import-hook" },
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "pytest-icdiff" },
+    { name = "pytest-mock" },
+    { name = "pytest-randomly" },
+    { name = "pytest-sugar" },
+    { name = "pytest-xdist" },
+]
+test = [
+    { name = "maturin" },
+    { name = "pytest" },
+    { name = "pytest-mock" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "maturin", specifier = ">=1.9.4" },
+    { name = "maturin-import-hook", specifier = ">=0.3.0" },
+    { name = "mypy", specifier = ">=1.10.1" },
+    { name = "pytest", specifier = ">=8.3.3" },
+    { name = "pytest-icdiff", specifier = ">=0.9" },
+    { name = "pytest-mock", specifier = ">=3.14.0" },
+    { name = "pytest-randomly", specifier = ">=3.16.0" },
+    { name = "pytest-sugar", specifier = ">=1.0.0" },
+    { name = "pytest-xdist", specifier = ">=3.6.1" },
+]
+test = [
+    { name = "maturin", specifier = ">=1.9.4" },
+    { name = "pytest", specifier = ">=8.3.3" },
+    { name = "pytest-mock", specifier = ">=3.14.0" },
+]
 
 [[package]]
 name = "klaw-returns"

@@ -43,9 +43,7 @@ def assert_result[E](condition: bool, error: E) -> Result[None, E]: ...
 
 
 @overload
-def assert_result[E](
-    condition: bool, error: Callable[[], E], *, lazy: bool = True
-) -> Result[None, E]: ...
+def assert_result[E](condition: bool, error: Callable[[], E], *, lazy: bool = True) -> Result[None, E]: ...
 
 
 def assert_result[E](

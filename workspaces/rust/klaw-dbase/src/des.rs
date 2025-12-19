@@ -108,8 +108,7 @@ impl DataTypeParser {
     ) -> Result<Vec<Field>, ValueError> {
         field_definitions
             .iter()
-            .enumerate()
-            .map(|(_index, field_info)| {
+            .map(|field_info| {
                 let field_name = self.sanitize_field_name(field_info.name());
                 let dtype = self.convert_field_type(&field_info.field_type())?;
                 Ok(Field {
@@ -471,12 +470,10 @@ impl MutableArray for ListBuilder {
 
 impl ValueBuilder for ListBuilder {
     fn try_push_value(&mut self, value: &FieldValue) -> PolarsResult<()> {
-        match value {
-            // dBase doesn't have array types, so this would be for future extensions
-            _ => Err(PolarsError::SchemaMismatch(
-                format!("expected array but got {:?}", value.field_type()).into(),
-            )),
-        }
+        // dBase doesn't have array types, so this would be for future extensions
+        Err(PolarsError::SchemaMismatch(
+            format!("expected array but got {:?}", value.field_type()).into(),
+        ))
     }
 }
 
@@ -626,7 +623,6 @@ impl FieldValueExt for FieldValue {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dbase::{FieldName, TableWriterBuilder};
 
     /// Helper function to create test field info using the public API
     fn create_test_field_info(name: &str, field_type: dbase::FieldType) -> MockFieldInfo {
@@ -673,13 +669,13 @@ mod tests {
 
         let fields = convert_mock_fields_to_polars(field_definitions)?;
 
-        if fields.len() == 1 {
-            if let Some(col_name) = single_column_name {
-                return Ok(PlSchema::from_iter([(
-                    col_name.clone(),
-                    fields[0].dtype.clone(),
-                )]));
-            }
+        if fields.len() == 1
+            && let Some(col_name) = single_column_name
+        {
+            return Ok(PlSchema::from_iter([(
+                col_name.clone(),
+                fields[0].dtype.clone(),
+            )]));
         }
 
         Ok(PlSchema::from_iter(fields))
@@ -691,8 +687,7 @@ mod tests {
         let mut parser = DataTypeParser::default();
         field_definitions
             .iter()
-            .enumerate()
-            .map(|(_index, field_info)| {
+            .map(|field_info| {
                 let field_name = parser.sanitize_field_name(field_info.name());
                 let dtype = parser.convert_field_type(&field_info.field_type())?;
                 Ok(Field {
@@ -816,12 +811,10 @@ mod tests {
         for (i, (expected_name, expected_type)) in expected_types.into_iter().enumerate() {
             let field = schema.get_at_index(i).unwrap();
             assert_eq!(field.0, expected_name);
-            assert!(
-                matches!(field.1, expected_type),
+            assert_eq!(
+                field.1, &expected_type,
                 "Field {} expected type {:?}, got {:?}",
-                expected_name,
-                expected_type,
-                field.1
+                expected_name, expected_type, field.1
             );
         }
     }
@@ -937,7 +930,7 @@ mod tests {
         assert!(int_builder.try_push_value(&date_value).is_ok());
 
         // Test numeric in float builder
-        let num_value = FieldValue::Numeric(Some(3.14));
+        let num_value = FieldValue::Numeric(Some(3.15));
         assert!(float_builder.try_push_value(&num_value).is_ok());
 
         // Test currency in float builder
@@ -945,7 +938,7 @@ mod tests {
         assert!(float_builder.try_push_value(&currency_value).is_ok());
 
         // Test double in float builder
-        let double_value = FieldValue::Double(2.718);
+        let double_value = FieldValue::Double(2.72);
         assert!(float_builder.try_push_value(&double_value).is_ok());
     }
 

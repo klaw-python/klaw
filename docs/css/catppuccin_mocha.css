@@ -1,313 +1,316 @@
 [data-md-color-scheme="slate"] {
-    .md-header {
-        background-color: var(--catppuccin-mocha-base);
-        color: var(--catppuccin-mocha-text);
-    }
-    
-    .md-source__icon {
-        color: var(--catppuccin-mocha-peach);
-    }
-    .md-source__fact--stars {
-        color: var(--catppuccin-mocha-green);
-    }
-    .md-source__fact--forks {
-        color: var(--catppuccin-mocha-mauve);
-    }
+	.md-header {
+		background-color: var(--catppuccin-mocha-base);
+		color: var(--catppuccin-mocha-text);
+	}
 
+	.md-source__icon {
+		color: var(--catppuccin-mocha-peach);
+	}
+	.md-source__fact--stars {
+		color: var(--catppuccin-mocha-green);
+	}
+	.md-source__fact--forks {
+		color: var(--catppuccin-mocha-mauve);
+	}
 
-    
-    
-    --md-default-bg-color: var(--catppuccin-mocha-crust);
-    --md-primary-fg-color: var(--catppuccin-mocha-text);
-    
+	--md-default-bg-color: var(--catppuccin-mocha-crust);
+	--md-primary-fg-color: var(--catppuccin-mocha-text);
 
-    --md-accent-fg-color: var(--catppuccin-mocha-green);
-    --md-accent-bg-color: var(--catppuccin-mocha-base);
+	--md-accent-fg-color: var(--catppuccin-mocha-green);
+	--md-accent-bg-color: var(--catppuccin-mocha-base);
 
-    /* Base colors */
-    --md-default-fg-color--dark: var(--catppuccin-mocha-text);
+	/* Base colors */
+	--md-default-fg-color--dark: var(--catppuccin-mocha-text);
 
-    /* Code colors */
-    --md-code-fg-color: var(--catppuccin-mocha-text);
-    --md-code-bg-color: var(--catppuccin-mocha-mantle);
+	/* Code colors */
+	--md-code-fg-color: var(--catppuccin-mocha-text);
+	--md-code-bg-color: var(--catppuccin-mocha-mantle);
 
-    /* Typeset colors */
-    --md-typeset-color: var(--catppuccin-mocha-text);
-    --md-typeset-a-color: var(--catppuccin-mocha-green);
-    --md-typeset-a-color--visited: var(--catppuccin-mocha-lavender);
-    --md-typeset-mark-color: var(--catppuccin-mocha-yellow);
-    --md-typeset-del-color: var(--catppuccin-mocha-red);
-    --md-typeset-ins-color: var(--catppuccin-mocha-green);
-    --md-typeset-kbd-color: var(--catppuccin-mocha-text);
-    --md-typeset-kbd-accent-color: var(--catppuccin-mocha-surface1);
-    
-    /* Nav Bar colors */
-    --md-nav-fg-color: var(--catppuccin-mocha-text);
-    --md-nav-bg-color: var(--catppuccin-mocha-mantle);  /* Top navbar: crust */
-    --md-nav-bg-color--light: var(--catppuccin-mocha-base);
-    --md-nav-bg-color--dark: var(--catppuccin-mocha-base);
+	/* Typeset colors */
+	--md-typeset-color: var(--catppuccin-mocha-text);
+	--md-typeset-a-color: var(--catppuccin-mocha-green);
+	--md-typeset-a-color--visited: var(--catppuccin-mocha-lavender);
+	--md-typeset-mark-color: var(--catppuccin-mocha-yellow);
+	--md-typeset-del-color: var(--catppuccin-mocha-red);
+	--md-typeset-ins-color: var(--catppuccin-mocha-green);
+	--md-typeset-kbd-color: var(--catppuccin-mocha-text);
+	--md-typeset-kbd-accent-color: var(--catppuccin-mocha-surface1);
 
+	/* Nav Bar colors */
+	--md-nav-fg-color: var(--catppuccin-mocha-text);
+	--md-nav-bg-color: var(--catppuccin-mocha-mantle); /* Top navbar: crust */
+	--md-nav-bg-color--light: var(--catppuccin-mocha-base);
+	--md-nav-bg-color--dark: var(--catppuccin-mocha-base);
 
-    /* Footer colors */
-    --md-footer-fg-color: var(--catppuccin-mocha-subtext0);
-    --md-footer-fg-color--light: var(--catppuccin-mocha-subtext1);
-    --md-footer-bg-color: var(--catppuccin-mocha-crust);
-    --md-footer-bg-color--dark: var(--catppuccin-mocha-mantle);
+	/* Footer colors */
+	--md-footer-fg-color: var(--catppuccin-mocha-subtext0);
+	--md-footer-fg-color--light: var(--catppuccin-mocha-subtext1);
+	--md-footer-bg-color: var(--catppuccin-mocha-crust);
+	--md-footer-bg-color--dark: var(--catppuccin-mocha-mantle);
 
-    /* Navigation Link colors */
-    .md-nav__link {
-        color: var(--catppuccin-mocha-text);
-        font-weight: bold;
-    }
-    .md-nav__link--active {
-        color: var(--catppuccin-mocha-green);
-        font-weight: bold;
-    }
-    
-    --md-nav-link-fg-color: var(--catppuccin-mocha-lavender);
-    --md-nav-link-fg-color--visited: var(--catppuccin-mocha-mauve);
-    --md-nav-link-bg-color: transparent;
-    --md-nav-link-bg-color--active: var(--catppuccin-mocha-green);
-    --md-nav-link-bg-color--hover: var(--catppuccin-mocha-teal);
-    --md-nav-ling-bg-color--active: var(--catppuccin-mocha-teal);
+	/* Navigation Link colors */
+	.md-nav__link {
+		color: var(--catppuccin-mocha-text);
+		font-weight: bold;
+	}
+	.md-nav__link--active {
+		color: var(--catppuccin-mocha-green);
+		font-weight: bold;
+	}
 
-    
-    
-    --md-cursor-color: var(--catppuccin-mocha-flamingo);
-    --md-cursor-line-color: var(--catppuccin-mocha-surface0);
-    --md-link-color: var(--catppuccin-mocha-lavender);
-    --md-link-hover-color: var(--catppuccin-mocha-teal);
-    --md-link-visited-color: var(--catppuccin-mocha-lavender);
-    --md-link-active-color: var(--catppuccin-mocha-green);
-    
+	--md-nav-link-fg-color: var(--catppuccin-mocha-lavender);
+	--md-nav-link-fg-color--visited: var(--catppuccin-mocha-mauve);
+	--md-nav-link-bg-color: transparent;
+	--md-nav-link-bg-color--active: var(--catppuccin-mocha-green);
+	--md-nav-link-bg-color--hover: var(--catppuccin-mocha-teal);
+	--md-nav-ling-bg-color--active: var(--catppuccin-mocha-teal);
 
-/* Names like None, True, False, etc. */
- .doc-signature .kc,
-.md-code__content .kc {
-    color: var(--catppuccin-mocha-maroon);
-    font-weight: bold;
-}
+	--md-cursor-color: var(--catppuccin-mocha-flamingo);
+	--md-cursor-line-color: var(--catppuccin-mocha-surface0);
+	--md-link-color: var(--catppuccin-mocha-lavender);
+	--md-link-hover-color: var(--catppuccin-mocha-teal);
+	--md-link-visited-color: var(--catppuccin-mocha-lavender);
+	--md-link-active-color: var(--catppuccin-mocha-green);
 
-/* conditionals */
-/* All keywords (except def/class) */
-.doc-signature .k:not([data-keyword]),
-.md-code__content .k:not([data-keyword]) {
-    color: var(--catppuccin-mocha-mauve);
-    font-weight: bold;
-}
+	/* Names like None, True, False, etc. */
+	.doc-signature .kc,
+	.md-code__content .kc {
+		color: var(--catppuccin-mocha-maroon);
+		font-weight: bold;
+	}
 
-/* Specifically def and class */
-.doc-signature .k[data-keyword="def"],
-.doc-signature .k[data-keyword="class"],
-.md-code__content .k[data-keyword="def"],
-.md-code__content .k[data-keyword="class"] {
-    color: var(--catppuccin-mocha-red);
-    font-weight: bolder;
-    font-style: italic;
-}
+	/* conditionals */
+	/* All keywords (except def/class) */
+	.doc-signature .k:not([data-keyword]),
+	.md-code__content .k:not([data-keyword]) {
+		color: var(--catppuccin-mocha-mauve);
+		font-weight: bold;
+	}
 
-/* Class names */
-.doc-signature .nc,
-.md-code__content .nc {
-    color: var(--catppuccin-mocha-peach);
-    font-weight: bold;
-}
+	/* Specifically def and class */
+	.doc-signature .k[data-keyword="def"],
+	.doc-signature .k[data-keyword="class"],
+	.md-code__content .k[data-keyword="def"],
+	.md-code__content .k[data-keyword="class"] {
+		color: var(--catppuccin-mocha-red);
+		font-weight: bolder;
+		font-style: italic;
+	}
 
-/* Named parameters */
-[data-parameter] {
-    color: var(--catppuccin-mocha-rosewater) !important;
-    font-weight: bolder;
-}
+	/* Class names */
+	.doc-signature .nc,
+	.md-code__content .nc {
+		color: var(--catppuccin-mocha-peach);
+		font-weight: bold;
+	}
 
-/* Functions and methods */
-[data-function] {
-    color: var(--catppuccin-mocha-blue) !important;
-    font-weight: bold;
-}
+	/* Named parameters */
+	[data-parameter] {
+		color: var(--catppuccin-mocha-rosewater) !important;
+		font-weight: bolder;
+	}
 
-/* Class references */
-[data-class] {
-    color: var(--catppuccin-mocha-sapphire) !important; /* or your preferred color */
-    font-weight: bold;
-}
-/* Enhanced import highlighting */
-.doc-signature .n[data-function],
-.md-code__content .n[data-function] {
-    color: var(--catppuccin-mocha-blue) !important;
-    font-weight: bold;
-}
+	/* Functions and methods */
+	[data-function] {
+		color: var(--catppuccin-mocha-blue) !important;
+		font-weight: bold;
+	}
 
-/* Import-specific class highlighting */
-.doc-signature .n[data-class],
-.md-code__content .n[data-class] {
-    color: var(--catppuccin-mocha-sapphire) ;
-    font-weight: bold;
-}
+	/* Class references */
+	[data-class] {
+		color: var(--catppuccin-mocha-sapphire) !important; /* or your preferred color */
+		font-weight: bold;
+	}
+	/* Enhanced import highlighting */
+	.doc-signature .n[data-function],
+	.md-code__content .n[data-function] {
+		color: var(--catppuccin-mocha-blue) !important;
+		font-weight: bold;
+	}
 
-/* Return types - distinct from regular classes */
-[data-return-type] {
-    color: var(--catppuccin-mocha-lavender) !important;
-    font-weight: bold;
-}
+	/* Import-specific class highlighting */
+	.doc-signature .n[data-class],
+	.md-code__content .n[data-class] {
+		color: var(--catppuccin-mocha-sapphire);
+		font-weight: bold;
+	}
 
-/* Return types that are also classes - combine both styles */
-[data-return-type][data-class] {
-    color: var(--catppuccin-mocha-lavender) !important;
-    font-weight: bold;
-}
+	/* Return types - distinct from regular classes */
+	[data-return-type] {
+		color: var(--catppuccin-mocha-lavender) !important;
+		font-weight: bold;
+	}
 
-/* Type annotations in parameter lists - similar to return types but different color */
-[data-type-annotation] {
-    color: var(--catppuccin-mocha-lavender) ;
-    font-weight: bold;
-}
+	/* Return types that are also classes - combine both styles */
+	[data-return-type][data-class] {
+		color: var(--catppuccin-mocha-lavender) !important;
+		font-weight: bold;
+	}
 
+	/* Type annotations in parameter lists - similar to return types but different color */
+	[data-type-annotation] {
+		color: var(--catppuccin-mocha-lavender);
+		font-weight: bold;
+	}
 
-/* Type annotations that are also classes - blend the styles */
-[data-type-annotation][data-class] {
-    color: var(--catppuccin-mocha-lavender) !important;
-    font-weight: bold;
-}
+	/* Type annotations that are also classes - blend the styles */
+	[data-type-annotation][data-class] {
+		color: var(--catppuccin-mocha-lavender) !important;
+		font-weight: bold;
+	}
 
-[data-attribute], 
-[data-variable] {
-    color: var(--catppuccin-mocha-text);
-    font-weight: normal;
-}
+	[data-attribute],
+	[data-variable] {
+		color: var(--catppuccin-mocha-text);
+		font-weight: normal;
+	}
 
-/* Dunder names */
-.doc-signature .vm,
-.md-code__content .vm {
-    color: var(--catppuccin-mocha-sky);
-    font-weight: normal;
-}
+	/* Dunder names */
+	.doc-signature .vm,
+	.md-code__content .vm {
+		color: var(--catppuccin-mocha-sky);
+		font-weight: normal;
+	}
 
-/* Built-in keywords */
-.doc-signature .bp,
-.md-code__content .bp {
-    color: var(--catppuccin-mocha-peach);
-    font-style: italic;
-    font-weight: bold;
-}
+	/* Built-in keywords */
+	.doc-signature .bp,
+	.md-code__content .bp {
+		color: var(--catppuccin-mocha-peach);
+		font-style: italic;
+		font-weight: bold;
+	}
 
-/* Built-in function methods */
-.doc-signature .fm, 
-.md-code__content .fm {
-    color: var(--catppuccin-mocha-sapphire);
-}
+	/* Built-in function methods */
+	.doc-signature .fm,
+	.md-code__content .fm {
+		color: var(--catppuccin-mocha-sapphire);
+	}
 
-/* conditional operators */
-.doc-signature .ow,
-.md-code__content .ow {
-    color: var(--catppuccin-mocha-mauve);
-    font-weight: bold;
-}
+	/* conditional operators */
+	.doc-signature .ow,
+	.md-code__content .ow {
+		color: var(--catppuccin-mocha-mauve);
+		font-weight: bold;
+	}
 
-/* Standard library types */
-.doc-signature .nb,
-.md-code__content .nb {
-    color: var(--catppuccin-mocha-sapphire) !important;
-    font-weight: bold;
-}
+	/* Standard library types */
+	.doc-signature .nb,
+	.md-code__content .nb {
+		color: var(--catppuccin-mocha-sapphire) !important;
+		font-weight: bold;
+	}
 
-/* Symbols */
-.doc-signature .o,
-.md-code__content .o {
-    color: var(--catppuccin-mocha-yellow);
-    font-weight: bold;
-}
+	/* Symbols */
+	.doc-signature .o,
+	.md-code__content .o {
+		color: var(--catppuccin-mocha-yellow);
+		font-weight: bold;
+	}
 
-/* Punctuation */
-.doc-signature .p,
-.md-code__content .p {
-    color: var(--catppuccin-mocha-pink);
-    font-weight: bold;
-}
+	/* Punctuation */
+	.doc-signature .p,
+	.md-code__content .p {
+		color: var(--catppuccin-mocha-pink);
+		font-weight: bold;
+	}
 
-/* Name decorators */
-.doc-signature .nd,
-.md-code__content .nd {
-    color: var(--catppuccin-mocha-teal);
-    font-weight: bold;
-}
+	/* Name decorators */
+	.doc-signature .nd,
+	.md-code__content .nd {
+		color: var(--catppuccin-mocha-teal);
+		font-weight: bold;
+	}
 
-/* Name Exceptions */
-.doc-signature .ne,
-.md-code__content .ne {
-    color: var(--catppuccin-mocha-teal);
-    font-weight: bold;
-}
+	/* Name Exceptions */
+	.doc-signature .ne,
+	.md-code__content .ne {
+		color: var(--catppuccin-mocha-teal);
+		font-weight: bold;
+	}
 
-/* f"strings" */
-.doc-signature .sa,
-.md-code__content .sa {
-    color: var(--catppuccin-mocha-red);
-    font-style: italic;
-    font-weight: bold;
-}
+	/* f"strings" */
+	.doc-signature .sa,
+	.md-code__content .sa {
+		color: var(--catppuccin-mocha-red);
+		font-style: italic;
+		font-weight: bold;
+	}
 
-/* { } */
-.doc-signature .si,
-.md-code__content .si {
-    color: var(--catppuccin-mocha-red);
-}
+	/* { } */
+	.doc-signature .si,
+	.md-code__content .si {
+		color: var(--catppuccin-mocha-red);
+	}
 
-/* Strings */
-.doc-signature .s1, .s2,
-.md-code__content .s1, .s2 {
-    color: var(--catppuccin-mocha-green);
-    font-weight: bold;
-}
+	/* Strings */
+	.doc-signature .s1,
+	.s2,
+	.md-code__content .s1,
+	.s2 {
+		color: var(--catppuccin-mocha-green);
+		font-weight: bold;
+	}
 
-/* DocString */
-.doc-signature .sd,
-.md-code__content .sd,
-.doc-signature .c1,
-.md-code__content .c1 {
-    color: var(--catppuccin-mocha-subtext0);
-    font-style: italic;
-    font-weight: bold;
-}
+	/* DocString */
+	.doc-signature .sd,
+	.md-code__content .sd,
+	.doc-signature .c1,
+	.md-code__content .c1 {
+		color: var(--catppuccin-mocha-subtext0);
+		font-style: italic;
+		font-weight: bold;
+	}
 
-/* Keyword Namespaces */
-.doc-signature .kn,
-.md-code__content .kn {
-    color: var(--catppuccin-mocha-mauve);
-    font-weight: bold;
-}
+	/* Keyword Namespaces */
+	.doc-signature .kn,
+	.md-code__content .kn {
+		color: var(--catppuccin-mocha-mauve);
+		font-weight: bold;
+	}
 
-/* Names modules */
-.doc-signature .nn,
-.md-code__content .nn {
-    color: var(--catppuccin-mocha-text);
-}
+	/* Names modules */
+	.doc-signature .nn,
+	.md-code__content .nn {
+		color: var(--catppuccin-mocha-text);
+	}
 
-/* Numbers */
-.doc-signature .mi,
-.md-code__content .mi {
-    color: var(--catppuccin-mocha-maroon);
-}
+	/* Numbers */
+	.doc-signature .mi,
+	.md-code__content .mi {
+		color: var(--catppuccin-mocha-maroon);
+	}
 
-/* Fancier color for built-in types */
-.doc-signature .n>a[href^="https://docs.python.org/"][href*="/functions.html#"]{
-    color: var(--catppuccin-mocha-sky);
-}
-.doc-signature .n>a[href^="https://docs.python.org/"][href*="/class-str.html#"]{
-    color: var(--catppuccin-mocha-peach);
-}
-.doc-signature .n>a[href^="https://docs.python.org/"][href*="/stdtypes.html#"] {
-    color: var(--catppuccin-mocha-sky);
-}
-.doc-signature .n>a[href^="https://docs.python.org/"][href*="/constants.html#"] {
-    color: var(--catppuccin-mocha-red);
-}
-.doc-signature .n>a[href^="https://docs.python.org/"][href*="/typing.html#"],
-.tb .n>a[href^="https://docs.python.org/"][href*="/typing.html#"]{
-    color: var(--catppuccin-mocha-lavender) ;
-}
-.doc-signature .n>a[href^="https://docs.python.org/"][href*="/collections.abc.html#"],
-.tb .n>a[href^="https://docs.python.org/"][href*="/collections.abc.html#"]{
-    color: var(--catppuccin-mocha-lavender) ;
-}
-
+	/* Fancier color for built-in types */
+	.doc-signature .n
+		> a[href^="https://docs.python.org/"][href*="/functions.html#"] {
+		color: var(--catppuccin-mocha-sky);
+	}
+	.doc-signature
+		.n
+		> a[href^="https://docs.python.org/"][href*="/class-str.html#"] {
+		color: var(--catppuccin-mocha-peach);
+	}
+	.doc-signature
+		.n
+		> a[href^="https://docs.python.org/"][href*="/stdtypes.html#"] {
+		color: var(--catppuccin-mocha-sky);
+	}
+	.doc-signature
+		.n
+		> a[href^="https://docs.python.org/"][href*="/constants.html#"] {
+		color: var(--catppuccin-mocha-red);
+	}
+	.doc-signature
+		.n
+		> a[href^="https://docs.python.org/"][href*="/typing.html#"],
+	.tb .n > a[href^="https://docs.python.org/"][href*="/typing.html#"] {
+		color: var(--catppuccin-mocha-lavender);
+	}
+	.doc-signature
+		.n
+		> a[href^="https://docs.python.org/"][href*="/collections.abc.html#"],
+	.tb .n > a[href^="https://docs.python.org/"][href*="/collections.abc.html#"] {
+		color: var(--catppuccin-mocha-lavender);
+	}
 }

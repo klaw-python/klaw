@@ -10,13 +10,13 @@ Comprehensive review of the klaw-core runtime module identified **8 issues** acr
 
 ### Issue Severity Distribution
 
-| Severity | Count | Description |
-|----------|-------|-------------|
-| 🔴 HIGH | 3 | Correctness bugs, race conditions |
-| 🟡 MEDIUM | 3 | API inconsistencies, dead code |
-| 🟢 LOW | 2 | Polish, unused features |
+| Severity  | Count | Description                       |
+| --------- | ----- | --------------------------------- |
+| 🔴 HIGH   | 3     | Correctness bugs, race conditions |
+| 🟡 MEDIUM | 3     | API inconsistencies, dead code    |
+| 🟢 LOW    | 2     | Polish, unused features           |
 
----
+______________________________________________________________________
 
 ## Findings by Priority
 
@@ -27,6 +27,7 @@ Comprehensive review of the klaw-core runtime module identified **8 issues** acr
 
 **Problem:**
 `TaskHandle.cancel()` can race with `_complete()` / `_fail()` from backends:
+
 - Cancel called before backend attaches CancelScope → task still runs and overwrites cancelled state
 - No guard preventing `_complete`/`_fail` from overwriting previous terminal state
 - First terminal event should "win" but currently last one does
@@ -38,15 +39,16 @@ Comprehensive review of the klaw-core runtime module identified **8 issues** acr
 ```python
 # In executor.py - TaskHandle class
 
+
 class TaskHandle(Generic[T]):
     __slots__ = (
-        "_result",
-        "_exception",
-        "_exit_reason",
-        "_completed",  # Add this field
-        "_event",
-        "_cancel_scope",
-        "_on_cancel",  # Add this for Ray integration
+        '_result',
+        '_exception',
+        '_exit_reason',
+        '_completed',  # Add this field
+        '_event',
+        '_cancel_scope',
+        '_on_cancel',  # Add this for Ray integration
     )
 
     def __init__(self) -> None:
@@ -95,12 +97,12 @@ class TaskHandle(Generic[T]):
             self._cancel_scope.cancel()
         # Set terminal state
         self._exit_reason = ExitReason.CANCELLED
-        self._exception = CancelledError(reason or "Task cancelled")
+        self._exception = CancelledError(reason or 'Task cancelled')
         self._completed = True
         self._event.set()
 ```
 
----
+______________________________________________________________________
 
 ### 🔴 HIGH-2: CancelScope Created Too Late in LocalBackend
 
@@ -116,6 +118,7 @@ CancelScope is created inside `_execute()` which runs asynchronously after `run(
 
 ```python
 # In _backends/local.py - LocalBackend class
+
 
 async def run(
     self,
@@ -139,7 +142,7 @@ async def run(
                 # Check if already cancelled before starting work
                 if scope.cancel_called:
                     handle._fail(
-                        CancelledError("Task cancelled before start"),
+                        CancelledError('Task cancelled before start'),
                         ExitReason.CANCELLED,
                     )
                     return
@@ -158,14 +161,14 @@ async def run(
                         handle._complete(result)
                     else:
                         handle._fail(
-                            CancelledError("Task cancelled"),
+                            CancelledError('Task cancelled'),
                             ExitReason.CANCELLED,
                         )
 
                 except Exception as e:
                     if scope.cancel_called:
                         handle._fail(
-                            CancelledError("Task cancelled"),
+                            CancelledError('Task cancelled'),
                             ExitReason.CANCELLED,
                         )
                     else:
@@ -177,7 +180,7 @@ async def run(
     return handle
 ```
 
----
+______________________________________________________________________
 
 ### 🔴 HIGH-3: Wrong TimeoutError Exception Type
 
@@ -205,6 +208,7 @@ except ImportError:
     # Fallback for older anyio versions
     AnyioTimeoutError = TimeoutError
 
+
 # In _wait_for_tasks method:
 async def _wait_for_tasks(self, timeout: float | None = None) -> None:
     """Wait for all tasks to complete with optional timeout."""
@@ -214,9 +218,10 @@ async def _wait_for_tasks(self, timeout: float | None = None) -> None:
                 await self._task_count.wait_for_zero()
         except AnyioTimeoutError:
             # Timeout waiting for tasks
-            raise TimeoutError(f"Timed out waiting for tasks after {timeout}s") from None
+            raise TimeoutError(f'Timed out waiting for tasks after {timeout}s') from None
     else:
         await self._task_count.wait_for_zero()
+
 
 # In shutdown method:
 async def shutdown(self, wait: bool = True, timeout: float | None = None) -> None:
@@ -234,7 +239,7 @@ async def shutdown(self, wait: bool = True, timeout: float | None = None) -> Non
     # ... rest of shutdown
 ```
 
----
+______________________________________________________________________
 
 ### 🟡 MEDIUM-1: Dead Hook Processor in Logging
 
@@ -251,6 +256,7 @@ async def shutdown(self, wait: bool = True, timeout: float | None = None) -> Non
 ```python
 # In _logging.py - update _get_shared_processors():
 
+
 def _get_shared_processors() -> list[Any]:
     """Get processors shared between structlog and stdlib logging."""
     import structlog
@@ -259,13 +265,13 @@ def _get_shared_processors() -> list[Any]:
         structlog.contextvars.merge_contextvars,
         structlog.stdlib.add_log_level,
         structlog.stdlib.add_logger_name,
-        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.TimeStamper(fmt='iso'),
         structlog.stdlib.ExtraAdder(),
         _create_hook_processor(),  # ADD THIS LINE - wire hooks into pipeline
     ]
 ```
 
----
+______________________________________________________________________
 
 ### 🟡 MEDIUM-2: Protocol Methods Return `Any` Instead of `Result`
 
@@ -284,6 +290,7 @@ Protocol methods `try_send()` and `try_recv()` are typed to return `Any`, but do
 
 from klaw_core.result import Err, Ok, Result
 from klaw_core.runtime.errors import ChannelClosed, ChannelEmpty, ChannelFull
+
 
 class Sender(Protocol[T]):
     """Protocol for sending values into a channel."""
@@ -344,7 +351,7 @@ class Receiver(Protocol[T_co]):
         ...
 ```
 
----
+______________________________________________________________________
 
 ### 🟡 MEDIUM-3: Incorrect MPMC Documentation
 
@@ -358,7 +365,7 @@ Documentation says "All clones receive the same messages (MPMC semantics)" which
 
 **Fix:**
 
-```python
+````python
 # In channels.py - update module docstring:
 
 """Channels: multi-producer multi-consumer, oneshot, broadcast, watch, select.
@@ -378,6 +385,7 @@ receivers. For broadcast semantics where ALL receivers see EVERY message, use
 """
 
 # Update Receiver.clone() docstring:
+
 
 def clone(self) -> Receiver[T_co]:
     """Clone this receiver for multi-consumer use.
@@ -406,9 +414,9 @@ def clone(self) -> Receiver[T_co]:
         ```
     """
     ...
-```
+````
 
----
+______________________________________________________________________
 
 ### 🟢 LOW-1: RuntimeConfig.concurrency Unused
 
@@ -424,6 +432,7 @@ def clone(self) -> Receiver[T_co]:
 
 ```python
 # In executor.py - update Executor.__init__():
+
 
 def __init__(
     self,
@@ -445,10 +454,10 @@ def __init__(
     # Apply auto-detected concurrency if not explicitly set
     if self._backend_type == Backend.LOCAL:
         if max_workers is not None:
-            merged_kwargs["max_workers"] = max_workers
-        elif "max_workers" not in merged_kwargs:
+            merged_kwargs['max_workers'] = max_workers
+        elif 'max_workers' not in merged_kwargs:
             # Use auto-detected concurrency from config
-            merged_kwargs["max_workers"] = config.concurrency
+            merged_kwargs['max_workers'] = config.concurrency
 
     self._backend_kwargs = merged_kwargs
     self._backend: ExecutorBackend | None = None
@@ -456,7 +465,7 @@ def __init__(
     self._started: bool = False
 ```
 
----
+______________________________________________________________________
 
 ### 🟢 LOW-2: RayBackend Cancellation Not Wired
 
@@ -472,6 +481,7 @@ When user calls `handle.cancel()`, it only sets local state. The Ray task contin
 
 ```python
 # In _backends/ray.py - update run() method:
+
 
 async def run(
     self,
@@ -508,7 +518,7 @@ async def run(
             handle._complete(result)
         except ray.exceptions.TaskCancelledError:
             handle._fail(
-                CancelledError("Ray task cancelled"),
+                CancelledError('Ray task cancelled'),
                 ExitReason.CANCELLED,
             )
         except ray.exceptions.RayTaskError as e:
@@ -520,7 +530,7 @@ async def run(
     return handle
 ```
 
----
+______________________________________________________________________
 
 ## Additional Recommendations
 
@@ -534,7 +544,7 @@ Currently `LocalSender.try_send()` reads capacity from `self._stream.statistics(
 
 ```python
 class LocalSender(Generic[T]):
-    __slots__ = ("_stream", "_capacity")
+    __slots__ = ('_stream', '_capacity')
 
     def __init__(self, stream: MemoryObjectSendStream[T], capacity: int | float) -> None:
         self._stream = stream
@@ -552,6 +562,7 @@ class LocalSender(Generic[T]):
             return Err(ChannelClosed())
         except anyio.ClosedResourceError:
             return Err(ChannelClosed())
+
 
 # Update channel() factory:
 async def channel(
@@ -576,6 +587,7 @@ async def shutdown(self, wait: bool = True, timeout: float | None = None) -> Non
     # After all cleanup
     self._task_handles.clear()
     self._started = False
+
 
 # In RayBackend.shutdown():
 async def shutdown(self, wait: bool = True, timeout: float | None = None) -> None:
@@ -616,13 +628,14 @@ async def submit(
     return handle
 ```
 
----
+______________________________________________________________________
 
 ## Task Checklist
 
 ### Phase 1: Critical Fixes (Do First)
 
 - [ ] **HIGH-1:** Fix TaskHandle cancellation races
+
   - [ ] Add `_completed` flag to TaskHandle
   - [ ] Guard `_complete()` and `_fail()` with early return if completed
   - [ ] Add `_on_cancel` callback mechanism
@@ -630,12 +643,14 @@ async def submit(
   - [ ] Write tests: cancel-before-start, cancel-during, cancel-after
 
 - [ ] **HIGH-2:** Fix LocalBackend CancelScope timing
+
   - [ ] Create CancelScope in `run()` before scheduling
   - [ ] Pass scope to `_execute()` inner function
   - [ ] Check `scope.cancel_called` before starting work
   - [ ] Write test: immediate cancel after run() returns
 
 - [ ] **HIGH-3:** Fix TimeoutError import
+
   - [ ] Import `anyio.TimeoutError` or use `anyio.get_cancelled_exc_class()`
   - [ ] Update `_wait_for_tasks()` exception handler
   - [ ] Update `shutdown()` exception handler
@@ -644,15 +659,18 @@ async def submit(
 ### Phase 2: API Consistency
 
 - [ ] **MEDIUM-1:** Wire logging hooks
+
   - [ ] Add `_create_hook_processor()` to `_get_shared_processors()`
   - [ ] Write test: verify hook receives log events
 
 - [ ] **MEDIUM-2:** Fix protocol return types
+
   - [ ] Change `Sender.try_send` return type to `Result[None, ChannelFull | ChannelClosed]`
   - [ ] Change `Receiver.try_recv` return type to `Result[T_co, ChannelEmpty | ChannelClosed]`
   - [ ] Run mypy to verify no regressions
 
 - [ ] **MEDIUM-3:** Fix MPMC documentation
+
   - [ ] Update module docstring
   - [ ] Update `Receiver.clone()` docstring
   - [ ] Update example in clone docstring
@@ -660,10 +678,12 @@ async def submit(
 ### Phase 3: Polish
 
 - [ ] **LOW-1:** Use RuntimeConfig.concurrency
+
   - [ ] Update Executor.__init__ to use config.concurrency as default max_workers
   - [ ] Preserve explicit max_workers override behavior
 
 - [ ] **LOW-2:** Wire Ray cancellation
+
   - [ ] Add `_on_cancel` callback in RayBackend.run()
   - [ ] Call `ray.cancel(object_ref)` in callback
   - [ ] Handle `ray.exceptions.TaskCancelledError` in result waiter
@@ -674,7 +694,7 @@ async def submit(
 - [ ] Clear task handle lists in shutdown()
 - [ ] Fix or remove backend_kwargs from submit() docs
 
----
+______________________________________________________________________
 
 ## Test Commands
 
@@ -694,7 +714,7 @@ uv run mypy workspaces/python/klaw-core/src/klaw_core/runtime/
 uv run ruff check workspaces/python/klaw-core/src/klaw_core/runtime/
 ```
 
----
+______________________________________________________________________
 
 ## Architecture Decisions
 
@@ -703,6 +723,7 @@ uv run ruff check workspaces/python/klaw-core/src/klaw_core/runtime/
 **Decision:** Keep `anyio.MemoryObjectStream` for LocalChannel implementation.
 
 **Rationale:**
+
 - PRD specified `aiologic.Queue` but anyio provides better semantics for our use case
 - Built-in MPMC with reference-counted clones
 - Native cancellation and closure handling via `EndOfStream`/`BrokenResourceError`
@@ -711,7 +732,7 @@ uv run ruff check workspaces/python/klaw-core/src/klaw_core/runtime/
 
 **Action:** ✅ Updated PRD task 4.3 description to reflect this decision.
 
----
+______________________________________________________________________
 
 ### Decision 2: Ray vs Custom IPC for Distributed Channels
 
@@ -719,28 +740,31 @@ uv run ruff check workspaces/python/klaw-core/src/klaw_core/runtime/
 
 **Analysis of alternatives:**
 
-| Option | Cross-Platform | Complexity | Performance | Maintenance |
-|--------|---------------|------------|-------------|-------------|
-| **Ray Queue** | ✅ Yes | 🟢 Low | 🟡 Medium | 🟢 Low |
-| Unix sockets + msgspec | ❌ Unix only | 🟡 Medium | 🟢 High | 🟡 Medium |
-| gRPC + msgspec | ✅ Yes | 🟡 Medium | 🟢 High | 🟡 Medium |
-| Arrow Flight | ✅ Yes | 🔴 High | 🟡 Batch-only | 🔴 High |
-| multiprocessing.Queue | ✅ Yes | 🟢 Low | 🟡 Medium | 🟢 Low |
+| Option                 | Cross-Platform | Complexity | Performance   | Maintenance |
+| ---------------------- | -------------- | ---------- | ------------- | ----------- |
+| **Ray Queue**          | ✅ Yes         | 🟢 Low     | 🟡 Medium     | 🟢 Low      |
+| Unix sockets + msgspec | ❌ Unix only   | 🟡 Medium  | 🟢 High       | 🟡 Medium   |
+| gRPC + msgspec         | ✅ Yes         | 🟡 Medium  | 🟢 High       | 🟡 Medium   |
+| Arrow Flight           | ✅ Yes         | 🔴 High    | 🟡 Batch-only | 🔴 High     |
+| multiprocessing.Queue  | ✅ Yes         | 🟢 Low     | 🟡 Medium     | 🟢 Low      |
 
 **Rationale:**
+
 1. **Ray is already a required dependency** - no new dependencies added
-2. **Cross-platform** - Windows, Linux, macOS all supported
-3. **Proven distributed queue** - `ray.util.queue.Queue` handles serialization, backpressure, and cross-process/machine communication
-4. **Same code local and cluster** - matches PRD goal "switch via config"
-5. **No custom IPC protocol** - eliminates maintenance burden of socket management, framing, error handling
-6. **Fault tolerance built-in** - Ray handles actor failures, restarts
+1. **Cross-platform** - Windows, Linux, macOS all supported
+1. **Proven distributed queue** - `ray.util.queue.Queue` handles serialization, backpressure, and cross-process/machine communication
+1. **Same code local and cluster** - matches PRD goal "switch via config"
+1. **No custom IPC protocol** - eliminates maintenance burden of socket management, framing, error handling
+1. **Fault tolerance built-in** - Ray handles actor failures, restarts
 
 **Trade-offs:**
+
 - Distributed channels require Ray runtime (acceptable since Ray is already required for distributed execution)
 - Higher latency than raw sockets (acceptable for most use cases)
 - Serialization via cloudpickle, not msgspec (acceptable, msgspec can still be used for payload if needed)
 
 **Implementation approach:**
+
 ```python
 # Local channel (in-process) - already implemented
 distributed=False → anyio.MemoryObjectStream wrapped in LocalSender/LocalReceiver
@@ -751,17 +775,19 @@ distributed=True → ray.util.queue.Queue wrapped in RaySender/RayReceiver
 
 **Action:** ✅ Updated PRD tasks 4.13-4.14 to use RayChannel wrapper instead of custom msgspec IPC.
 
----
+______________________________________________________________________
 
 ### Impact on Task List
 
 **Removed complexity:**
+
 - ❌ No custom serialization protocol with msgspec tagged unions
 - ❌ No Unix socket or named pipe management
 - ❌ No cross-platform IPC abstraction layer
 - ❌ No custom backpressure implementation
 
 **Simplified tasks:**
+
 - 4.13: `RayChannel` wrapper around `ray.util.queue.Queue` (~2h instead of ~8h)
 - 4.14: `RaySender`/`RayReceiver` adapters matching local API (~1h instead of ~4h)
 - 4.17: Tests for Ray channel wrapper (~1h instead of ~3h)

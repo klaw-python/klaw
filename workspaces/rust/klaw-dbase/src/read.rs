@@ -10,7 +10,7 @@ use std::iter::{Fuse, FusedIterator};
 use std::sync::Arc;
 
 // Progress tracking
-use crate::progress::{DbaseProgressTracker, ProgressCallback};
+use crate::progress::DbaseProgressTracker;
 
 #[allow(unused_imports)]
 use dbase::{FieldInfo, Reader, Record};
@@ -338,7 +338,7 @@ where
             reader: self.reader,
             sources: self.sources,
             schema: self.schema,
-            field_info: self.field_info,
+            _field_info: self.field_info,
             field_name_mapping: self.field_name_mapping.clone(),
             single_column_name: self.single_column_name,
             options: self.options,
@@ -381,7 +381,7 @@ where
 
     /// Convert the scanner into an actual iterator with progress tracking
     pub fn into_iter_with_progress(
-        mut self,
+        self,
         batch_size: Option<usize>,
         with_columns: Option<Arc<[usize]>>,
         progress_tracker: Option<DbaseProgressTracker>,
@@ -391,7 +391,7 @@ where
             reader: self.reader,
             sources: self.sources,
             schema: self.schema,
-            field_info: self.field_info,
+            _field_info: self.field_info,
             field_name_mapping: self.field_name_mapping.clone(),
             single_column_name: self.single_column_name,
             options: self.options,
@@ -415,7 +415,7 @@ where
     reader: Reader<R>,
     sources: I,
     schema: Arc<PlSchema>,
-    field_info: Vec<FieldInfo>,
+    _field_info: Vec<FieldInfo>,
     field_name_mapping: std::collections::HashMap<String, String>, // sanitized -> original
     single_column_name: Option<PlSmallStr>,
     options: DbfReadOptions,
@@ -591,7 +591,7 @@ where
                         Ok(record) => {
                             if let Some(field_value) = record.get(original_field_name) {
                                 // Try to push the value, if it fails insert null
-                                if let Err(_) = builder.try_push_value(field_value) {
+                                if builder.try_push_value(field_value).is_err() {
                                     builder.push_null();
                                 }
                             } else {
@@ -626,10 +626,8 @@ where
         let df = DataFrame::new(columns)?;
 
         // If this is an empty DataFrame, we've reached EOF - finish progress tracking
-        if df.is_empty() {
-            if let Some(ref tracker) = self.progress_tracker {
-                tracker.finish();
-            }
+        if let (true, Some(tracker)) = (df.is_empty(), &self.progress_tracker) {
+            tracker.finish();
         }
 
         Ok(df)
@@ -655,13 +653,12 @@ where
 #[cfg(test)]
 mod read_tests {
     use super::*;
+    #[allow(unused_imports)]
     use std::io::Cursor;
 
     /// Helper function to create a temporary DBF file for testing
     fn create_test_dbf() -> std::io::Result<(tempfile::NamedTempFile, Vec<dbase::FieldInfo>)> {
-        use dbase::{
-            Date, DateTime, FieldName, FieldValue, Reader, Record, TableWriterBuilder, Time,
-        };
+        use dbase::{Date, FieldName, FieldValue, Reader, Record, TableWriterBuilder};
 
         // Create a temporary file
         let temp_file = tempfile::NamedTempFile::new()?;
@@ -675,7 +672,7 @@ mod read_tests {
             .add_date_field(FieldName::try_from("BIRTH_DATE").unwrap())
             .add_float_field(FieldName::try_from("SCORE").unwrap(), 10, 2)
             .build_with_file_dest(temp_file.path())
-            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+            .map_err(std::io::Error::other)?;
 
         // Create test records
         let records = vec![
@@ -730,16 +727,13 @@ mod read_tests {
         for record in records {
             writer
                 .write_record(&record)
-                .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+                .map_err(std::io::Error::other)?;
         }
 
-        writer
-            .finalize()
-            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+        writer.finalize().map_err(std::io::Error::other)?;
 
         // Now read the file back to get the field info
-        let reader = Reader::from_path(temp_file.path())
-            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+        let reader = Reader::from_path(temp_file.path()).map_err(std::io::Error::other)?;
         let fields = reader.fields().to_vec();
 
         Ok((temp_file, fields))

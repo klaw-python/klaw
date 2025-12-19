@@ -241,8 +241,7 @@ pub fn serialize_dataframe(
     for row_idx in 0..df.height() {
         let row: Vec<AnyValue> = schema
             .iter()
-            .enumerate()
-            .map(|(_col_idx, (name, _))| df.column(name).unwrap().get(row_idx).unwrap())
+            .map(|(name, _)| df.column(name).unwrap().get(row_idx).unwrap())
             .collect();
 
         let record = try_as_record(&row, &specs)?;

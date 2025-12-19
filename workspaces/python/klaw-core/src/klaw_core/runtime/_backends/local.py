@@ -52,9 +52,7 @@ class LocalBackend:
         # CountdownEvent starts in "set" state (no pending tasks)
         self._task_count: aiologic.CountdownEvent = aiologic.CountdownEvent()
         self._max_workers = max_workers
-        self._limiter: anyio.CapacityLimiter | None = (
-            anyio.CapacityLimiter(max_workers) if max_workers else None
-        )
+        self._limiter: anyio.CapacityLimiter | None = anyio.CapacityLimiter(max_workers) if max_workers else None
 
     async def _ensure_task_group(self) -> TaskGroup:
         """Ensure task group is created and entered.

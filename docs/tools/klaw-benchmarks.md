@@ -34,14 +34,16 @@ klaw-benchmarks compare --baseline main
 ```python
 from klaw_benchmarks import Benchmark, BenchmarkSuite
 
-suite = BenchmarkSuite("my_suite")
+suite = BenchmarkSuite('my_suite')
+
 
 @suite.benchmark
 async def test_async_operation():
     # Your benchmark code here
     pass
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     suite.run()
 ```
 
@@ -54,3 +56,4 @@ Configure benchmarks via `benchmarks.toml`:
 iterations = 1000
 warmup_iterations = 100
 timeout = 30
+```

@@ -46,7 +46,8 @@ except AssertionError as e:
         result = subprocess.run(
             [sys.executable, '-O', '-c', code],
             capture_output=True,
-            text=True, check=False,
+            text=True,
+            check=False,
         )
         assert 'ASSERTION_ERROR:should fail' in result.stdout
 
@@ -183,14 +184,8 @@ class TestAssertResultIntegration:
         def validate_username(username: str):
             return (
                 assert_result(len(username) >= 3, 'username too short')
-                .and_then(
-                    lambda _: assert_result(len(username) <= 20, 'username too long')
-                )
-                .and_then(
-                    lambda _: assert_result(
-                        username.isalnum(), 'username must be alphanumeric'
-                    )
-                )
+                .and_then(lambda _: assert_result(len(username) <= 20, 'username too long'))
+                .and_then(lambda _: assert_result(username.isalnum(), 'username must be alphanumeric'))
                 .and_then(lambda _: Ok(username))
             )
 

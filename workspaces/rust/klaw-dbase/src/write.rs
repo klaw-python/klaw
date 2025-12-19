@@ -125,7 +125,7 @@ pub fn write_dbase<'a>(
         let serializer = Serializer::new();
 
         // Convert schema to dBase field specifications
-        let field_specs = serializer.try_as_schema(&schema)?;
+        let field_specs = serializer.try_as_schema(schema)?;
 
         // Adjust field specs for memo fields based on threshold
         let adjusted_specs = adjust_specs_for_memo_fields(field_specs, &options);
@@ -199,7 +199,7 @@ pub fn write_dbase_with_specs<'a>(
         // Write all DataFrame chunks
         for chunk in chunks_iter {
             if chunk.schema() == schema {
-                write_dataframe_to_dbase(&chunk, &mut writer, &adjusted_specs)?;
+                write_dataframe_to_dbase(chunk, &mut writer, &adjusted_specs)?;
             } else {
                 return Err(Error::NonMatchingSchemas);
             }

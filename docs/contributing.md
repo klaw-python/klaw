@@ -5,9 +5,9 @@ We welcome contributions to Klaw! This document provides guidelines and informat
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/your-username/klaw.git`
-3. Set up the development environment: `just setup`
-4. Create a feature branch: `git checkout -b feature/your-feature`
+1. Clone your fork: `git clone https://github.com/your-username/klaw.git`
+1. Set up the development environment: `just setup`
+1. Create a feature branch: `git checkout -b feature/your-feature`
 
 ## Development Workflow
 
@@ -33,9 +33,9 @@ We welcome contributions to Klaw! This document provides guidelines and informat
 ## Pull Request Process
 
 1. Ensure your code follows the style guidelines
-2. Update tests and documentation as needed
-3. Run the full test suite and linting
-4. Submit a pull request with a clear description
+1. Update tests and documentation as needed
+1. Run the full test suite and linting
+1. Submit a pull request with a clear description
 
 ## Code of Conduct
 

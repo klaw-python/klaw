@@ -91,7 +91,7 @@ impl DbaseProgressTracker {
 
         let overall_pb = mp.add(ProgressBar::new(total_records));
         overall_pb.set_style(
-            ProgressStyle::with_template(&overall_template)
+            ProgressStyle::with_template(overall_template)
                 .unwrap()
                 .progress_chars("━━-"),
         );
@@ -109,12 +109,12 @@ impl DbaseProgressTracker {
         for file in files.iter() {
             let pb = mp.add(ProgressBar::new(file.get_file_size()));
             pb.set_style(
-                ProgressStyle::with_template(&file_template)
+                ProgressStyle::with_template(file_template)
                     .unwrap()
                     .progress_chars("━━-")
                     .tick_strings(&["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]),
             );
-            pb.set_message(format!("{}", file.get_file_name()));
+            pb.set_message(file.get_file_name().to_string());
             pb.enable_steady_tick(std::time::Duration::from_millis(100));
             file_progress_bars.push(pb);
         }
@@ -181,8 +181,6 @@ impl DbaseProgressTracker {
         }
     }
 }
-
-/// Convenience functions for common progress scenarios
 
 /// Create a progress tracker for a single DBC file
 pub fn create_single_file_progress(file: DbaseFileInfo) -> DbaseProgressTracker {

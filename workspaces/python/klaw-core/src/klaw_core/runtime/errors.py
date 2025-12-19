@@ -9,16 +9,24 @@ __all__ = [
     'ActorNotFoundError',
     'ActorStopped',
     'ActorStoppedError',
+    'AlreadySent',
+    'AlreadySentError',
     'BackendError',
     'BackendException',
     'Cancelled',
     'CancelledError',
+    'ChannelBackendError',
+    'ChannelBackendErrorException',
     'ChannelClosed',
     'ChannelClosedError',
     'ChannelEmpty',
     'ChannelEmptyError',
     'ChannelFull',
     'ChannelFullError',
+    'Lagged',
+    'LaggedError',
+    'NoReceivers',
+    'NoReceiversError',
     'Timeout',
     'TimeoutError',
 ]
@@ -88,6 +96,100 @@ class ChannelEmptyError(Exception):
     def to_struct(self) -> ChannelEmpty:
         """Convert to struct for Result-based code."""
         return ChannelEmpty()
+
+
+class Lagged(msgspec.Struct, frozen=True, gc=False):
+    """Broadcast receiver lagged behind - struct variant for Result[T, Lagged]."""
+
+    skipped: int
+
+    def to_exception(self) -> LaggedError:
+        """Convert to exception for raise-based code."""
+        return LaggedError(self.skipped)
+
+
+class LaggedError(Exception):
+    """Broadcast receiver lagged behind - exception variant."""
+
+    def __init__(self, skipped: int) -> None:
+        self.skipped = skipped
+        super().__init__(f'Receiver lagged behind, skipped {skipped} message(s)')
+
+    def to_struct(self) -> Lagged:
+        """Convert to struct for Result-based code."""
+        return Lagged(self.skipped)
+
+
+class AlreadySent(msgspec.Struct, frozen=True, gc=False):
+    """Oneshot channel already sent - struct variant for Result[T, AlreadySent]."""
+
+    def to_exception(self) -> AlreadySentError:
+        """Convert to exception for raise-based code."""
+        return AlreadySentError()
+
+
+class AlreadySentError(Exception):
+    """Oneshot channel already sent - exception variant."""
+
+    def __init__(self) -> None:
+        super().__init__('Oneshot channel already sent')
+
+    def to_struct(self) -> AlreadySent:
+        """Convert to struct for Result-based code."""
+        return AlreadySent()
+
+
+class NoReceivers(msgspec.Struct, frozen=True, gc=False):
+    """No receivers provided to select() - struct variant for Result[T, NoReceivers]."""
+
+    def to_exception(self) -> NoReceiversError:
+        """Convert to exception for raise-based code."""
+        return NoReceiversError()
+
+
+class NoReceiversError(Exception):
+    """No receivers provided to select() - exception variant."""
+
+    def __init__(self) -> None:
+        super().__init__('select() requires at least one receiver')
+
+    def to_struct(self) -> NoReceivers:
+        """Convert to struct for Result-based code."""
+        return NoReceivers()
+
+
+class ChannelBackendError(msgspec.Struct, frozen=True, gc=False):
+    """Channel backend operation failed - struct variant for Result[T, ChannelBackendError]."""
+
+    message: str
+    backend: str
+    actor_name: str | None = None
+    namespace: str | None = None
+
+    def to_exception(self) -> ChannelBackendErrorException:
+        """Convert to exception for raise-based code."""
+        return ChannelBackendErrorException(self.message, self.backend, self.actor_name, self.namespace)
+
+
+class ChannelBackendErrorException(Exception):
+    """Channel backend operation failed - exception variant."""
+
+    def __init__(self, message: str, backend: str, actor_name: str | None = None, namespace: str | None = None) -> None:
+        self.message = message
+        self.backend = backend
+        self.actor_name = actor_name
+        self.namespace = namespace
+        parts = [f'[{backend}]']
+        if actor_name:
+            parts.append(f"actor='{actor_name}'")
+        if namespace:
+            parts.append(f"ns='{namespace}'")
+        parts.append(message)
+        super().__init__(' '.join(parts))
+
+    def to_struct(self) -> ChannelBackendError:
+        """Convert to struct for Result-based code."""
+        return ChannelBackendError(self.message, self.backend, self.actor_name, self.namespace)
 
 
 # --- Timeout/Cancellation Errors ---

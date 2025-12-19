@@ -49,9 +49,7 @@ def do[**P, E, T](
 
     @wrapt.decorator
     def wrapper(
-        wrapped: Callable[
-            P, Generator[Ok[Any] | Err[E] | Some[Any] | NothingType, Any, T]
-        ],
+        wrapped: Callable[P, Generator[Ok[Any] | Err[E] | Some[Any] | NothingType, Any, T]],
         instance: Any,
         args: tuple[Any, ...],
         kwargs: dict[str, Any],
@@ -102,9 +100,7 @@ def do_async[**P, E](
 
     @wrapt.decorator
     async def wrapper(
-        wrapped: Callable[
-            P, AsyncGenerator[Ok[Any] | Err[E] | Some[Any] | NothingType, Any]
-        ],
+        wrapped: Callable[P, AsyncGenerator[Ok[Any] | Err[E] | Some[Any] | NothingType, Any]],
         instance: Any,
         args: tuple[Any, ...],
         kwargs: dict[str, Any],

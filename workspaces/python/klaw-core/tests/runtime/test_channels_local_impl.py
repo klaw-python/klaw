@@ -416,9 +416,7 @@ class TestCapacity:
 
 
 @pytest.mark.hypothesis_property
-@given(
-    values=st.lists(st.integers(min_value=-1000000, max_value=1000000), min_size=1, max_size=100)
-)
+@given(values=st.lists(st.integers(min_value=-1000000, max_value=1000000), min_size=1, max_size=100))
 async def test_property_fifo_order(values: list[int]) -> None:
     """Property: Channel maintains FIFO order for all messages."""
     tx, rx = await channel()
@@ -432,9 +430,7 @@ async def test_property_fifo_order(values: list[int]) -> None:
 
 
 @pytest.mark.hypothesis_property
-@given(
-    values=st.lists(st.text(min_size=1), min_size=1, max_size=50)
-)
+@given(values=st.lists(st.text(min_size=1), min_size=1, max_size=50))
 async def test_property_no_data_loss(values: list[str]) -> None:
     """Property: No messages are lost after send."""
     tx, rx = await channel()

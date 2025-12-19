@@ -189,10 +189,7 @@ for workspace_path in python_workspaces:
         # Skip private modules in Python packages only (any path component starting with _)
         # But don't skip __init__.py files (they're not private)
         rel_parts = path.relative_to(src).parts
-        if not is_rust_ext and any(
-            part.startswith('_') and not part.startswith('__')
-            for part in rel_parts
-        ):
+        if not is_rust_ext and any(part.startswith('_') and not part.startswith('__') for part in rel_parts):
             continue
 
         module_path = path.relative_to(src).with_suffix('')

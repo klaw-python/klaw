@@ -22,9 +22,7 @@ class NoInstanceError(TypeError):
     def __init__(self, typeclass_name: str, value_type: type) -> None:
         self.typeclass_name = typeclass_name
         self.value_type = value_type
-        super().__init__(
-            f"No instance of '{typeclass_name}' for type '{value_type.__name__}'"
-        )
+        super().__init__(f"No instance of '{typeclass_name}' for type '{value_type.__name__}'")
 
 
 class TypeClass[F: Callable[..., Any]](wrapt.ObjectProxy):
@@ -153,10 +151,7 @@ class TypeClass[F: Callable[..., Any]](wrapt.ObjectProxy):
             if not value:
                 return True
             key_type, val_type = args if len(args) == 2 else (args[0], Any)
-            return all(
-                isinstance(k, key_type) and isinstance(v, val_type)
-                for k, v in value.items()
-            )
+            return all(isinstance(k, key_type) and isinstance(v, val_type) for k, v in value.items())
 
         return True
 

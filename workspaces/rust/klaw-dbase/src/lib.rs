@@ -7,5 +7,6 @@ pub mod read_compressed;
 
 pub mod ser;
 
+#[cfg(test)]
 pub mod tests;
 pub mod write;

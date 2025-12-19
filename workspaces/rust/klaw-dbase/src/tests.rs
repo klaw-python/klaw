@@ -1,4 +1,6 @@
 //! Integration tests for the optimal dBase implementation
+#![allow(unused_imports)]
+#![allow(unused_mut)]
 
 use std::io::Cursor;
 
@@ -7,7 +9,7 @@ use polars::prelude::{DataType, Schema as PlSchema};
 
 use super::{
     read::{DbfReadOptions, DbfReader},
-    write::{write_dbase, write_dbase_file, WriteOptions},
+    write::{WriteOptions, write_dbase, write_dbase_file},
 };
 
 #[cfg(test)]
@@ -53,7 +55,7 @@ mod integration_tests {
                         let mut iterator = reader.into_iter(None, None);
                         let mut roundtrip_df = None;
 
-                        while let Some(batch_result) = iterator.next() {
+                        for batch_result in iterator {
                             let batch = batch_result.unwrap();
                             if batch.is_empty() {
                                 continue;
@@ -150,7 +152,7 @@ mod integration_tests {
                             let mut iterator = reader.into_iter(None, None);
                             let mut roundtrip_df = None;
 
-                            while let Some(batch_result) = iterator.next() {
+                            for batch_result in iterator {
                                 let batch = batch_result.unwrap();
                                 if batch.is_empty() {
                                     continue;
@@ -225,7 +227,7 @@ mod integration_tests {
                         let mut iterator = reader.into_iter(None, None);
                         let mut roundtrip_df = None;
 
-                        while let Some(batch_result) = iterator.next() {
+                        for batch_result in iterator {
                             let batch = batch_result.unwrap();
                             if batch.is_empty() {
                                 continue;
@@ -270,7 +272,7 @@ mod integration_tests {
         let df = df! {
             "palavra" => ["Hello", "World", "Now"],
             "inteiro" => [42, -17, 0],
-            "real" => [3.14, -2.71, 0.0],
+            "real" => [3.15, -2.71, 0.0],
             "booliano" => [true, false, true],
             "data" => ["2023-01-01", "2023-12-31", "2023-06-15"],
         }
@@ -314,7 +316,7 @@ mod integration_tests {
                         let mut iterator = reader.into_iter(None, None);
                         let mut roundtrip_df = None; // TODO: This is a hack to avoid the first batch being empty
 
-                        while let Some(batch_result) = iterator.next() {
+                        for batch_result in iterator {
                             let batch = batch_result.unwrap();
                             if batch.is_empty() {
                                 continue;
@@ -417,7 +419,7 @@ mod integration_tests {
                         let mut iterator = reader.into_iter(None, None);
                         let mut roundtrip_df = None;
 
-                        while let Some(batch_result) = iterator.next() {
+                        for batch_result in iterator {
                             let batch = batch_result.unwrap();
                             if batch.is_empty() {
                                 continue;
@@ -529,7 +531,7 @@ mod integration_tests {
                 let mut iterator = reader.into_iter(None, None);
                 let mut original_df = None;
 
-                while let Some(batch_result) = iterator.next() {
+                for batch_result in iterator {
                     let batch = batch_result.unwrap();
                     if batch.is_empty() {
                         continue;
@@ -572,7 +574,7 @@ mod integration_tests {
                                     let mut iterator = reader.into_iter(None, None);
                                     let mut roundtrip_df = None;
 
-                                    while let Some(batch_result) = iterator.next() {
+                                    for batch_result in iterator {
                                         let batch = batch_result.unwrap();
                                         if batch.is_empty() {
                                             continue;

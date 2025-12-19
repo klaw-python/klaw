@@ -10,10 +10,8 @@ texts = st.text(min_size=0, max_size=100)
 booleans = st.booleans()
 
 # Exception strategies
-exceptions = st.sampled_from(
-    [
-        ValueError('test'),
-        TypeError('test'),
-        RuntimeError('test'),
-    ]
-)
+exceptions = st.sampled_from([
+    ValueError('test'),
+    TypeError('test'),
+    RuntimeError('test'),
+])

@@ -41,9 +41,7 @@ SCRIPT_SUFFIX = '"'
 class TestExecutorInContainer:
     """Tests for Executor running inside containers."""
 
-    def test_executor_submit_in_container(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_executor_submit_in_container(self, docker: DockerClient, unique_name: str) -> None:
         """Executor.submit() works inside a container."""
         script = f"""{SETUP_SCRIPT}
 from klaw_core.runtime import init, Executor
@@ -74,9 +72,7 @@ asyncio.run(main())
         except Exception as e:
             pytest.skip(f'Docker not available: {e}')
 
-    def test_executor_map_in_container(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_executor_map_in_container(self, docker: DockerClient, unique_name: str) -> None:
         """Executor.map() works inside a container."""
         script = f"""{SETUP_SCRIPT}
 from klaw_core.runtime import init, Executor
@@ -107,9 +103,7 @@ asyncio.run(main())
         except Exception as e:
             pytest.skip(f'Docker not available: {e}')
 
-    def test_executor_respects_cpu_limit(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_executor_respects_cpu_limit(self, docker: DockerClient, unique_name: str) -> None:
         """Executor respects container CPU limits."""
         script = f"""{SETUP_SCRIPT}
 from klaw_core.runtime import init, get_config, Executor
@@ -159,9 +153,7 @@ def _get_ray_image() -> str:
 class TestRayBackendCluster:
     """Tests for RayBackend with Ray cluster."""
 
-    def test_ray_backend_basic(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_ray_backend_basic(self, docker: DockerClient, unique_name: str) -> None:
         """RayBackend executes tasks on Ray cluster."""
         import time
 
@@ -244,9 +236,7 @@ ray.shutdown()
             except Exception:
                 pass
 
-    def test_ray_backend_map(
-        self, docker: DockerClient, unique_name: str
-    ) -> None:
+    def test_ray_backend_map(self, docker: DockerClient, unique_name: str) -> None:
         """RayBackend.map() distributes work across cluster."""
         import time
 

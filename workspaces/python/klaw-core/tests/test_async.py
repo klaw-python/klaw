@@ -467,13 +467,11 @@ class TestAsyncRaceOk:
             return Ok(f'source{n}') if n == 2 else Err(f'fail{n}')
 
         # Source 2 is fastest and succeeds
-        result = await async_race_ok(
-            [
-                slow_source(1, 0.1),
-                slow_source(2, 0.01),
-                slow_source(3, 0.1),
-            ]
-        )
+        result = await async_race_ok([
+            slow_source(1, 0.1),
+            slow_source(2, 0.01),
+            slow_source(3, 0.1),
+        ])
         assert result == Ok('source2')
 
     @pytest.mark.asyncio
@@ -489,13 +487,11 @@ class TestAsyncRaceOk:
                 cancelled.append(n)
                 raise
 
-        await async_race_ok(
-            [
-                trackable(1, 0.01),  # Succeeds first
-                trackable(2, 0.1),  # Should be cancelled
-                trackable(3, 0.1),  # Should be cancelled
-            ]
-        )
+        await async_race_ok([
+            trackable(1, 0.01),  # Succeeds first
+            trackable(2, 0.1),  # Should be cancelled
+            trackable(3, 0.1),  # Should be cancelled
+        ])
 
         assert 2 in cancelled or 3 in cancelled
 
@@ -607,11 +603,7 @@ class TestAsyncIntegration:
                 return Err('name too short')
             return Ok(user)
 
-        result = await (
-            AsyncResult(fetch_user(1))
-            .aand_then_async(validate_user)
-            .amap(lambda u: u['name'].upper())
-        )
+        result = await AsyncResult(fetch_user(1)).aand_then_async(validate_user).amap(lambda u: u['name'].upper())
         assert result == Ok('USER-1')
 
     @pytest.mark.asyncio

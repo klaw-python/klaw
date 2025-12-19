@@ -171,9 +171,7 @@ class AsyncResult[T, E]:
 
         return AsyncResult(_mapped())
 
-    def amap_async[U](
-        self, f: Callable[[T], Awaitable[U]]
-    ) -> AsyncResult[U, E]:
+    def amap_async[U](self, f: Callable[[T], Awaitable[U]]) -> AsyncResult[U, E]:
         """Apply an async function to the Ok value.
 
         If the underlying Result is Ok, awaits f(value).
@@ -225,9 +223,7 @@ class AsyncResult[T, E]:
 
         return AsyncResult(_mapped())
 
-    def amap_err_async[F](
-        self, f: Callable[[E], Awaitable[F]]
-    ) -> AsyncResult[T, F]:
+    def amap_err_async[F](self, f: Callable[[E], Awaitable[F]]) -> AsyncResult[T, F]:
         """Apply an async function to the Err value.
 
         Args:
@@ -245,9 +241,7 @@ class AsyncResult[T, E]:
 
         return AsyncResult(_mapped())
 
-    def aand_then[U](
-        self, f: Callable[[T], Result[U, E]]
-    ) -> AsyncResult[U, E]:
+    def aand_then[U](self, f: Callable[[T], Result[U, E]]) -> AsyncResult[U, E]:
         """Chain with a sync function that returns a Result.
 
         If Ok, calls f(value) and returns its result.
@@ -278,9 +272,7 @@ class AsyncResult[T, E]:
 
         return AsyncResult(_chained())
 
-    def aand_then_async[U](
-        self, f: Callable[[T], Awaitable[Result[U, E]]]
-    ) -> AsyncResult[U, E]:
+    def aand_then_async[U](self, f: Callable[[T], Awaitable[Result[U, E]]]) -> AsyncResult[U, E]:
         """Chain with an async function that returns a Result.
 
         If Ok, awaits f(value) and returns its result.
@@ -311,9 +303,7 @@ class AsyncResult[T, E]:
 
         return AsyncResult(_chained())
 
-    def aor_else[F](
-        self, f: Callable[[E], Result[T, F]]
-    ) -> AsyncResult[T, F]:
+    def aor_else[F](self, f: Callable[[E], Result[T, F]]) -> AsyncResult[T, F]:
         """Recover from an Err with a sync function.
 
         If Err, calls f(error) and returns its result.
@@ -334,9 +324,7 @@ class AsyncResult[T, E]:
 
         return AsyncResult(_recovered())
 
-    def aor_else_async[F](
-        self, f: Callable[[E], Awaitable[Result[T, F]]]
-    ) -> AsyncResult[T, F]:
+    def aor_else_async[F](self, f: Callable[[E], Awaitable[Result[T, F]]]) -> AsyncResult[T, F]:
         """Recover from an Err with an async function.
 
         If Err, awaits f(error) and returns its result.

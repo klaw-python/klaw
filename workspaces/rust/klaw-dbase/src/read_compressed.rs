@@ -198,6 +198,7 @@ impl<R: Read> Seek for DbcReader<R> {
 /// 1. Opens the DBC file and creates a DbcReader (Read + Seek)
 /// 2. Wraps it in an iterator as expected by DbfReader::try_new
 /// 3. Creates a DbfReader that will stream decompress data on-demand
+#[allow(clippy::type_complexity)]
 pub fn create_dbf_reader_from_dbc<P: AsRef<Path>>(
     dbc_path: P,
     single_column_name: Option<polars::prelude::PlSmallStr>,
@@ -295,10 +296,14 @@ mod tests {
                         let sample = batch.head(Some(10));
                         println!("✓ First 10 rows:\n{}", sample);
                         println!("✓ Data access works correctly");
-                        println!("✓ Streaming DBC reader integration with our DbfReader works perfectly!");
+                        println!(
+                            "✓ Streaming DBC reader integration with our DbfReader works perfectly!"
+                        );
 
                         println!("✓ Data access works correctly");
-                        println!("✓ Streaming DBC reader integration with our DbfReader works perfectly!");
+                        println!(
+                            "✓ Streaming DBC reader integration with our DbfReader works perfectly!"
+                        );
                         println!("  ✓ No memory overhead - decompresses on-demand");
                         println!("  ✓ Uses our optimized DbfReader pipeline");
                     } else {

@@ -1,0 +1,53 @@
+[project]
+name        = "klaw-random"
+version     = "0.1.0"
+description = "Fast pseudo-random number generator with Python bindings"
+readme      = "README.md"
+license     = { text = "MIT" }
+authors     = [{ name = "Raphael Vaz", email = "raphael@wrath.codes" }]
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+]
+keywords = ["random", "prng", "frand", "fast", "klaw"]
+
+requires-python = ">=3.13"
+dependencies = []
+
+[project.urls]
+Homepage      = "https://github.com/wrath-codes/klaw"
+Repository    = "https://github.com/wrath-codes/klaw"
+Issues        = "https://github.com/wrath-codes/klaw/issues"
+Documentation = "https://github.com/wrath-codes/klaw/tree/main/workspaces/rust/klaw-random"
+
+[dependency-groups]
+# CI: minimal deps for testing
+test = [
+    "maturin>=1.9.4",
+    "pytest>=8.3.3",
+    "pytest-mock>=3.14.0",
+]
+# Local dev: includes test + extras
+dev = [
+    { include-group = "test" },
+    "mypy>=1.10.1",
+    "maturin-import-hook>=0.3.0",
+    "pytest-icdiff>=0.9",
+    "pytest-xdist>=3.6.1",
+    "pytest-randomly>=3.16.0",
+    "pytest-sugar>=1.0.0",
+]
+
+[tool.maturin]
+module-name = "klaw_random._random_rs"
+features    = ["pyo3/extension-module"]
+
+[build-system]
+requires      = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"

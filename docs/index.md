@@ -59,6 +59,6 @@ We welcome contributions! Please see our [contributing guide](contributing.md) f
 
 Klaw is licensed under the MIT License. See [LICENSE](https://github.com/your-org/klaw/blob/main/LICENSE) for details.
 
----
+______________________________________________________________________
 
 *Built with ❤️ for the Python community*

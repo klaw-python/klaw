@@ -1,478 +1,552 @@
 /* Base Admonition colors */
 [data-md-color-scheme="slate"] {
-  --md-admonition-fg-color: var(--catppuccin-mocha-text);
-  --md-admonition-bg-color: var(--catppuccin-mocha-mantle);
-  --md-admonition-bg-color--light: var(--catppuccin-mocha-surface1);
-  --md-admonition-bg-color--dark: var(--catppuccin-mocha-surface2);
+	--md-admonition-fg-color: var(--catppuccin-mocha-text);
+	--md-admonition-bg-color: var(--catppuccin-mocha-mantle);
+	--md-admonition-bg-color--light: var(--catppuccin-mocha-surface1);
+	--md-admonition-bg-color--dark: var(--catppuccin-mocha-surface2);
 }
 
 /* Admonition Borders */
 .md-typeset .admonition,
 .md-typeset details {
-  border-width: 0;
-  border-left-width: 0.2rem;
+	border-width: 0;
+	border-left-width: 0.2rem;
 }
 
 /* Admonition vertical margins */
 .md-typeset .admonition,
 .md-typeset details {
-  margin-bottom: 0.5rem;
-  margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+	margin-top: 0.5rem;
 }
 
 /* Example */
 .md-typeset .admonition.example,
 .md-typeset details.example {
-  border-color: var(--catppuccin-mocha-mauve) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-mauve) 10%) !important;
+	border-color: var(--catppuccin-mocha-mauve) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-mauve) 10%
+	) !important;
 }
 
-.md-typeset .example>summary::after {
-  background-color: var(--catppuccin-mocha-mauve) !important;
+.md-typeset .example > summary::after {
+	background-color: var(--catppuccin-mocha-mauve) !important;
 }
 
-.md-typeset .example>.admonition-title::before,
-.md-typeset .example>summary::before {
-  background-color: var(--catppuccin-mocha-mauve) !important;
-  -webkit-mask-image: var(--md-admonition-icon--example);
-  mask-image: var(--md-admonition-icon--example);
+.md-typeset .example > .admonition-title::before,
+.md-typeset .example > summary::before {
+	background-color: var(--catppuccin-mocha-mauve) !important;
+	-webkit-mask-image: var(--md-admonition-icon--example);
+	mask-image: var(--md-admonition-icon--example);
 }
 
-.md-typeset .example>.admonition-title,
-.md-typeset .example>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-mauve) 10%) !important;
+.md-typeset .example > .admonition-title,
+.md-typeset .example > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-mauve) 10%
+	) !important;
 }
 
-.example>.highlight>pre {
-  border-radius: 0.2rem;
-  border: 0.1rem solid color-mix(in srgb, var(--catppuccin-mocha-base) 20%, var(--catppuccin-mocha-mauve) 60%);
+.example > .highlight > pre {
+	border-radius: 0.2rem;
+	border: 0.1rem solid
+		color-mix(
+			in srgb,
+			var(--catppuccin-mocha-base) 20%,
+			var(--catppuccin-mocha-mauve) 60%
+		);
 }
 
-.example>.highlight>pre>code>span .linenos::before {
-  color: var(--catppuccin-mocha-mauve);
+.example > .highlight > pre > code > span .linenos::before {
+	color: var(--catppuccin-mocha-mauve);
 }
 
 /* Note */
 .md-typeset .admonition.note,
 .md-typeset details.note {
-  border-color: var(--catppuccin-mocha-blue) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-blue) 10%) !important;
+	border-color: var(--catppuccin-mocha-blue) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-blue) 10%
+	) !important;
 }
 
-.md-typeset .note>summary::after {
-  background-color: var(--catppuccin-mocha-blue) !important;
+.md-typeset .note > summary::after {
+	background-color: var(--catppuccin-mocha-blue) !important;
 }
 
-.md-typeset .note>.admonition-title::before,
-.md-typeset .note>summary::before {
-  background-color: var(--catppuccin-mocha-blue) !important;
-  -webkit-mask-image: var(--md-admonition-icon--note);
-  mask-image: var(--md-admonition-icon--note);
+.md-typeset .note > .admonition-title::before,
+.md-typeset .note > summary::before {
+	background-color: var(--catppuccin-mocha-blue) !important;
+	-webkit-mask-image: var(--md-admonition-icon--note);
+	mask-image: var(--md-admonition-icon--note);
 }
 
-.md-typeset .note>.admonition-title,
-.md-typeset .note>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder;
-  font-size: small;
+.md-typeset .note > .admonition-title,
+.md-typeset .note > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder;
+	font-size: small;
 }
 
-.md-typeset details.note>p,
-.md-typeset details.note>ul,
-.md-typeset details.note>ol {
-  font-weight: bold;
-  font-size: x-small !important;
+.md-typeset details.note > p,
+.md-typeset details.note > ul,
+.md-typeset details.note > ol {
+	font-weight: bold;
+	font-size: x-small !important;
 }
 
 /* Abstract */
 .md-typeset .admonition.abstract,
 .md-typeset details.abstract {
-  border-color: var(--catppuccin-mocha-sky) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-sky) 10%) !important;
+	border-color: var(--catppuccin-mocha-sky) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-sky) 10%
+	) !important;
 }
 
-.md-typeset .abstract>summary::after {
-  background-color: var(--catppuccin-mocha-sky) !important;
+.md-typeset .abstract > summary::after {
+	background-color: var(--catppuccin-mocha-sky) !important;
 }
 
-.md-typeset .abstract>.admonition-title::before,
-.md-typeset .abstract>summary::before {
-  background-color: var(--catppuccin-mocha-sky) !important;
-  -webkit-mask-image: var(--md-admonition-icon--abstract);
-  mask-image: var(--md-admonition-icon--abstract);
+.md-typeset .abstract > .admonition-title::before,
+.md-typeset .abstract > summary::before {
+	background-color: var(--catppuccin-mocha-sky) !important;
+	-webkit-mask-image: var(--md-admonition-icon--abstract);
+	mask-image: var(--md-admonition-icon--abstract);
 }
 
-.md-typeset .abstract>.admonition-title,
-.md-typeset .abstract>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder;
-  font-size: small;
+.md-typeset .abstract > .admonition-title,
+.md-typeset .abstract > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder;
+	font-size: small;
 }
 
-.md-typeset details.abstract>p,
-.md-typeset details.abstract>ul,
-.md-typeset details.abstract>ol {
-  font-weight: bold;
-  font-size: x-small !important;
+.md-typeset details.abstract > p,
+.md-typeset details.abstract > ul,
+.md-typeset details.abstract > ol {
+	font-weight: bold;
+	font-size: x-small !important;
 }
 
 /* Info */
 .md-typeset .admonition.info,
 .md-typeset details.info {
-  border-color: var(--catppuccin-mocha-sapphire) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 70%, var(--catppuccin-latte-sapphire) 10%) !important;
+	border-color: var(--catppuccin-mocha-sapphire) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 70%,
+		var(--catppuccin-latte-sapphire) 10%
+	) !important;
 }
 
-.md-typeset .info>summary::after {
-  background-color: var(--catppuccin-mocha-sapphire) !important;
+.md-typeset .info > summary::after {
+	background-color: var(--catppuccin-mocha-sapphire) !important;
 }
 
-.md-typeset .info>.admonition-title::before,
-.md-typeset .info>summary::before {
-  background-color: var(--catppuccin-mocha-sapphire) !important;
-  -webkit-mask-image: var(--md-admonition-icon--info);
-  mask-image: var(--md-admonition-icon--info);
+.md-typeset .info > .admonition-title::before,
+.md-typeset .info > summary::before {
+	background-color: var(--catppuccin-mocha-sapphire) !important;
+	-webkit-mask-image: var(--md-admonition-icon--info);
+	mask-image: var(--md-admonition-icon--info);
 }
 
-.md-typeset .info>.admonition-title,
-.md-typeset .info>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder !important;
-  font-size: small !important;
+.md-typeset .info > .admonition-title,
+.md-typeset .info > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder !important;
+	font-size: small !important;
 }
 
-.md-typeset details.info>p,
-.md-typeset details.info>ul,
-.md-typeset details.info>ol {
-  font-weight: bold !important;
-  font-size: x-small !important;
+.md-typeset details.info > p,
+.md-typeset details.info > ul,
+.md-typeset details.info > ol {
+	font-weight: bold !important;
+	font-size: x-small !important;
 }
 
-.info>.highlight>pre {
-  border-radius: 0.2rem;
-  border: 0.1rem solid color-mix(in srgb, var(--catppuccin-mocha-base) 20%, var(--catppuccin-mocha-sapphire) 60%);
+.info > .highlight > pre {
+	border-radius: 0.2rem;
+	border: 0.1rem solid
+		color-mix(
+			in srgb,
+			var(--catppuccin-mocha-base) 20%,
+			var(--catppuccin-mocha-sapphire) 60%
+		);
 }
 
-.info>.highlight>pre>code>span .linenos::before {
-  color: var(--catppuccin-mocha-sapphire);
+.info > .highlight > pre > code > span .linenos::before {
+	color: var(--catppuccin-mocha-sapphire);
 }
 
 /* Tip */
 .md-typeset .admonition.tip,
 .md-typeset details.tip {
-  border-color: var(--catppuccin-mocha-teal) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-teal) 10%) !important;
+	border-color: var(--catppuccin-mocha-teal) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-teal) 10%
+	) !important;
 }
 
-.md-typeset .tip>summary::after {
-  background-color: var(--catppuccin-mocha-teal) !important;
+.md-typeset .tip > summary::after {
+	background-color: var(--catppuccin-mocha-teal) !important;
 }
 
-.md-typeset .tip>.admonition-title::before,
-.md-typeset .tip>summary::before {
-  background-color: var(--catppuccin-mocha-teal) !important;
-  -webkit-mask-image: var(--md-admonition-icon--tip);
-  mask-image: var(--md-admonition-icon--tip);
+.md-typeset .tip > .admonition-title::before,
+.md-typeset .tip > summary::before {
+	background-color: var(--catppuccin-mocha-teal) !important;
+	-webkit-mask-image: var(--md-admonition-icon--tip);
+	mask-image: var(--md-admonition-icon--tip);
 }
 
-.md-typeset .tip>.admonition-title,
-.md-typeset .tip>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder;
-  font-size: small;
+.md-typeset .tip > .admonition-title,
+.md-typeset .tip > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder;
+	font-size: small;
 }
 
-.md-typeset details.tip>p,
-.md-typeset details.tip>ul,
-.md-typeset details.tip>ol {
-  font-weight: bold;
-  font-size: x-small;
+.md-typeset details.tip > p,
+.md-typeset details.tip > ul,
+.md-typeset details.tip > ol {
+	font-weight: bold;
+	font-size: x-small;
 }
 
 /* Success */
 .md-typeset .admonition.success,
 .md-typeset details.success {
-  border-color: var(--catppuccin-mocha-green) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-green) 10%) !important;
+	border-color: var(--catppuccin-mocha-green) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-green) 10%
+	) !important;
 }
 
-.md-typeset .success>summary::after {
-  background-color: var(--catppuccin-mocha-green) !important;
+.md-typeset .success > summary::after {
+	background-color: var(--catppuccin-mocha-green) !important;
 }
 
-.md-typeset .success>.admonition-title::before,
-.md-typeset .success>summary::before {
-  background-color: var(--catppuccin-mocha-green) !important;
-  -webkit-mask-image: var(--md-admonition-icon--success);
-  mask-image: var(--md-admonition-icon--success);
+.md-typeset .success > .admonition-title::before,
+.md-typeset .success > summary::before {
+	background-color: var(--catppuccin-mocha-green) !important;
+	-webkit-mask-image: var(--md-admonition-icon--success);
+	mask-image: var(--md-admonition-icon--success);
 }
 
-.md-typeset .success>.admonition-title,
-.md-typeset .success>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder;
-  font-size: small;
+.md-typeset .success > .admonition-title,
+.md-typeset .success > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder;
+	font-size: small;
 }
 
-.md-typeset details.success>p,
-.md-typeset details.success>ul,
-.md-typeset details.success>ol {
-  font-weight: bold;
-  font-size: x-small;
+.md-typeset details.success > p,
+.md-typeset details.success > ul,
+.md-typeset details.success > ol {
+	font-weight: bold;
+	font-size: x-small;
 }
 
 /* Question */
 .md-typeset .admonition.question,
 .md-typeset details.question {
-  border-color: var(--catppuccin-mocha-yellow) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-yellow) 10%) !important;
+	border-color: var(--catppuccin-mocha-yellow) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-yellow) 10%
+	) !important;
 }
 
-.md-typeset .question>summary::after {
-  background-color: var(--catppuccin-mocha-yellow) !important;
+.md-typeset .question > summary::after {
+	background-color: var(--catppuccin-mocha-yellow) !important;
 }
 
-.md-typeset .question>.admonition-title::before,
-.md-typeset .question>summary::before {
-  background-color: var(--catppuccin-mocha-yellow) !important;
-  -webkit-mask-image: var(--md-admonition-icon--question);
-  mask-image: var(--md-admonition-icon--question);
+.md-typeset .question > .admonition-title::before,
+.md-typeset .question > summary::before {
+	background-color: var(--catppuccin-mocha-yellow) !important;
+	-webkit-mask-image: var(--md-admonition-icon--question);
+	mask-image: var(--md-admonition-icon--question);
 }
 
-.md-typeset .question>.admonition-title,
-.md-typeset .question>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder;
-  font-size: small;
+.md-typeset .question > .admonition-title,
+.md-typeset .question > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder;
+	font-size: small;
 }
 
-.md-typeset details.question>p,
-.md-typeset details.question>ul,
-.md-typeset details.question>ol {
-  font-weight: bold;
-  font-size: x-small;
+.md-typeset details.question > p,
+.md-typeset details.question > ul,
+.md-typeset details.question > ol {
+	font-weight: bold;
+	font-size: x-small;
 }
 
 /* Warning */
 .md-typeset .admonition.warning,
 .md-typeset details.warning {
-  border-color: var(--catppuccin-mocha-peach) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-peach) 10%) !important;
+	border-color: var(--catppuccin-mocha-peach) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-peach) 10%
+	) !important;
 }
 
-.md-typeset .warning>summary::after {
-  background-color: var(--catppuccin-mocha-peach) !important;
+.md-typeset .warning > summary::after {
+	background-color: var(--catppuccin-mocha-peach) !important;
 }
 
-.md-typeset .warning>.admonition-title::before,
-.md-typeset .warning>summary::before {
-  background-color: var(--catppuccin-mocha-peach) !important;
-  -webkit-mask-image: var(--md-admonition-icon--warning);
-  mask-image: var(--md-admonition-icon--warning);
+.md-typeset .warning > .admonition-title::before,
+.md-typeset .warning > summary::before {
+	background-color: var(--catppuccin-mocha-peach) !important;
+	-webkit-mask-image: var(--md-admonition-icon--warning);
+	mask-image: var(--md-admonition-icon--warning);
 }
 
-.md-typeset .warning>.admonition-title,
-.md-typeset .warning>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder;
-  font-size: small;
+.md-typeset .warning > .admonition-title,
+.md-typeset .warning > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder;
+	font-size: small;
 }
 
-.md-typeset details.warning>p,
-.md-typeset details.warning>ul,
-.md-typeset details.warning>ol {
-  font-weight: bold;
-  font-size: x-small;
+.md-typeset details.warning > p,
+.md-typeset details.warning > ul,
+.md-typeset details.warning > ol {
+	font-weight: bold;
+	font-size: x-small;
 }
 
 /* Failure */
 .md-typeset .admonition.failure,
 .md-typeset details.failure {
-  border-color: var(--catppuccin-mocha-maroon) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-maroon) 10%) !important;
+	border-color: var(--catppuccin-mocha-maroon) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-maroon) 10%
+	) !important;
 }
 
-.md-typeset .failure>summary::after {
-  background-color: var(--catppuccin-mocha-maroon) !important;
+.md-typeset .failure > summary::after {
+	background-color: var(--catppuccin-mocha-maroon) !important;
 }
 
-.md-typeset .failure>.admonition-title::before,
-.md-typeset .failure>summary::before {
-  background-color: var(--catppuccin-mocha-maroon) !important;
-  -webkit-mask-image: var(--md-admonition-icon--failure);
-  mask-image: var(--md-admonition-icon--failure);
+.md-typeset .failure > .admonition-title::before,
+.md-typeset .failure > summary::before {
+	background-color: var(--catppuccin-mocha-maroon) !important;
+	-webkit-mask-image: var(--md-admonition-icon--failure);
+	mask-image: var(--md-admonition-icon--failure);
 }
 
-.md-typeset .failure>.admonition-title,
-.md-typeset .failure>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder !important;
-  font-size: small !important;
+.md-typeset .failure > .admonition-title,
+.md-typeset .failure > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder !important;
+	font-size: small !important;
 }
 
-.md-typeset details.failure>p,
-.md-typeset details.failure>ul,
-.md-typeset details.failure>ol {
-  font-weight: bold !important;
-  font-size: x-small !important;
+.md-typeset details.failure > p,
+.md-typeset details.failure > ul,
+.md-typeset details.failure > ol {
+	font-weight: bold !important;
+	font-size: x-small !important;
 }
 
 /* Danger */
 .md-typeset .admonition.danger,
 .md-typeset details.danger {
-  border-color: var(--catppuccin-mocha-red) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-red) 10%) !important;
+	border-color: var(--catppuccin-mocha-red) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-red) 10%
+	) !important;
 }
 
-.md-typeset .danger>summary::after {
-  background-color: var(--catppuccin-mocha-red) !important;
+.md-typeset .danger > summary::after {
+	background-color: var(--catppuccin-mocha-red) !important;
 }
 
-.md-typeset .danger>.admonition-title::before,
-.md-typeset .danger>summary::before {
-  background-color: var(--catppuccin-mocha-red) !important;
-  -webkit-mask-image: var(--md-admonition-icon--danger);
-  mask-image: var(--md-admonition-icon--danger);
+.md-typeset .danger > .admonition-title::before,
+.md-typeset .danger > summary::before {
+	background-color: var(--catppuccin-mocha-red) !important;
+	-webkit-mask-image: var(--md-admonition-icon--danger);
+	mask-image: var(--md-admonition-icon--danger);
 }
 
-.md-typeset .danger>.admonition-title,
-.md-typeset .danger>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder !important;
-  font-size: small !important;
+.md-typeset .danger > .admonition-title,
+.md-typeset .danger > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder !important;
+	font-size: small !important;
 }
 
-.md-typeset details.danger>p,
-.md-typeset details.danger>ul,
-.md-typeset details.danger>ol {
-  font-weight: bold !important;
-  font-size: x-small !important;
+.md-typeset details.danger > p,
+.md-typeset details.danger > ul,
+.md-typeset details.danger > ol {
+	font-weight: bold !important;
+	font-size: x-small !important;
 }
 
 /* Bug */
 .md-typeset .admonition.bug,
 .md-typeset details.bug {
-  border-color: var(--catppuccin-mocha-red) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-red) 10%) !important;
+	border-color: var(--catppuccin-mocha-red) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-red) 10%
+	) !important;
 }
 
-.md-typeset .bug>summary::after {
-  background-color: var(--catppuccin-mocha-red) !important;
+.md-typeset .bug > summary::after {
+	background-color: var(--catppuccin-mocha-red) !important;
 }
 
-.md-typeset .bug>.admonition-title::before,
-.md-typeset .bug>summary::before {
-  background-color: var(--catppuccin-mocha-red) !important;
-  -webkit-mask-image: var(--md-admonition-icon--bug);
-  mask-image: var(--md-admonition-icon--bug);
+.md-typeset .bug > .admonition-title::before,
+.md-typeset .bug > summary::before {
+	background-color: var(--catppuccin-mocha-red) !important;
+	-webkit-mask-image: var(--md-admonition-icon--bug);
+	mask-image: var(--md-admonition-icon--bug);
 }
 
-.md-typeset .bug>.admonition-title,
-.md-typeset .bug>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder !important;
-  font-size: small !important;
+.md-typeset .bug > .admonition-title,
+.md-typeset .bug > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder !important;
+	font-size: small !important;
 }
 
-.md-typeset details.bug>p,
-.md-typeset details.bug>ul,
-.md-typeset details.bug>ol {
-  font-weight: bold !important;
-  font-size: x-small !important;
+.md-typeset details.bug > p,
+.md-typeset details.bug > ul,
+.md-typeset details.bug > ol {
+	font-weight: bold !important;
+	font-size: x-small !important;
 }
 
 /* Quote */
 .md-typeset .admonition.quote,
 .md-typeset details.quote {
-  border-color: var(--catppuccin-mocha-lavender) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-lavender) 10%) !important;
+	border-color: var(--catppuccin-mocha-lavender) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-lavender) 10%
+	) !important;
 }
 
-.md-typeset .quote>summary::after {
-  background-color: var(--catppuccin-mocha-lavender) !important;
+.md-typeset .quote > summary::after {
+	background-color: var(--catppuccin-mocha-lavender) !important;
 }
 
-.md-typeset .quote>.admonition-title::before,
-.md-typeset .quote>summary::before {
-  background-color: var(--catppuccin-mocha-lavender) !important;
-  -webkit-mask-image: var(--md-admonition-icon--quote);
-  mask-image: var(--md-admonition-icon--quote);
+.md-typeset .quote > .admonition-title::before,
+.md-typeset .quote > summary::before {
+	background-color: var(--catppuccin-mocha-lavender) !important;
+	-webkit-mask-image: var(--md-admonition-icon--quote);
+	mask-image: var(--md-admonition-icon--quote);
 }
 
-.md-typeset .quote>.admonition-title,
-.md-typeset .quote>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder;
-  font-size: small;
+.md-typeset .quote > .admonition-title,
+.md-typeset .quote > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder;
+	font-size: small;
 }
 
-.md-typeset details.quote>p,
-.md-typeset details.quote>ul,
-.md-typeset details.quote>ol {
-  font-weight: bold;
-  font-size: x-small;
+.md-typeset details.quote > p,
+.md-typeset details.quote > ul,
+.md-typeset details.quote > ol {
+	font-weight: bold;
+	font-size: x-small;
 }
-
 
 /* Source */
 .doc .doc-contents .mkdocstrings-source {
-  border: 0;
-  border-left: 0.2rem solid var(--catppuccin-mocha-pink) !important;
-  border-color: var(--catppuccin-mocha-pink) !important;
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-mocha-pink) 10%) !important;
-  margin-left: 0.5rem;
+	border: 0;
+	border-left: 0.2rem solid var(--catppuccin-mocha-pink) !important;
+	border-color: var(--catppuccin-mocha-pink) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-mocha-pink) 10%
+	) !important;
+	margin-left: 0.5rem;
 }
 
 .md-typeset .mkdocstrings-source,
 .md-typeset details.mkdocstrings-source {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
 }
 
-.mkdocstrings-source summary>code {
-  background-color: color-mix(in srgb, var(--catppuccin-mocha-base) 80%, var(--catppuccin-latte-pink) 10%) !important;
-  border: 0.08rem ridge var(--catppuccin-mocha-pink);
-  padding: 0.2rem 0.3rem 0.2rem 0.3rem !important;
-  border-radius: 0.2rem;
-  opacity: 0.8;
+.mkdocstrings-source summary > code {
+	background-color: color-mix(
+		in srgb,
+		var(--catppuccin-mocha-base) 80%,
+		var(--catppuccin-latte-pink) 10%
+	) !important;
+	border: 0.08rem ridge var(--catppuccin-mocha-pink);
+	padding: 0.2rem 0.3rem 0.2rem 0.3rem !important;
+	border-radius: 0.2rem;
+	opacity: 0.8;
 }
 
-.mkdocstrings-source summary>code:hover {
-  opacity: 1;
+.mkdocstrings-source summary > code:hover {
+	opacity: 1;
 }
 
-.md-typeset .mkdocstrings-source>summary::after,
-.md-typeset details.mkdocstrings-source>summary::after {
-  background-color: var(--catppuccin-mocha-pink) !important;
+.md-typeset .mkdocstrings-source > summary::after,
+.md-typeset details.mkdocstrings-source > summary::after {
+	background-color: var(--catppuccin-mocha-pink) !important;
 }
 
-.md-typeset .mkdocstrings-source>.mkdocstrings-source::before,
-.md-typeset .mkdocstrings-source>summary::before {
-  background-color: var(--catppuccin-mocha-pink) !important;
-  -webkit-mask-image: var(--md-admonition-icon--mkdocstrings-source);
-  mask-image: var(--md-admonition-icon--mkdocstrings-source);
+.md-typeset .mkdocstrings-source > .mkdocstrings-source::before,
+.md-typeset .mkdocstrings-source > summary::before {
+	background-color: var(--catppuccin-mocha-pink) !important;
+	-webkit-mask-image: var(--md-admonition-icon--mkdocstrings-source);
+	mask-image: var(--md-admonition-icon--mkdocstrings-source);
 }
 
-.md-typeset .mkdocstrings-source>code::before,
-.md-typeset .mkdocstrings-source>summary {
-  color: var(--catppuccin-mocha-text) !important;
-  font-weight: bolder !important;
-  font-size: x-small !important;
+.md-typeset .mkdocstrings-source > code::before,
+.md-typeset .mkdocstrings-source > summary {
+	color: var(--catppuccin-mocha-text) !important;
+	font-weight: bolder !important;
+	font-size: x-small !important;
 }
 
-.md-typeset details.mkdocstrings-source>p,
-.md-typeset details.mkdocstrings-source>ul,
-.md-typeset details.mkdocstrings-source>ol {
-  font-weight: bold !important;
-  font-size: x-small !important;
+.md-typeset details.mkdocstrings-source > p,
+.md-typeset details.mkdocstrings-source > ul,
+.md-typeset details.mkdocstrings-source > ol {
+	font-weight: bold !important;
+	font-size: x-small !important;
 }
 
-.mkdocstrings-source>.highlight>pre {
-  border-radius: 0.2rem;
-  border: 0.1rem solid color-mix(in srgb, var(--catppuccin-mocha-base) 20%, var(--catppuccin-mocha-pink) 80%);
+.mkdocstrings-source > .highlight > pre {
+	border-radius: 0.2rem;
+	border: 0.1rem solid
+		color-mix(
+			in srgb,
+			var(--catppuccin-mocha-base) 20%,
+			var(--catppuccin-mocha-pink) 80%
+		);
 }
 
-.mkdocstrings-source>.highlight>pre>code>span .linenos::before {
-  color: var(--catppuccin-mocha-pink);
+.mkdocstrings-source > .highlight > pre > code > span .linenos::before {
+	color: var(--catppuccin-mocha-pink);
 }

@@ -1,0 +1,25 @@
+[package]
+name        = "klaw-random"
+version     = "0.1.0"
+edition     = "2021"
+license     = "MIT"
+description = "Fast pseudo-random number generator with Python bindings"
+repository  = "https://github.com/wrath-codes/klaw"
+homepage    = "https://github.com/wrath-codes/klaw"
+readme      = "README.md"
+keywords    = ["random", "prng", "frand", "fast"]
+categories  = ["algorithms", "no-std"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default          = ["pyo3/extension-module"]
+extension-module = ["pyo3/extension-module"]
+
+[build-dependencies]
+pyo3-build-config = "0.25.1"
+
+[dependencies]
+pyo3 = { version = "0.25.1", features = ["abi3-py313"] }
+frand = "0.10"
