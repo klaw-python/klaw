@@ -450,7 +450,8 @@ class AsyncResult[T, E]:
                 tg.start_soon(run_self)
                 tg.start_soon(run_other)
 
-            assert result1 is not None and result2 is not None
+            assert result1 is not None
+            assert result2 is not None
 
             if isinstance(result1, Err):
                 return result1

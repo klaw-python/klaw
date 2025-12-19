@@ -56,40 +56,40 @@ from klaw_core.result import (
 from klaw_core.typeclass import typeclass
 
 __all__ = [
-    # Result types
-    'Err',
-    'Ok',
-    'Result',
-    'collect',
-    # Option types
-    'Nothing',
-    'NothingType',
-    'Option',
-    'Some',
-    # Propagation
-    'Propagate',
-    # Decorators
-    'do',
-    'do_async',
-    'pipe',
-    'pipe_async',
-    'result',
-    'safe',
-    'safe_async',
+    # Async
+    'AsyncResult',
     # Composition
     'Deref',
     'DerefOk',
     'DerefSome',
-    'pipe_fn',
-    # Typeclass
-    'typeclass',
-    # Lambda helpers
-    'fn',
+    # Result types
+    'Err',
+    # Option types
+    'Nothing',
+    'NothingType',
+    'Ok',
+    'Option',
+    # Propagation
+    'Propagate',
+    'Result',
+    'Some',
     # Assertions
     'assert_result',
-    'safe_assert',
-    # Async
-    'AsyncResult',
     'async_collect',
     'async_lru_safe',
+    'collect',
+    # Decorators
+    'do',
+    'do_async',
+    # Lambda helpers
+    'fn',
+    'pipe',
+    'pipe_async',
+    'pipe_fn',
+    'result',
+    'safe',
+    'safe_assert',
+    'safe_async',
+    # Typeclass
+    'typeclass',
 ]

@@ -15,7 +15,7 @@ P = ParamSpec('P')
 T = TypeVar('T')
 
 
-def pipe(func: Callable[P, T]) -> Callable[P, Ok[T]]:
+def pipe[**P, T](func: Callable[P, T]) -> Callable[P, Ok[T]]:
     """Decorator that wraps the return value in Ok.
 
     Useful for functions that never fail, to make them compatible
@@ -49,7 +49,7 @@ def pipe(func: Callable[P, T]) -> Callable[P, Ok[T]]:
     return wrapper(func)  # type: ignore[return-value]
 
 
-def pipe_async(
+def pipe_async[**P, T](
     func: Callable[P, Awaitable[T]],
 ) -> Callable[P, Awaitable[Ok[T]]]:
     """Async decorator that wraps the return value in Ok.

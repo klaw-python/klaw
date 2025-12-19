@@ -9,18 +9,18 @@ This module provides three functions: `scan_dbase`, `read_dbase`, and `write_dba
 `write_dbase` writes a `DataFrame` to a dBase file.
 """
 
-from ._dbase_rs import DbaseError, EmptySources, SchemaMismatch, EncodingError, DbcError
-from ._scan import read_dbase, scan_dbase, get_dbase_record_count
+from ._dbase_rs import DbaseError, DbcError, EmptySources, EncodingError, SchemaMismatch
+from ._scan import get_dbase_record_count, read_dbase, scan_dbase
 from ._sink import write_dbase
 
 __all__ = [
-    "DbaseError",
-    "EmptySources",
-    "SchemaMismatch",
-    "EncodingError",
-    "DbcError",
-    "scan_dbase",
-    "read_dbase",
-    "write_dbase",
-    "get_dbase_record_count",
+    'DbaseError',
+    'DbcError',
+    'EmptySources',
+    'EncodingError',
+    'SchemaMismatch',
+    'get_dbase_record_count',
+    'read_dbase',
+    'scan_dbase',
+    'write_dbase',
 ]

@@ -1,6 +1,6 @@
 def main():
-    print("Hello from klaw-cli!")
+    print('Hello from klaw-cli!')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

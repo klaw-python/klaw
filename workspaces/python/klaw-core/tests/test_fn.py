@@ -1,6 +1,7 @@
 """Tests for typed fn lambda placeholder."""
 
 import math
+import operator
 
 import pytest
 from hypothesis import given
@@ -709,7 +710,7 @@ class TestFnConversions:
     def test_float(self):
         """fn.float_() creates float conversion function."""
         to_float = fn.float_()
-        assert to_float('3.14') == 3.14
+        assert to_float('3.14') == math.pi
         assert to_float(3) == 3.0
 
     def test_str(self):
@@ -1059,7 +1060,7 @@ class TestStream:
 
     def test_stream_reduce(self):
         """Stream.reduce reduces to single value."""
-        result = Stream([1, 2, 3, 4]).reduce(lambda a, b: a + b)
+        result = Stream([1, 2, 3, 4]).reduce(operator.add)
         assert result == 10
 
     def test_stream_to_set(self):
@@ -1239,12 +1240,12 @@ class TestStreamOptionResult:
         """try_reduce returns Ok on success."""
         from klaw_core import Ok
 
-        result = Stream([1, 2, 3]).try_reduce(lambda a, b: a + b)
+        result = Stream([1, 2, 3]).try_reduce(operator.add)
         assert result == Ok(6)
 
     def test_try_reduce_err(self):
         """try_reduce returns Err on exception."""
-        result = Stream([]).try_reduce(lambda a, b: a + b)
+        result = Stream([]).try_reduce(operator.add)
         assert result.is_err()
         assert isinstance(result.error, TypeError)
 

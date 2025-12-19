@@ -15,7 +15,7 @@ from klaw_core.result import Err, Ok, Result
 __all__ = ['assert_result', 'safe_assert']
 
 
-def safe_assert(condition: bool, message: str = '') -> None:  # noqa: FBT001
+def safe_assert(condition: bool, message: str = '') -> None:
     """Assert that works even in optimized mode (-O flag).
 
     Unlike the built-in assert, this always executes regardless of __debug__.
@@ -49,7 +49,7 @@ def assert_result[E](
 
 
 def assert_result[E](
-    condition: bool,  # noqa: FBT001
+    condition: bool,
     error: E | Callable[[], E],
     *,
     lazy: bool = False,

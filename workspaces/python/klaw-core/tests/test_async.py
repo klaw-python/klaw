@@ -1,6 +1,7 @@
 """Tests for async utilities: AsyncResult, async_collect, async_lru_safe."""
 
 import asyncio
+import operator
 
 import pytest
 from klaw_core import Err, Ok, Result
@@ -250,7 +251,8 @@ class TestAsyncResult:
         result = await ar1.azip(ar2)
 
         assert result == Ok((1, 2))
-        assert order[0] in (1, 3) and order[1] in (1, 3)
+        assert order[0] in {1, 3}
+        assert order[1] in {1, 3}
 
     @pytest.mark.asyncio
     async def test_chained_operations(self):
@@ -259,7 +261,7 @@ class TestAsyncResult:
         async def fetch(id: int) -> Result[dict, str]:
             return Ok({'id': id, 'name': f'user-{id}'})
 
-        result = await AsyncResult(fetch(1)).amap(lambda d: d['name']).amap(str.upper)
+        result = await AsyncResult(fetch(1)).amap(operator.itemgetter('name')).amap(str.upper)
         assert result == Ok('USER-1')
 
     def test_repr(self):

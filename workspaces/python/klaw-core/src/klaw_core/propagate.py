@@ -3,7 +3,7 @@
 from typing import Any
 
 
-class Propagate(Exception):  # noqa: N818
+class Propagate(Exception):
     """Exception raised by .bail() to propagate Err/Nothing up the call stack.
 
     This is caught by the @result decorator to return the contained error.

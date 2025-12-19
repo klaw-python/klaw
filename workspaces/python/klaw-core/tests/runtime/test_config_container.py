@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     from python_on_whales import DockerClient
 
 
-@pytest.fixture(scope="module")
-def docker() -> "DockerClient":
+@pytest.fixture(scope='module')
+def docker() -> DockerClient:
     """Provide a DockerClient for container tests."""
     from python_on_whales import DockerClient
 
@@ -25,7 +25,7 @@ def docker() -> "DockerClient":
 
 
 # Path to klaw-core for volume mounting
-KLAW_CORE_PATH = "/Users/wrath/projects/klaw/workspaces/python/klaw-core"
+KLAW_CORE_PATH = '/Users/wrath/projects/klaw/workspaces/python/klaw-core'
 
 # Script prefix to install deps and setup path
 SETUP_SCRIPT = """
@@ -43,7 +43,7 @@ class TestDetectContainerCpuLimit:
     """Tests for _detect_container_cpu_limit() inside containers."""
 
     def test_detects_cpu_limit_with_cpus_flag(
-        self, docker: "DockerClient", unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """_detect_container_cpu_limit() returns correct value with --cpus=2."""
         script = f"""{SETUP_SCRIPT}
@@ -62,20 +62,20 @@ else:
 """
         try:
             output = docker.run(
-                "python:3.13-slim",
-                ["sh", "-c", script],
-                name=f"klaw_detect_cpu{unique_name}",
+                'python:3.13-slim',
+                ['sh', '-c', script],
+                name=f'klaw_detect_cpu{unique_name}',
                 cpus=2.0,
                 remove=True,
-                volumes=[(KLAW_CORE_PATH, "/app", "ro")],
+                volumes=[(KLAW_CORE_PATH, '/app', 'ro')],
             )
             print(output)
-            assert "cpu_limit=" in output
+            assert 'cpu_limit=' in output
         except Exception as e:
-            pytest.skip(f"Docker not available: {e}")
+            pytest.skip(f'Docker not available: {e}')
 
     def test_returns_none_without_cpu_limit(
-        self, docker: "DockerClient", unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """_detect_container_cpu_limit() returns None when no limit set."""
         script = f"""{SETUP_SCRIPT}
@@ -91,16 +91,16 @@ print('PASS: _detect_container_cpu_limit() returned None (no limit)')
 """
         try:
             output = docker.run(
-                "python:3.13-slim",
-                ["sh", "-c", script],
-                name=f"klaw_detect_no_cpu{unique_name}",
+                'python:3.13-slim',
+                ['sh', '-c', script],
+                name=f'klaw_detect_no_cpu{unique_name}',
                 remove=True,
-                volumes=[(KLAW_CORE_PATH, "/app", "ro")],
+                volumes=[(KLAW_CORE_PATH, '/app', 'ro')],
             )
             print(output)
-            assert "PASS" in output or "cpu_limit=None" in output
+            assert 'PASS' in output or 'cpu_limit=None' in output
         except Exception as e:
-            pytest.skip(f"Docker not available: {e}")
+            pytest.skip(f'Docker not available: {e}')
 
 
 @pytest.mark.containers
@@ -108,7 +108,7 @@ class TestDetectConcurrency:
     """Tests for _detect_concurrency() inside containers."""
 
     def test_respects_cpu_limit(
-        self, docker: "DockerClient", unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """_detect_concurrency() respects container CPU limit."""
         script = f"""{SETUP_SCRIPT}
@@ -124,20 +124,20 @@ print('PASS: _detect_concurrency() respects CPU limit')
 """
         try:
             output = docker.run(
-                "python:3.13-slim",
-                ["sh", "-c", script],
-                name=f"klaw_detect_conc{unique_name}",
+                'python:3.13-slim',
+                ['sh', '-c', script],
+                name=f'klaw_detect_conc{unique_name}',
                 cpus=2.0,
                 remove=True,
-                volumes=[(KLAW_CORE_PATH, "/app", "ro")],
+                volumes=[(KLAW_CORE_PATH, '/app', 'ro')],
             )
             print(output)
-            assert "concurrency=" in output
+            assert 'concurrency=' in output
         except Exception as e:
-            pytest.skip(f"Docker not available: {e}")
+            pytest.skip(f'Docker not available: {e}')
 
     def test_respects_memory_limit(
-        self, docker: "DockerClient", unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """_detect_concurrency() considers memory constraints."""
         script = f"""{SETUP_SCRIPT}
@@ -154,17 +154,17 @@ print('PASS: _detect_concurrency() returned valid value')
 """
         try:
             output = docker.run(
-                "python:3.13-slim",
-                ["sh", "-c", script],
-                name=f"klaw_detect_mem{unique_name}",
-                memory="512m",
+                'python:3.13-slim',
+                ['sh', '-c', script],
+                name=f'klaw_detect_mem{unique_name}',
+                memory='512m',
                 remove=True,
-                volumes=[(KLAW_CORE_PATH, "/app", "ro")],
+                volumes=[(KLAW_CORE_PATH, '/app', 'ro')],
             )
             print(output)
-            assert "concurrency=" in output
+            assert 'concurrency=' in output
         except Exception as e:
-            pytest.skip(f"Docker not available: {e}")
+            pytest.skip(f'Docker not available: {e}')
 
 
 @pytest.mark.containers
@@ -172,7 +172,7 @@ class TestDetectBackend:
     """Tests for _detect_backend() inside containers."""
 
     def test_detects_backend_from_env(
-        self, docker: "DockerClient", unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """_detect_backend() reads KLAW_BACKEND env var."""
         script = f"""{SETUP_SCRIPT}
@@ -187,20 +187,20 @@ print('PASS: _detect_backend() detected ray from env')
 """
         try:
             output = docker.run(
-                "python:3.13-slim",
-                ["sh", "-c", script],
-                name=f"klaw_detect_backend{unique_name}",
+                'python:3.13-slim',
+                ['sh', '-c', script],
+                name=f'klaw_detect_backend{unique_name}',
                 remove=True,
-                volumes=[(KLAW_CORE_PATH, "/app", "ro")],
-                envs={"KLAW_BACKEND": "ray"},
+                volumes=[(KLAW_CORE_PATH, '/app', 'ro')],
+                envs={'KLAW_BACKEND': 'ray'},
             )
             print(output)
-            assert "PASS" in output
+            assert 'PASS' in output
         except Exception as e:
-            pytest.skip(f"Docker not available: {e}")
+            pytest.skip(f'Docker not available: {e}')
 
     def test_defaults_to_local(
-        self, docker: "DockerClient", unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """_detect_backend() defaults to LOCAL without env var."""
         script = f"""{SETUP_SCRIPT}
@@ -215,16 +215,16 @@ print('PASS: _detect_backend() defaults to local')
 """
         try:
             output = docker.run(
-                "python:3.13-slim",
-                ["sh", "-c", script],
-                name=f"klaw_detect_backend_local{unique_name}",
+                'python:3.13-slim',
+                ['sh', '-c', script],
+                name=f'klaw_detect_backend_local{unique_name}',
                 remove=True,
-                volumes=[(KLAW_CORE_PATH, "/app", "ro")],
+                volumes=[(KLAW_CORE_PATH, '/app', 'ro')],
             )
             print(output)
-            assert "PASS" in output
+            assert 'PASS' in output
         except Exception as e:
-            pytest.skip(f"Docker not available: {e}")
+            pytest.skip(f'Docker not available: {e}')
 
 
 def _get_ray_image() -> str:
@@ -232,9 +232,9 @@ def _get_ray_image() -> str:
     import platform
 
     arch = platform.machine()
-    if arch in ("arm64", "aarch64"):
-        return "rayproject/ray:2.9.0-aarch64"
-    return "rayproject/ray:2.9.0"
+    if arch in {'arm64', 'aarch64'}:
+        return 'rayproject/ray:2.9.0-aarch64'
+    return 'rayproject/ray:2.9.0'
 
 
 @pytest.mark.containers
@@ -242,7 +242,7 @@ class TestRayCluster:
     """Tests for Ray cluster resource detection."""
 
     def test_detects_cluster_cpus(
-        self, docker: "DockerClient", unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """_detect_ray_concurrency() returns total CPUs across cluster nodes."""
         import time
@@ -251,16 +251,16 @@ class TestRayCluster:
 
         ray_image = _get_ray_image()
 
-        network_name = f"ray_net{unique_name}"
-        head_name = f"ray_head{unique_name}"
-        worker_name = f"ray_worker{unique_name}"
+        network_name = f'ray_net{unique_name}'
+        head_name = f'ray_head{unique_name}'
+        worker_name = f'ray_worker{unique_name}'
 
         def wait_for_ray_head(max_attempts: int = 10) -> bool:
             """Wait for Ray head to be ready by checking ray status."""
             for _ in range(max_attempts):
                 try:
-                    result = docker_cli.execute(head_name, ["ray", "status"])
-                    if "Active" in result or "CPU" in result:
+                    result = docker_cli.execute(head_name, ['ray', 'status'])
+                    if 'Active' in result or 'CPU' in result:
                         return True
                 except Exception:
                     pass
@@ -274,7 +274,7 @@ class TestRayCluster:
             # Start head node (2 CPUs)
             docker_cli.run(
                 ray_image,
-                ["ray", "start", "--head", "--port=6379", "--num-cpus=2", "--block"],
+                ['ray', 'start', '--head', '--port=6379', '--num-cpus=2', '--block'],
                 name=head_name,
                 networks=[network_name],
                 detach=True,
@@ -283,12 +283,12 @@ class TestRayCluster:
 
             # Wait for head to be ready
             if not wait_for_ray_head():
-                pytest.skip("Ray head node failed to start")
+                pytest.skip('Ray head node failed to start')
 
             # Start worker node (2 CPUs)
             docker_cli.run(
                 ray_image,
-                ["ray", "start", f"--address={head_name}:6379", "--num-cpus=2", "--block"],
+                ['ray', 'start', f'--address={head_name}:6379', '--num-cpus=2', '--block'],
                 name=worker_name,
                 networks=[network_name],
                 detach=True,
@@ -298,8 +298,8 @@ class TestRayCluster:
             # Wait for worker to join (check cluster has 4 CPUs)
             for _ in range(10):
                 try:
-                    status = docker_cli.execute(head_name, ["ray", "status"])
-                    if "4.0 CPU" in status or "4 CPU" in status:
+                    status = docker_cli.execute(head_name, ['ray', 'status'])
+                    if '4.0 CPU' in status or '4 CPU' in status:
                         break
                 except Exception:
                     pass
@@ -317,16 +317,16 @@ ray.shutdown()
 """
             output = docker_cli.run(
                 ray_image,
-                ["python", "-c", script],
-                name=f"ray_client{unique_name}",
+                ['python', '-c', script],
+                name=f'ray_client{unique_name}',
                 networks=[network_name],
                 remove=True,
             )
             print(output)
-            assert "PASS" in output
+            assert 'PASS' in output
 
         except Exception as e:
-            pytest.skip(f"Ray cluster test failed: {e}")
+            pytest.skip(f'Ray cluster test failed: {e}')
         finally:
             # Cleanup
             for name in [head_name, worker_name]:
@@ -349,7 +349,7 @@ class TestInit:
     """Tests for init() inside containers."""
 
     def test_init_auto_detection(
-        self, docker: "DockerClient", unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """init() with auto-detection works in container."""
         script = f"""{SETUP_SCRIPT}
@@ -366,20 +366,20 @@ print('PASS: init() auto-detection works')
 """
         try:
             output = docker.run(
-                "python:3.13-slim",
-                ["sh", "-c", script],
-                name=f"klaw_init{unique_name}",
+                'python:3.13-slim',
+                ['sh', '-c', script],
+                name=f'klaw_init{unique_name}',
                 cpus=4.0,
                 remove=True,
-                volumes=[(KLAW_CORE_PATH, "/app", "ro")],
+                volumes=[(KLAW_CORE_PATH, '/app', 'ro')],
             )
             print(output)
-            assert "PASS" in output
+            assert 'PASS' in output
         except Exception as e:
-            pytest.skip(f"Docker not available: {e}")
+            pytest.skip(f'Docker not available: {e}')
 
     def test_init_with_explicit_config(
-        self, docker: "DockerClient", unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """init() with explicit config overrides detection."""
         script = f"""{SETUP_SCRIPT}
@@ -398,13 +398,13 @@ print('PASS: init() explicit config works')
 """
         try:
             output = docker.run(
-                "python:3.13-slim",
-                ["sh", "-c", script],
-                name=f"klaw_init_explicit{unique_name}",
+                'python:3.13-slim',
+                ['sh', '-c', script],
+                name=f'klaw_init_explicit{unique_name}',
                 remove=True,
-                volumes=[(KLAW_CORE_PATH, "/app", "ro")],
+                volumes=[(KLAW_CORE_PATH, '/app', 'ro')],
             )
             print(output)
-            assert "PASS" in output
+            assert 'PASS' in output
         except Exception as e:
-            pytest.skip(f"Docker not available: {e}")
+            pytest.skip(f'Docker not available: {e}')

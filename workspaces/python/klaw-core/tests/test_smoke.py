@@ -76,7 +76,7 @@ def test_submodule_imports():
         async_lru_safe,
     )
     from klaw_core.compose import Deref, pipe  # noqa: F401
-    from klaw_core.decorators import do, pipe, result, safe  # noqa: F401
+    from klaw_core.decorators import do, result, safe  # noqa: F401
     from klaw_core.fn import fn  # noqa: F401
     from klaw_core.typeclass import typeclass  # noqa: F401
 

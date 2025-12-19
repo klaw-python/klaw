@@ -9,13 +9,12 @@ Uses hypothesis for property-based testing and mimesis for fake data.
 from __future__ import annotations
 
 import asyncio
-from typing import Any
 
 import pytest
-from hypothesis import given, strategies as st
-
-from klaw_core import Err, Ok
-from klaw_core.runtime.channels import LocalReceiver, LocalSender, channel
+from hypothesis import given
+from hypothesis import strategies as st
+from klaw_core import Ok
+from klaw_core.runtime.channels import channel
 from klaw_core.runtime.errors import ChannelClosed, ChannelEmpty, ChannelFull
 
 
@@ -24,7 +23,7 @@ def setup_runtime() -> None:
     """Initialize runtime before each test."""
     from klaw_core.runtime import init
 
-    init(backend="local", concurrency=4)
+    init(backend='local', concurrency=4)
 
 
 class TestLocalSenderRecvBasic:
@@ -40,14 +39,14 @@ class TestLocalSenderRecvBasic:
     async def test_send_and_recv_string(self) -> None:
         """send/recv works with string values."""
         tx, rx = await channel()
-        await tx.send("hello")
+        await tx.send('hello')
         value = await rx.recv()
-        assert value == "hello"
+        assert value == 'hello'
 
     async def test_send_and_recv_complex_type(self) -> None:
         """send/recv works with dicts and complex types."""
         tx, rx = await channel()
-        data = {"key": "value", "num": 42, "nested": {"a": 1}}
+        data = {'key': 'value', 'num': 42, 'nested': {'a': 1}}
         await tx.send(data)
         received = await rx.recv()
         assert received == data
@@ -82,7 +81,7 @@ class TestLocalSenderNonBlocking:
 
     async def test_try_send_when_full_returns_channel_full(self) -> None:
         """try_send() returns Err(ChannelFull) when queue is at capacity."""
-        tx, rx = await channel(capacity=2)
+        tx, _rx = await channel(capacity=2)
 
         # Fill the queue
         await tx.send(1)
@@ -104,7 +103,7 @@ class TestLocalSenderNonBlocking:
 
     async def test_try_send_returns_capacity_in_error(self) -> None:
         """ChannelFull error includes the queue capacity."""
-        tx, rx = await channel(capacity=5)
+        tx, _rx = await channel(capacity=5)
 
         # Fill the queue
         for _ in range(5):
@@ -130,7 +129,7 @@ class TestLocalReceiverNonBlocking:
 
     async def test_try_recv_returns_channel_empty_when_no_messages(self) -> None:
         """try_recv() returns Err(ChannelEmpty) when queue is empty."""
-        tx, rx = await channel()
+        _tx, rx = await channel()
 
         result = await rx.try_recv()
         assert result.is_err()
@@ -175,7 +174,7 @@ class TestChannelClose:
         assert await rx.recv() == 1
 
         # After draining, recv() raises ChannelClosed
-        with pytest.raises(Exception, match="Channel closed"):
+        with pytest.raises(Exception, match='Channel closed'):
             await rx.recv()
 
     async def test_close_receiver_signals_to_senders(self) -> None:
@@ -183,7 +182,7 @@ class TestChannelClose:
         tx, rx = await channel()
         await rx.close()
 
-        with pytest.raises(Exception, match="Channel closed"):
+        with pytest.raises(Exception, match='Channel closed'):
             await tx.send(42)
 
     async def test_close_is_idempotent(self) -> None:
@@ -243,7 +242,6 @@ class TestChannelClone:
         await tx.send(42)
 
         # One of the receivers gets it (MPMC - message goes to first available)
-        values = []
         result1 = await rx1.try_recv()
         result2 = await rx2.try_recv()
         result3 = await rx3.try_recv()
@@ -255,7 +253,7 @@ class TestChannelClone:
 
     async def test_channel_stays_open_until_all_senders_close(self) -> None:
         """Channel stays open while any sender clone is active."""
-        tx1, rx = await channel()
+        tx1, _rx = await channel()
         tx2 = tx1.clone()
         tx3 = tx2.clone()
 
@@ -270,7 +268,7 @@ class TestChannelClone:
         await tx3.close()
         # Now channel is closed
 
-        with pytest.raises(Exception, match="Channel closed"):
+        with pytest.raises(Exception, match='Channel closed'):
             await tx1.send(44)
 
     async def test_channel_closes_when_all_receivers_closed(self) -> None:
@@ -288,7 +286,7 @@ class TestChannelClone:
         await rx2.close()
 
         # Now senders get ChannelClosed
-        with pytest.raises(Exception, match="Channel closed"):
+        with pytest.raises(Exception, match='Channel closed'):
             await tx.send(43)
 
 
@@ -296,7 +294,7 @@ class TestAsyncIteration:
     """Tests for async iteration support."""
 
     async def test_async_for_iteration(self) -> None:
-        """async for iterates over received values."""
+        """Async for iterates over received values."""
         tx, rx = await channel()
 
         async def send_values():
@@ -306,9 +304,7 @@ class TestAsyncIteration:
 
         asyncio.create_task(send_values())
 
-        values = []
-        async for value in rx:
-            values.append(value)
+        values = [value async for value in rx]
 
         assert values == [1, 2, 3]
 
@@ -337,14 +333,10 @@ class TestAsyncIteration:
 
         asyncio.create_task(sender())
 
-        values1 = []
-        async for v in rx1:
-            values1.append(v)
+        values1 = [v async for v in rx1]
 
         # rx2 may get some or none (MPMC - messages already consumed)
-        values2 = []
-        async for v in rx2:
-            values2.append(v)
+        values2 = [v async for v in rx2]
 
         # Total should be 3 (distributed between receivers)
         assert len(values1) + len(values2) <= 3
@@ -355,10 +347,10 @@ class TestErrorCases:
 
     async def test_send_after_close_raises_channel_closed(self) -> None:
         """send() after close() raises ChannelClosed."""
-        tx, rx = await channel()
+        tx, _rx = await channel()
         await tx.close()
 
-        with pytest.raises(Exception, match="Channel closed"):
+        with pytest.raises(Exception, match='Channel closed'):
             await tx.send(42)
 
     async def test_recv_after_close_and_drain_raises_channel_closed(self) -> None:
@@ -368,12 +360,12 @@ class TestErrorCases:
         await tx.close()
 
         await rx.recv()  # Get the message
-        with pytest.raises(Exception, match="Channel closed"):
+        with pytest.raises(Exception, match='Channel closed'):
             await rx.recv()
 
     async def test_try_send_on_closed_sender_returns_error(self) -> None:
         """try_send() on closed sender returns error immediately."""
-        tx, rx = await channel()
+        tx, _rx = await channel()
         await tx.close()
 
         result = await tx.try_send(42)
@@ -381,7 +373,7 @@ class TestErrorCases:
 
     async def test_try_recv_on_closed_receiver_returns_error(self) -> None:
         """try_recv() on closed receiver returns error immediately."""
-        tx, rx = await channel()
+        _tx, rx = await channel()
         await rx.close()
 
         result = await rx.try_recv()
@@ -434,9 +426,7 @@ async def test_property_fifo_order(values: list[int]) -> None:
     for v in values:
         await tx.send(v)
 
-    received = []
-    for _ in values:
-        received.append(await rx.recv())
+    received = [await rx.recv() for _ in values]
 
     assert received == values
 
@@ -454,9 +444,7 @@ async def test_property_no_data_loss(values: list[str]) -> None:
 
     await tx.close()
 
-    received = []
-    async for v in rx:
-        received.append(v)
+    received = [v async for v in rx]
 
     assert len(received) == len(values)
     assert set(received) == set(values)
@@ -469,7 +457,7 @@ async def test_property_no_data_loss(values: list[str]) -> None:
 )
 async def test_property_capacity_respected(capacity: int, count: int) -> None:
     """Property: Capacity limit is enforced."""
-    tx, rx = await channel(capacity=capacity)
+    tx, _rx = await channel(capacity=capacity)
 
     # Send up to capacity non-blocking
     for i in range(min(count, capacity)):

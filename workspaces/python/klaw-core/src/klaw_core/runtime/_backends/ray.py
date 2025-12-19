@@ -24,7 +24,7 @@ def _get_ray() -> Any:
     global _ray  # noqa: PLW0603
     if _ray is None:
         try:
-            import ray as ray_module  # noqa: PLC0415
+            import ray as ray_module
 
             _ray = ray_module
         except ImportError as e:

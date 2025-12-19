@@ -17,7 +17,7 @@ T = TypeVar('T')
 E = TypeVar('E')
 
 
-def do(
+def do[**P, E, T](
     func: Callable[P, Generator[Ok[Any] | Err[E] | Some[Any] | NothingType, Any, T]],
 ) -> Callable[P, Ok[T] | Err[E]]:
     """Decorator for generator-based do-notation with Result.
@@ -64,10 +64,7 @@ def do(
                     return result
                 if isinstance(result, NothingType):
                     return Err(None)  # type: ignore[arg-type]
-                if isinstance(result, Ok) or isinstance(result, Some):
-                    value = result.value
-                else:
-                    value = result
+                value = result.value if isinstance(result, (Ok, Some)) else result
                 result = gen.send(value)
         except StopIteration as e:
             return Ok(e.value)
@@ -75,7 +72,7 @@ def do(
     return wrapper(func)  # type: ignore[return-value]
 
 
-def do_async(
+def do_async[**P, E](
     func: Callable[P, AsyncGenerator[Ok[Any] | Err[E] | Some[Any] | NothingType, Any]],
 ) -> Callable[P, Any]:
     """Async decorator for generator-based do-notation with Result.

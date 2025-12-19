@@ -107,18 +107,88 @@ lint.ignore = [
 # lint.per-file-ignores."returns/pointfree/__init__.py" = [ "F401", "PLC0414" ]
 # lint.per-file-ignores."returns/primitives/asserts.py" = [ "S101" ]
 lint.per-file-ignores."**/tests/**/*.py" = [
-  "C901",   # complexity in tests is fine
+  "A002",    # allow shadowing builtins (like `id`) in tests
+  "B017",    # allow blind exception assertions in tests
+  "B901",    # allow yield + return in generator tests (testing do notation)
+  "B903",    # allow non-dataclass simple classes in tests
+  "C901",    # complexity in tests is fine
+  "D102",    # test methods don't need docstrings
+  "D105",    # magic methods don't need docstrings in tests
+  "D107",    # __init__ doesn't need docstrings in tests
+  "E402",    # imports can be after statements in tests
+  "FBT001",  # boolean positional args in test function definitions
+  "FBT002",  # boolean positional args in test function definitions
+  "FBT003",  # boolean positional values in test function calls
+  "FURB118", # allow simple add functions instead of operator.add
   "PLC0415", # imports inside functions are fine in tests
-  "RUF029", # allow async functions to not use `await`
-  "S101",   # asserts
-  "S105",   # hardcoded passwords
-  "S110",   # try-except-pass is fine in cleanup
-  "S404",   # subprocess calls are for tests
-  "S603",   # do not require `shell=True`
-  "S607",   # partial executable paths
-  "SIM105", # contextlib.suppress not required
+  "PLC2701", # allow importing private modules for testing internals
+  "PLR0124", # allow name compared with itself (testing identity)
+  "PLR0133", # allow constant comparisons in tests
+  "PT011",   # allow broad pytest.raises
+  "PT017",   # allow assertions on caught exceptions
+  "RUF002",  # allow ambiguous unicode in docstrings
+  "RUF006",  # allow storing async functions without awaiting in tests
+  "RUF029",  # allow async functions to not use `await`
+  "RUF043",  # allow regex patterns in pytest match
+  "S101",    # asserts
+  "S105",    # hardcoded passwords
+  "S108",    # allow /tmp paths in tests
+  "S110",    # try-except-pass is fine in cleanup
+  "S404",    # subprocess calls are for tests
+  "S603",    # do not require `shell=True`
+  "S607",    # partial executable paths
+  "SIM105",  # contextlib.suppress not required
+  "SIM115",  # allow file operations without context manager
+  "SIM117",  # allow nested with statements
+  "SLF001",  # allow accessing private members for testing
 ]
 lint.per-file-ignores."tests/test_examples/*" = ["D102"]
+lint.per-file-ignores."docs/scripts/**/*.py" = [
+  "C901",    # complexity ok in doc scripts
+  "E722",    # bare except ok for fallback behavior
+  "PLR6201", # tuple vs set membership check
+  "S110",    # try-except-pass ok in doc scripts
+]
+lint.per-file-ignores."**/*.pyi" = [
+  "D103",    # stubs don't need docstrings
+  "N818",    # exception naming conventions relaxed for stubs
+]
+lint.per-file-ignores."**/main.py" = [
+  "D103",    # placeholder main.py files don't need docstrings
+]
+lint.per-file-ignores."workspaces/python/klaw-*/src/**/__init__.py" = [
+  "D103",    # placeholder modules don't need docstrings
+]
+lint.per-file-ignores."workspaces/rust/*/src/**/__init__.py" = [
+  "D103",    # placeholder modules don't need docstrings
+]
+lint.per-file-ignores."workspaces/rust/klaw-dbase/**/*.py" = [
+  "C901",    # complex scan function is okay
+  "FBT003",  # boolean positional in batch_iter_with_progress
+  "PTH118",  # allow os.path.join for now
+  "PTH207",  # allow iglob for now
+]
+lint.per-file-ignores."workspaces/python/klaw-core/src/klaw_core/**/*.py" = [
+  "A004",    # allow TimeoutError re-export
+  "C901",    # complex functions like _apply_op are okay
+  "D105",    # magic methods don't need docstrings
+  "D107",    # __init__ in exception classes doesn't need docstrings
+  "D402",    # allow fn.range() docstring
+  "E402",    # allow imports after TypeVar in executor.py
+  "FBT001",  # boolean positional args in some APIs (splitlines, channel)
+  "FBT002",  # boolean default args in some APIs
+  "LOG015",  # allow root logger for simple warnings
+  "N818",    # BackendException naming is fine
+  "PLC0415", # lazy imports to avoid circular deps (Result/Option)
+  "PLC2801", # dunder call for __aenter__ is intentional
+  "PLW1641", # Expr doesn't need __hash__ (uses msgspec frozen struct)
+  "PLW2901", # loop variable reassignment in _apply is intentional
+  "RUF029",  # async channel function doesn't await (returns sync result)
+  "S101",    # asserts in backend code
+  "S110",    # try-except-pass for cleanup
+  "SIM105",  # contextlib.suppress not required in cleanup
+  "SLF001",  # internal API access (_complete, _fail, etc.)
+]
 # lint.per-file-ignores."tests/test_examples/test_maybe/test_maybe_pattern_matching.py" = [
 #   "D101",
 #   "D103",

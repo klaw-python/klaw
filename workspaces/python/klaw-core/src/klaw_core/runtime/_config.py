@@ -64,7 +64,7 @@ def _detect_backend() -> Backend:
         return Backend.RAY
     if env_backend == 'local':
         return Backend.LOCAL
-    if env_backend and env_backend not in ('local', 'ray'):
+    if env_backend and env_backend not in {'local', 'ray'}:
         logging.warning("Unknown KLAW_BACKEND value '%s', defaulting to local", env_backend)
 
     # Try to detect Ray cluster
@@ -167,7 +167,7 @@ def _detect_container_cpu_limit() -> int | None:
     """Detect CPU limit in containerized environments."""
     # cgroups v2
     try:
-        with pathlib.Path('/sys/fs/cgroup/cpu.max').open() as f:
+        with pathlib.Path('/sys/fs/cgroup/cpu.max').open(encoding='utf-8') as f:
             content = f.read().strip()
             if content != 'max':
                 quota, period = content.split()
@@ -178,9 +178,9 @@ def _detect_container_cpu_limit() -> int | None:
 
     # cgroups v1
     try:
-        with pathlib.Path('/sys/fs/cgroup/cpu/cpu.cfs_quota_us').open() as quota_f:
+        with pathlib.Path('/sys/fs/cgroup/cpu/cpu.cfs_quota_us').open(encoding='utf-8') as quota_f:
             quota_v1 = int(quota_f.read().strip())
-        with pathlib.Path('/sys/fs/cgroup/cpu/cpu.cfs_period_us').open() as period_f:
+        with pathlib.Path('/sys/fs/cgroup/cpu/cpu.cfs_period_us').open(encoding='utf-8') as period_f:
             period_v1 = int(period_f.read().strip())
         if quota_v1 > 0:
             return max(1, quota_v1 // period_v1)

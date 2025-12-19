@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import pytest
-
-from klaw_core.runtime.channels import Receiver, Sender, channel
+from klaw_core.runtime.channels import channel
 
 
 class TestChannelFactory:
@@ -45,15 +43,15 @@ class TestChannelFactory:
     async def test_channel_generic_type_str(self) -> None:
         """channel() works with str type."""
         tx, rx = await channel()
-        await tx.send("hello")
+        await tx.send('hello')
         value = await rx.recv()
-        assert value == "hello"
+        assert value == 'hello'
         assert isinstance(value, str)
 
     async def test_channel_generic_type_complex(self) -> None:
         """channel() works with complex types (dict, list)."""
         tx, rx = await channel()
-        msg = {"key": "value", "num": 42}
+        msg = {'key': 'value', 'num': 42}
         await tx.send(msg)
         received = await rx.recv()
         assert received == msg

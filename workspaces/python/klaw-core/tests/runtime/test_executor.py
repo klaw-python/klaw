@@ -5,9 +5,8 @@ from __future__ import annotations
 import asyncio
 
 import pytest
-
-from klaw_core import Err, Ok
-from klaw_core.runtime import Executor, ExitReason, TaskHandle, init
+from klaw_core import Ok
+from klaw_core.runtime import Executor, TaskHandle, init
 
 
 @pytest.fixture(autouse=True)
@@ -55,7 +54,6 @@ class TestExecutorSubmit:
 
     async def test_submit_returns_task_handle(self) -> None:
         """submit() returns a TaskHandle."""
-
         async with Executor() as ex:
             handle = await ex.submit(lambda: 42)
             assert isinstance(handle, TaskHandle)
@@ -120,7 +118,6 @@ class TestExecutorMap:
 
     async def test_map_empty_iterable(self) -> None:
         """map() with empty iterable returns empty list."""
-
         async with Executor() as ex:
             results = await ex.map(lambda x: x, [])
             assert results == []
@@ -136,9 +133,7 @@ class TestExecutorImap:
             return x * 2
 
         async with Executor() as ex:
-            results = []
-            async for result in ex.imap(double, [1, 2, 3]):
-                results.append(result)
+            results = [result async for result in ex.imap(double, [1, 2, 3])]
             assert len(results) == 3
             values = sorted([r.unwrap() for r in results])
             assert values == [2, 4, 6]
@@ -153,9 +148,7 @@ class TestExecutorImap:
             return x
 
         async with Executor() as ex:
-            results = []
-            async for result in ex.imap(maybe_fail, [1, 2, 3]):
-                results.append(result)
+            results = [result async for result in ex.imap(maybe_fail, [1, 2, 3])]
             ok_count = sum(1 for r in results if r.is_ok())
             err_count = sum(1 for r in results if r.is_err())
             assert ok_count == 2
@@ -167,7 +160,6 @@ class TestExecutorGather:
 
     async def test_gather_multiple_handles(self) -> None:
         """gather() waits for multiple handles."""
-
         async with Executor() as ex:
             h1 = await ex.submit(lambda: 1)
             h2 = await ex.submit(lambda: 2)
@@ -194,7 +186,6 @@ class TestExecutorGather:
 
     async def test_gather_empty(self) -> None:
         """gather() with no handles returns empty list."""
-
         async with Executor() as ex:
             results = await ex.gather()
             assert results == []
@@ -211,7 +202,6 @@ class TestExecutorContextManager:
 
     async def test_context_manager_cleanup(self) -> None:
         """Executor cleans up on context exit."""
-
         async with Executor() as ex:
             handle = await ex.submit(lambda: 42)
             await handle

@@ -128,7 +128,7 @@ class TestInit:
     def test_init_with_defaults(self) -> None:
         config = init()
         assert isinstance(config, RuntimeConfig)
-        assert config.backend in (Backend.LOCAL, Backend.RAY)
+        assert config.backend in {Backend.LOCAL, Backend.RAY}
         assert config.concurrency >= 1
 
     def test_init_with_backend_enum(self) -> None:
@@ -281,7 +281,7 @@ class TestDetectLocalConcurrency:
 
         available_memory_gb = psutil.virtual_memory().available / (1024**3)
         memory_limit = max(1, int(available_memory_gb))
-        expected = max(1, min(256, min(physical_cores, memory_limit)))
+        expected = max(1, min(256, physical_cores, memory_limit))
 
         assert result == expected, f'Expected {expected}, got {result}'
 

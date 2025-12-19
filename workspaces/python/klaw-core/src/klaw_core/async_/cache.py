@@ -33,7 +33,7 @@ T = TypeVar('T')
 
 
 @overload
-def async_lru_safe(
+def async_lru_safe[**P, T](
     fn: Callable[P, Awaitable[T]],
 ) -> Callable[P, Awaitable[Result[T, Exception]]]: ...
 
@@ -49,7 +49,7 @@ def async_lru_safe(
 ]: ...
 
 
-def async_lru_safe(
+def async_lru_safe[**P, T](
     fn: Callable[P, Awaitable[T]] | None = None,
     *,
     maxsize: int | None = 128,

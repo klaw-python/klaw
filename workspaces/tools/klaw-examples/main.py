@@ -1,6 +1,6 @@
 def main():
-    print("Hello from klaw-examples!")
+    print('Hello from klaw-examples!')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator, Awaitable, Callable, Iterable
 from types import TracebackType
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 # TypeVars for generic methods (not classes using Python 3.12 generic syntax)
 T = TypeVar('T')
@@ -211,7 +211,7 @@ class Executor:
         else:
             self._backend_type = backend
 
-    async def __aenter__(self) -> Executor:
+    async def __aenter__(self) -> Self:
         """Enter the executor context."""
         self._backend = await self._create_backend()
         self._started = True

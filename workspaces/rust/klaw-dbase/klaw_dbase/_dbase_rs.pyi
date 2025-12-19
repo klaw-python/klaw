@@ -38,16 +38,16 @@ def write_dbase_buff(
 def get_record_count(path: str) -> int: ...
 
 class DbaseError(Exception):
-    """An error occurred while reading a dBase file."""
+    ...
 
 class EmptySources(ValueError):
-    """No contents found in the dBase file."""
+    ...
 
 class SchemaMismatch(ValueError):
-    """The dBase file contains data with a different schema."""
+    ...
 
 class EncodingError(ValueError):
-    """An error occurred while encoding or decoding a dBase file."""
+    ...
 
 class DbcError(ValueError):
-    """An error occurred while reading a compressed dBase file."""
+    ...

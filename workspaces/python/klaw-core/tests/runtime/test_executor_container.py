@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture(scope='module')
-def docker() -> 'DockerClient':
+def docker() -> DockerClient:
     """Provide a DockerClient for container tests."""
     from python_on_whales import DockerClient
 
@@ -42,7 +42,7 @@ class TestExecutorInContainer:
     """Tests for Executor running inside containers."""
 
     def test_executor_submit_in_container(
-        self, docker: 'DockerClient', unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """Executor.submit() works inside a container."""
         script = f"""{SETUP_SCRIPT}
@@ -75,7 +75,7 @@ asyncio.run(main())
             pytest.skip(f'Docker not available: {e}')
 
     def test_executor_map_in_container(
-        self, docker: 'DockerClient', unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """Executor.map() works inside a container."""
         script = f"""{SETUP_SCRIPT}
@@ -108,7 +108,7 @@ asyncio.run(main())
             pytest.skip(f'Docker not available: {e}')
 
     def test_executor_respects_cpu_limit(
-        self, docker: 'DockerClient', unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """Executor respects container CPU limits."""
         script = f"""{SETUP_SCRIPT}
@@ -117,10 +117,10 @@ from klaw_core.runtime import init, get_config, Executor
 async def main():
     config = init(backend='local')
     print(f'concurrency={{config.concurrency}}')
-    
+
     # With 2 CPUs, concurrency should be <= 2
     assert config.concurrency <= 2, f'Expected <= 2, got {{config.concurrency}}'
-    
+
     async with Executor() as ex:
         results = await ex.map(lambda x: x, [1, 2, 3])
         print(f'results_count={{len(results)}}')
@@ -150,7 +150,7 @@ def _get_ray_image() -> str:
     import platform
 
     arch = platform.machine()
-    if arch in ('arm64', 'aarch64'):
+    if arch in {'arm64', 'aarch64'}:
         return 'rayproject/ray:2.9.0-aarch64'
     return 'rayproject/ray:2.9.0'
 
@@ -160,7 +160,7 @@ class TestRayBackendCluster:
     """Tests for RayBackend with Ray cluster."""
 
     def test_ray_backend_basic(
-        self, docker: 'DockerClient', unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """RayBackend executes tasks on Ray cluster."""
         import time
@@ -245,7 +245,7 @@ ray.shutdown()
                 pass
 
     def test_ray_backend_map(
-        self, docker: 'DockerClient', unique_name: str
+        self, docker: DockerClient, unique_name: str
     ) -> None:
         """RayBackend.map() distributes work across cluster."""
         import time

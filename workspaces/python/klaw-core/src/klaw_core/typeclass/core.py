@@ -7,7 +7,7 @@ and static type inference via overloads.
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any, Generic, TypeVar, get_args, get_origin
+from typing import Any, TypeVar, get_args, get_origin
 
 import wrapt
 
@@ -27,7 +27,7 @@ class NoInstanceError(TypeError):
         )
 
 
-class TypeClass(wrapt.ObjectProxy, Generic[F]):
+class TypeClass[F: Callable[..., Any]](wrapt.ObjectProxy):
     """A typeclass with registered type instances.
 
     A typeclass defines a polymorphic function that dispatches to
@@ -142,7 +142,7 @@ class TypeClass(wrapt.ObjectProxy, Generic[F]):
             return True
 
         # For sequences, check element types
-        if origin in (list, tuple, set, frozenset):
+        if origin in {list, tuple, set, frozenset}:
             if not value:
                 return True  # Empty collection matches any element type
             element_type = args[0]
@@ -200,13 +200,10 @@ def _has_implementation(fn: Callable[..., Any]) -> bool:
     # In Python 3.13, these all compile to the same bytecode that just returns None
     # with co_consts = (None,)
     # Real implementations have more constants or different bytecode
-    if code.co_consts == (None,) and len(code.co_code) <= 4:
-        return False
-
-    return True
+    return not (code.co_consts == (None,) and len(code.co_code) <= 4)
 
 
-def typeclass(fn: F) -> TypeClass[F]:
+def typeclass[F: Callable[..., Any]](fn: F) -> TypeClass[F]:
     """Decorator to create a typeclass from a function signature.
 
     The decorated function serves as the default implementation (if it has a body)

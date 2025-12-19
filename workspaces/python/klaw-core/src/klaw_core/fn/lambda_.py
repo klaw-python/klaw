@@ -82,7 +82,7 @@ class Expr(msgspec.Struct, frozen=True, gc=False):
         """Create a new Expr with an additional operation."""
         if isinstance(arg, Expr):
             arg = _INPUT
-        return Expr(ops=self.ops + ((op, arg),))
+        return Expr(ops=(*self.ops, (op, arg)))
 
     def __call__(self, value: Any) -> Any:
         """Apply all operations to the value."""
@@ -806,185 +806,185 @@ class Lambda(Expr):
     # =========================================================================
 
     def upper(self) -> Callable[[str], str]:
-        """Create lambda: x.upper()"""
+        """Create lambda: x.upper()."""
         return operator.methodcaller('upper')
 
     def lower(self) -> Callable[[str], str]:
-        """Create lambda: x.lower()"""
+        """Create lambda: x.lower()."""
         return operator.methodcaller('lower')
 
     def strip(self, chars: str | None = None) -> Callable[[str], str]:
-        """Create lambda: x.strip(chars)"""
+        """Create lambda: x.strip(chars)."""
         return operator.methodcaller('strip', chars)
 
     def lstrip(self, chars: str | None = None) -> Callable[[str], str]:
-        """Create lambda: x.lstrip(chars)"""
+        """Create lambda: x.lstrip(chars)."""
         return operator.methodcaller('lstrip', chars)
 
     def rstrip(self, chars: str | None = None) -> Callable[[str], str]:
-        """Create lambda: x.rstrip(chars)"""
+        """Create lambda: x.rstrip(chars)."""
         return operator.methodcaller('rstrip', chars)
 
     def split(self, sep: str | None = None, maxsplit: int = -1) -> Callable[[str], list[str]]:
-        """Create lambda: x.split(sep, maxsplit)"""
+        """Create lambda: x.split(sep, maxsplit)."""
         return operator.methodcaller('split', sep, maxsplit)
 
     def rsplit(self, sep: str | None = None, maxsplit: int = -1) -> Callable[[str], list[str]]:
-        """Create lambda: x.rsplit(sep, maxsplit)"""
+        """Create lambda: x.rsplit(sep, maxsplit)."""
         return operator.methodcaller('rsplit', sep, maxsplit)
 
     def splitlines(self, keepends: bool = False) -> Callable[[str], list[str]]:
-        """Create lambda: x.splitlines(keepends)"""
+        """Create lambda: x.splitlines(keepends)."""
         return operator.methodcaller('splitlines', keepends)
 
     def join(self, iterable: Iterable[str]) -> Callable[[str], str]:
-        """Create lambda: x.join(iterable)"""
+        """Create lambda: x.join(iterable)."""
         return operator.methodcaller('join', iterable)
 
     def replace(self, old: str, new: str, count: int = -1) -> Callable[[str], str]:
-        """Create lambda: x.replace(old, new, count)"""
+        """Create lambda: x.replace(old, new, count)."""
         return operator.methodcaller('replace', old, new, count)
 
     def startswith(
         self, prefix: str | tuple[str, ...], start: int = 0, end: int | None = None
     ) -> Callable[[str], bool]:
-        """Create lambda: x.startswith(prefix)"""
+        """Create lambda: x.startswith(prefix)."""
         if end is None:
             return operator.methodcaller('startswith', prefix, start)
         return operator.methodcaller('startswith', prefix, start, end)
 
     def endswith(self, suffix: str | tuple[str, ...], start: int = 0, end: int | None = None) -> Callable[[str], bool]:
-        """Create lambda: x.endswith(suffix)"""
+        """Create lambda: x.endswith(suffix)."""
         if end is None:
             return operator.methodcaller('endswith', suffix, start)
         return operator.methodcaller('endswith', suffix, start, end)
 
     def find(self, sub: str, start: int = 0, end: int | None = None) -> Callable[[str], int]:
-        """Create lambda: x.find(sub)"""
+        """Create lambda: x.find(sub)."""
         if end is None:
             return operator.methodcaller('find', sub, start)
         return operator.methodcaller('find', sub, start, end)
 
     def rfind(self, sub: str, start: int = 0, end: int | None = None) -> Callable[[str], int]:
-        """Create lambda: x.rfind(sub)"""
+        """Create lambda: x.rfind(sub)."""
         if end is None:
             return operator.methodcaller('rfind', sub, start)
         return operator.methodcaller('rfind', sub, start, end)
 
     def index(self, sub: str, start: int = 0, end: int | None = None) -> Callable[[str], int]:
-        """Create lambda: x.index(sub)"""
+        """Create lambda: x.index(sub)."""
         if end is None:
             return operator.methodcaller('index', sub, start)
         return operator.methodcaller('index', sub, start, end)
 
     def count(self, sub: str, start: int = 0, end: int | None = None) -> Callable[[str], int]:
-        """Create lambda: x.count(sub)"""
+        """Create lambda: x.count(sub)."""
         if end is None:
             return operator.methodcaller('count', sub, start)
         return operator.methodcaller('count', sub, start, end)
 
     def title(self) -> Callable[[str], str]:
-        """Create lambda: x.title()"""
+        """Create lambda: x.title()."""
         return operator.methodcaller('title')
 
     def capitalize(self) -> Callable[[str], str]:
-        """Create lambda: x.capitalize()"""
+        """Create lambda: x.capitalize()."""
         return operator.methodcaller('capitalize')
 
     def casefold(self) -> Callable[[str], str]:
-        """Create lambda: x.casefold()"""
+        """Create lambda: x.casefold()."""
         return operator.methodcaller('casefold')
 
     def swapcase(self) -> Callable[[str], str]:
-        """Create lambda: x.swapcase()"""
+        """Create lambda: x.swapcase()."""
         return operator.methodcaller('swapcase')
 
     def center(self, width: int, fillchar: str = ' ') -> Callable[[str], str]:
-        """Create lambda: x.center(width, fillchar)"""
+        """Create lambda: x.center(width, fillchar)."""
         return operator.methodcaller('center', width, fillchar)
 
     def ljust(self, width: int, fillchar: str = ' ') -> Callable[[str], str]:
-        """Create lambda: x.ljust(width, fillchar)"""
+        """Create lambda: x.ljust(width, fillchar)."""
         return operator.methodcaller('ljust', width, fillchar)
 
     def rjust(self, width: int, fillchar: str = ' ') -> Callable[[str], str]:
-        """Create lambda: x.rjust(width, fillchar)"""
+        """Create lambda: x.rjust(width, fillchar)."""
         return operator.methodcaller('rjust', width, fillchar)
 
     def zfill(self, width: int) -> Callable[[str], str]:
-        """Create lambda: x.zfill(width)"""
+        """Create lambda: x.zfill(width)."""
         return operator.methodcaller('zfill', width)
 
     def encode(self, encoding: str = 'utf-8', errors: str = 'strict') -> Callable[[str], bytes]:
-        """Create lambda: x.encode(encoding, errors)"""
+        """Create lambda: x.encode(encoding, errors)."""
         return operator.methodcaller('encode', encoding, errors)
 
     def isalpha(self) -> Callable[[str], bool]:
-        """Create lambda: x.isalpha()"""
+        """Create lambda: x.isalpha()."""
         return operator.methodcaller('isalpha')
 
     def isalnum(self) -> Callable[[str], bool]:
-        """Create lambda: x.isalnum()"""
+        """Create lambda: x.isalnum()."""
         return operator.methodcaller('isalnum')
 
     def isdigit(self) -> Callable[[str], bool]:
-        """Create lambda: x.isdigit()"""
+        """Create lambda: x.isdigit()."""
         return operator.methodcaller('isdigit')
 
     def isnumeric(self) -> Callable[[str], bool]:
-        """Create lambda: x.isnumeric()"""
+        """Create lambda: x.isnumeric()."""
         return operator.methodcaller('isnumeric')
 
     def isdecimal(self) -> Callable[[str], bool]:
-        """Create lambda: x.isdecimal()"""
+        """Create lambda: x.isdecimal()."""
         return operator.methodcaller('isdecimal')
 
     def isspace(self) -> Callable[[str], bool]:
-        """Create lambda: x.isspace()"""
+        """Create lambda: x.isspace()."""
         return operator.methodcaller('isspace')
 
     def isupper(self) -> Callable[[str], bool]:
-        """Create lambda: x.isupper()"""
+        """Create lambda: x.isupper()."""
         return operator.methodcaller('isupper')
 
     def islower(self) -> Callable[[str], bool]:
-        """Create lambda: x.islower()"""
+        """Create lambda: x.islower()."""
         return operator.methodcaller('islower')
 
     def istitle(self) -> Callable[[str], bool]:
-        """Create lambda: x.istitle()"""
+        """Create lambda: x.istitle()."""
         return operator.methodcaller('istitle')
 
     def isidentifier(self) -> Callable[[str], bool]:
-        """Create lambda: x.isidentifier()"""
+        """Create lambda: x.isidentifier()."""
         return operator.methodcaller('isidentifier')
 
     def isprintable(self) -> Callable[[str], bool]:
-        """Create lambda: x.isprintable()"""
+        """Create lambda: x.isprintable()."""
         return operator.methodcaller('isprintable')
 
     def isascii(self) -> Callable[[str], bool]:
-        """Create lambda: x.isascii()"""
+        """Create lambda: x.isascii()."""
         return operator.methodcaller('isascii')
 
     def expandtabs(self, tabsize: int = 8) -> Callable[[str], str]:
-        """Create lambda: x.expandtabs(tabsize)"""
+        """Create lambda: x.expandtabs(tabsize)."""
         return operator.methodcaller('expandtabs', tabsize)
 
     def partition(self, sep: str) -> Callable[[str], tuple[str, str, str]]:
-        """Create lambda: x.partition(sep)"""
+        """Create lambda: x.partition(sep)."""
         return operator.methodcaller('partition', sep)
 
     def rpartition(self, sep: str) -> Callable[[str], tuple[str, str, str]]:
-        """Create lambda: x.rpartition(sep)"""
+        """Create lambda: x.rpartition(sep)."""
         return operator.methodcaller('rpartition', sep)
 
     def removeprefix(self, prefix: str) -> Callable[[str], str]:
-        """Create lambda: x.removeprefix(prefix)"""
+        """Create lambda: x.removeprefix(prefix)."""
         return operator.methodcaller('removeprefix', prefix)
 
     def removesuffix(self, suffix: str) -> Callable[[str], str]:
-        """Create lambda: x.removesuffix(suffix)"""
+        """Create lambda: x.removesuffix(suffix)."""
         return operator.methodcaller('removesuffix', suffix)
 
     # =========================================================================
@@ -992,27 +992,27 @@ class Lambda(Expr):
     # =========================================================================
 
     def get(self, key: K, default: V | None = None) -> Callable[[Mapping[K, V]], V | None]:
-        """Create lambda: x.get(key, default)"""
+        """Create lambda: x.get(key, default)."""
         return operator.methodcaller('get', key, default)
 
     def keys(self) -> Callable[[Mapping[K, V]], Any]:
-        """Create lambda: x.keys()"""
+        """Create lambda: x.keys()."""
         return operator.methodcaller('keys')
 
     def values(self) -> Callable[[Mapping[K, V]], Any]:
-        """Create lambda: x.values()"""
+        """Create lambda: x.values()."""
         return operator.methodcaller('values')
 
     def items(self) -> Callable[[Mapping[K, V]], Any]:
-        """Create lambda: x.items()"""
+        """Create lambda: x.items()."""
         return operator.methodcaller('items')
 
     def pop(self, key: K, *default: V) -> Callable[[dict[K, V]], V]:
-        """Create lambda: x.pop(key, default)"""
+        """Create lambda: x.pop(key, default)."""
         return operator.methodcaller('pop', key, *default)
 
     def setdefault(self, key: K, default: V) -> Callable[[dict[K, V]], V]:
-        """Create lambda: x.setdefault(key, default)"""
+        """Create lambda: x.setdefault(key, default)."""
         return operator.methodcaller('setdefault', key, default)
 
     # =========================================================================
@@ -1020,35 +1020,35 @@ class Lambda(Expr):
     # =========================================================================
 
     def append(self, item: T) -> Callable[[MutableSequence[T]], None]:
-        """Create lambda: x.append(item)"""
+        """Create lambda: x.append(item)."""
         return operator.methodcaller('append', item)
 
     def extend(self, items: Iterable[T]) -> Callable[[MutableSequence[T]], None]:
-        """Create lambda: x.extend(items)"""
+        """Create lambda: x.extend(items)."""
         return operator.methodcaller('extend', items)
 
     def insert(self, idx: int, item: T) -> Callable[[MutableSequence[T]], None]:
-        """Create lambda: x.insert(index, item)"""
+        """Create lambda: x.insert(index, item)."""
         return operator.methodcaller('insert', idx, item)
 
     def remove(self, item: T) -> Callable[[MutableSequence[T]], None]:
-        """Create lambda: x.remove(item)"""
+        """Create lambda: x.remove(item)."""
         return operator.methodcaller('remove', item)
 
     def reverse(self) -> Callable[[MutableSequence[T]], None]:
-        """Create lambda: x.reverse()"""
+        """Create lambda: x.reverse()."""
         return operator.methodcaller('reverse')
 
     def sort(self, *, key: Callable[[T], Any] | None = None, reverse: bool = False) -> Callable[[list[T]], None]:
-        """Create lambda: x.sort(key=key, reverse=reverse)"""
+        """Create lambda: x.sort(key=key, reverse=reverse)."""
         return operator.methodcaller('sort', key=key, reverse=reverse)
 
     def copy(self) -> Callable[[list[T]], list[T]]:
-        """Create lambda: x.copy()"""
+        """Create lambda: x.copy()."""
         return operator.methodcaller('copy')
 
     def clear(self) -> Callable[[MutableSequence[T]], None]:
-        """Create lambda: x.clear()"""
+        """Create lambda: x.clear()."""
         return operator.methodcaller('clear')
 
     # =========================================================================
@@ -1056,27 +1056,27 @@ class Lambda(Expr):
     # =========================================================================
 
     def bit_length(self) -> Callable[[int], int]:
-        """Create lambda: x.bit_length()"""
+        """Create lambda: x.bit_length()."""
         return operator.methodcaller('bit_length')
 
     def bit_count(self) -> Callable[[int], int]:
-        """Create lambda: x.bit_count()"""
+        """Create lambda: x.bit_count()."""
         return operator.methodcaller('bit_count')
 
     def conjugate(self) -> Callable[[complex], complex]:
-        """Create lambda: x.conjugate()"""
+        """Create lambda: x.conjugate()."""
         return operator.methodcaller('conjugate')
 
     def hex(self) -> Callable[[float], str]:
-        """Create lambda: x.hex()"""
+        """Create lambda: x.hex()."""
         return operator.methodcaller('hex')
 
     def is_integer(self) -> Callable[[float], bool]:
-        """Create lambda: x.is_integer()"""
+        """Create lambda: x.is_integer()."""
         return operator.methodcaller('is_integer')
 
     def as_integer_ratio(self) -> Callable[[float], tuple[int, int]]:
-        """Create lambda: x.as_integer_ratio()"""
+        """Create lambda: x.as_integer_ratio()."""
         return operator.methodcaller('as_integer_ratio')
 
     # =========================================================================
@@ -1084,15 +1084,15 @@ class Lambda(Expr):
     # =========================================================================
 
     def attr(self, name: str) -> Callable[[Any], Any]:
-        """Create lambda: getattr(x, name)"""
+        """Create lambda: getattr(x, name)."""
         return operator.attrgetter(name)
 
     def item(self, key: K) -> Callable[[Mapping[K, V]], V]:
-        """Create lambda: x[key]"""
+        """Create lambda: x[key]."""
         return operator.itemgetter(key)
 
     def method(self, name: str, *args: Any, **kwargs: Any) -> Callable[[Any], Any]:
-        """Create lambda: x.method(*args, **kwargs)"""
+        """Create lambda: x.method(*args, **kwargs)."""
         return operator.methodcaller(name, *args, **kwargs)
 
     # =========================================================================
@@ -1100,75 +1100,75 @@ class Lambda(Expr):
     # =========================================================================
 
     def add(self, n: T) -> Callable[[T], T]:
-        """Create lambda: x + n"""
+        """Create lambda: x + n."""
         return lambda x: x + n  # type: ignore[operator, return-value]
 
     def radd(self, n: T) -> Callable[[T], T]:
-        """Create lambda: n + x"""
+        """Create lambda: n + x."""
         return lambda x: n + x  # type: ignore[operator, return-value]
 
     def sub(self, n: T) -> Callable[[T], T]:
-        """Create lambda: x - n"""
+        """Create lambda: x - n."""
         return lambda x: x - n  # type: ignore[operator, return-value]
 
     def rsub(self, n: T) -> Callable[[T], T]:
-        """Create lambda: n - x"""
+        """Create lambda: n - x."""
         return lambda x: n - x  # type: ignore[operator, return-value]
 
     def mul(self, n: T) -> Callable[[T], T]:
-        """Create lambda: x * n"""
+        """Create lambda: x * n."""
         return lambda x: x * n  # type: ignore[operator, return-value]
 
     def rmul(self, n: T) -> Callable[[T], T]:
-        """Create lambda: n * x"""
+        """Create lambda: n * x."""
         return lambda x: n * x  # type: ignore[operator, return-value]
 
     def truediv(self, n: float) -> Callable[[float], float]:
-        """Create lambda: x / n"""
+        """Create lambda: x / n."""
         return lambda x: x / n
 
     def rtruediv(self, n: float) -> Callable[[float], float]:
-        """Create lambda: n / x"""
+        """Create lambda: n / x."""
         return lambda x: n / x
 
     def floordiv(self, n: int) -> Callable[[int], int]:
-        """Create lambda: x // n"""
+        """Create lambda: x // n."""
         return lambda x: x // n
 
     def rfloordiv(self, n: int) -> Callable[[int], int]:
-        """Create lambda: n // x"""
+        """Create lambda: n // x."""
         return lambda x: n // x
 
     def mod(self, n: int) -> Callable[[int], int]:
-        """Create lambda: x % n"""
+        """Create lambda: x % n."""
         return lambda x: x % n
 
     def rmod(self, n: int) -> Callable[[int], int]:
-        """Create lambda: n % x"""
+        """Create lambda: n % x."""
         return lambda x: n % x
 
     def pow(self, n: int) -> Callable[[int], int]:
-        """Create lambda: x ** n"""
+        """Create lambda: x ** n."""
         return lambda x: x**n
 
     def rpow(self, n: int) -> Callable[[int], int]:
-        """Create lambda: n ** x"""
+        """Create lambda: n ** x."""
         return lambda x: n**x
 
     def neg(self) -> Callable[[T], T]:
-        """Create lambda: -x"""
+        """Create lambda: -x."""
         return operator.neg
 
     def pos(self) -> Callable[[T], T]:
-        """Create lambda: +x"""
+        """Create lambda: +x."""
         return operator.pos
 
     def abs_(self) -> Callable[[T], T]:
-        """Create lambda: abs(x)"""
+        """Create lambda: abs(x)."""
         return abs  # type: ignore[return-value]
 
     def invert(self) -> Callable[[int], int]:
-        """Create lambda: ~x"""
+        """Create lambda: ~x."""
         return operator.invert
 
     # =========================================================================
@@ -1176,43 +1176,43 @@ class Lambda(Expr):
     # =========================================================================
 
     def and_(self, n: int) -> Callable[[int], int]:
-        """Create lambda: x & n"""
+        """Create lambda: x & n."""
         return lambda x: x & n
 
     def rand(self, n: int) -> Callable[[int], int]:
-        """Create lambda: n & x"""
+        """Create lambda: n & x."""
         return lambda x: n & x
 
     def or_(self, n: int) -> Callable[[int], int]:
-        """Create lambda: x | n"""
+        """Create lambda: x | n."""
         return lambda x: x | n
 
     def ror(self, n: int) -> Callable[[int], int]:
-        """Create lambda: n | x"""
+        """Create lambda: n | x."""
         return lambda x: n | x
 
     def xor(self, n: int) -> Callable[[int], int]:
-        """Create lambda: x ^ n"""
+        """Create lambda: x ^ n."""
         return lambda x: x ^ n
 
     def rxor(self, n: int) -> Callable[[int], int]:
-        """Create lambda: n ^ x"""
+        """Create lambda: n ^ x."""
         return lambda x: n ^ x
 
     def lshift(self, n: int) -> Callable[[int], int]:
-        """Create lambda: x << n"""
+        """Create lambda: x << n."""
         return lambda x: x << n
 
     def rlshift(self, n: int) -> Callable[[int], int]:
-        """Create lambda: n << x"""
+        """Create lambda: n << x."""
         return lambda x: n << x
 
     def rshift(self, n: int) -> Callable[[int], int]:
-        """Create lambda: x >> n"""
+        """Create lambda: x >> n."""
         return lambda x: x >> n
 
     def rrshift(self, n: int) -> Callable[[int], int]:
-        """Create lambda: n >> x"""
+        """Create lambda: n >> x."""
         return lambda x: n >> x
 
     # =========================================================================
@@ -1220,27 +1220,27 @@ class Lambda(Expr):
     # =========================================================================
 
     def eq(self, value: T) -> Callable[[T], bool]:
-        """Create lambda: x == value"""
+        """Create lambda: x == value."""
         return lambda x: x == value
 
     def ne(self, value: T) -> Callable[[T], bool]:
-        """Create lambda: x != value"""
+        """Create lambda: x != value."""
         return lambda x: x != value
 
     def lt(self, value: T) -> Callable[[T], bool]:
-        """Create lambda: x < value"""
+        """Create lambda: x < value."""
         return lambda x: x < value  # type: ignore[operator]
 
     def le(self, value: T) -> Callable[[T], bool]:
-        """Create lambda: x <= value"""
+        """Create lambda: x <= value."""
         return lambda x: x <= value  # type: ignore[operator]
 
     def gt(self, value: T) -> Callable[[T], bool]:
-        """Create lambda: x > value"""
+        """Create lambda: x > value."""
         return lambda x: x > value  # type: ignore[operator]
 
     def ge(self, value: T) -> Callable[[T], bool]:
-        """Create lambda: x >= value"""
+        """Create lambda: x >= value."""
         return lambda x: x >= value  # type: ignore[operator]
 
     # =========================================================================
@@ -1248,31 +1248,31 @@ class Lambda(Expr):
     # =========================================================================
 
     def not_(self) -> Callable[[Any], bool]:
-        """Create lambda: not x"""
+        """Create lambda: not x."""
         return operator.not_
 
     def truth(self) -> Callable[[Any], bool]:
-        """Create lambda: bool(x)"""
+        """Create lambda: bool(x)."""
         return operator.truth
 
     def is_(self, value: T) -> Callable[[T], bool]:
-        """Create lambda: x is value"""
+        """Create lambda: x is value."""
         return lambda x: x is value
 
     def is_not(self, value: T) -> Callable[[T], bool]:
-        """Create lambda: x is not value"""
+        """Create lambda: x is not value."""
         return lambda x: x is not value
 
     def contains(self, item: T) -> Callable[[Iterable[T]], bool]:
-        """Create lambda: item in x"""
+        """Create lambda: item in x."""
         return lambda x: item in x
 
     def in_(self, container: Iterable[T]) -> Callable[[T], bool]:
-        """Create lambda: x in container"""
+        """Create lambda: x in container."""
         return lambda x: x in container
 
     def not_in(self, container: Iterable[T]) -> Callable[[T], bool]:
-        """Create lambda: x not in container"""
+        """Create lambda: x not in container."""
         return lambda x: x not in container
 
     # =========================================================================
@@ -1280,39 +1280,39 @@ class Lambda(Expr):
     # =========================================================================
 
     def int_(self) -> Callable[[Any], int]:
-        """Create lambda: int(x)"""
+        """Create lambda: int(x)."""
         return int
 
     def float_(self) -> Callable[[Any], float]:
-        """Create lambda: float(x)"""
+        """Create lambda: float(x)."""
         return float
 
     def str_(self) -> Callable[[Any], str]:
-        """Create lambda: str(x)"""
+        """Create lambda: str(x)."""
         return str
 
     def bool_(self) -> Callable[[Any], bool]:
-        """Create lambda: bool(x)"""
+        """Create lambda: bool(x)."""
         return bool
 
     def list_(self) -> Callable[[Iterable[T]], list[T]]:
-        """Create lambda: list(x)"""
+        """Create lambda: list(x)."""
         return list
 
     def tuple_(self) -> Callable[[Iterable[T]], tuple[T, ...]]:
-        """Create lambda: tuple(x)"""
+        """Create lambda: tuple(x)."""
         return tuple  # type: ignore[return-value]
 
     def set_(self) -> Callable[[Iterable[T]], set[T]]:
-        """Create lambda: set(x)"""
+        """Create lambda: set(x)."""
         return set
 
     def dict_(self) -> Callable[[Iterable[tuple[K, V]]], dict[K, V]]:
-        """Create lambda: dict(x)"""
+        """Create lambda: dict(x)."""
         return dict  # type: ignore[return-value]
 
     def bytes_(self, encoding: str = 'utf-8') -> Callable[[str], bytes]:
-        """Create lambda: x.encode(encoding)"""
+        """Create lambda: x.encode(encoding)."""
         return operator.methodcaller('encode', encoding)
 
     # =========================================================================
@@ -1320,73 +1320,73 @@ class Lambda(Expr):
     # =========================================================================
 
     def len_(self) -> Callable[[Any], int]:
-        """Create lambda: len(x)"""
+        """Create lambda: len(x)."""
         return len
 
     def repr_(self) -> Callable[[Any], str]:
-        """Create lambda: repr(x)"""
+        """Create lambda: repr(x)."""
         return repr
 
     def hash_(self) -> Callable[[Any], int]:
-        """Create lambda: hash(x)"""
+        """Create lambda: hash(x)."""
         return hash
 
     def type_(self) -> Callable[[Any], type]:
-        """Create lambda: type(x)"""
+        """Create lambda: type(x)."""
         return type
 
     def id_(self) -> Callable[[Any], int]:
-        """Create lambda: id(x)"""
+        """Create lambda: id(x)."""
         return id
 
     def callable_(self) -> Callable[[Any], bool]:
-        """Create lambda: callable(x)"""
+        """Create lambda: callable(x)."""
         return callable
 
     def sorted_(
         self, *, key: Callable[[T], Any] | None = None, reverse: bool = False
     ) -> Callable[[Iterable[T]], list[T]]:
-        """Create lambda: sorted(x, key=key, reverse=reverse)"""
+        """Create lambda: sorted(x, key=key, reverse=reverse)."""
         return lambda x: sorted(x, key=key, reverse=reverse)
 
     def reversed_(self) -> Callable[[Iterable[T]], Iterable[T]]:
-        """Create lambda: reversed(x)"""
+        """Create lambda: reversed(x)."""
         return reversed  # type: ignore[return-value]
 
     def enumerate_(self, start: int = 0) -> Callable[[Iterable[T]], Iterable[tuple[int, T]]]:
-        """Create lambda: enumerate(x, start)"""
+        """Create lambda: enumerate(x, start)."""
         return lambda x: enumerate(x, start)
 
     def min_(self) -> Callable[[Iterable[T]], T]:
-        """Create lambda: min(x)"""
+        """Create lambda: min(x)."""
         return min  # type: ignore[return-value]
 
     def max_(self) -> Callable[[Iterable[T]], T]:
-        """Create lambda: max(x)"""
+        """Create lambda: max(x)."""
         return max  # type: ignore[return-value]
 
     def sum_(self) -> Callable[[Iterable[T]], T]:
-        """Create lambda: sum(x)"""
+        """Create lambda: sum(x)."""
         return sum  # type: ignore[return-value]
 
     def all_(self) -> Callable[[Iterable[Any]], bool]:
-        """Create lambda: all(x)"""
+        """Create lambda: all(x)."""
         return all
 
     def any_(self) -> Callable[[Iterable[Any]], bool]:
-        """Create lambda: any(x)"""
+        """Create lambda: any(x)."""
         return any
 
     def zip_(self, *iterables: Iterable[Any]) -> Callable[[Iterable[T]], Iterable[tuple[Any, ...]]]:
-        """Create lambda: zip(x, *iterables)"""
+        """Create lambda: zip(x, *iterables)."""
         return lambda x: zip(x, *iterables, strict=False)
 
     def map_(self, func: Callable[[T], T2]) -> Callable[[Iterable[T]], Iterable[T2]]:
-        """Create lambda: map(func, x)"""
+        """Create lambda: map(func, x)."""
         return lambda x: map(func, x)
 
     def filter_(self, func: Callable[[T], bool] | None = None) -> Callable[[Iterable[T]], Iterable[T]]:
-        """Create lambda: filter(func, x)"""
+        """Create lambda: filter(func, x)."""
         return lambda x: filter(func, x)
 
     # =========================================================================
@@ -1394,15 +1394,15 @@ class Lambda(Expr):
     # =========================================================================
 
     def identity(self) -> Callable[[T], T]:
-        """Create lambda: x (identity function)"""
+        """Create lambda: x (identity function)."""
         return lambda x: x
 
     def const(self, value: T) -> Callable[[Any], T]:
-        """Create lambda: value (constant function)"""
+        """Create lambda: value (constant function)."""
         return lambda _: value
 
     def call(self, *args: Any, **kwargs: Any) -> Callable[[Callable[..., T]], T]:
-        """Create lambda: x(*args, **kwargs)"""
+        """Create lambda: x(*args, **kwargs)."""
         return lambda x: x(*args, **kwargs)
 
     # =========================================================================

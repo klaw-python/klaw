@@ -17,27 +17,27 @@ E = TypeVar('E', bound=BaseException)
 
 
 @overload
-def safe(
+def safe[**P, T](
     func: Callable[P, T],
 ) -> Callable[P, Ok[T] | Err[Exception]]: ...
 
 
 @overload
-def safe(
+def safe[E: BaseException](
     *,
     exceptions: tuple[type[E], ...],
 ) -> Callable[[Callable[P, T]], Callable[P, Ok[T] | Err[E]]]: ...
 
 
 @overload
-def safe(
+def safe[E: BaseException](
     func: None = None,
     *,
     exceptions: tuple[type[E], ...] | None = None,
 ) -> Callable[[Callable[P, T]], Callable[P, Ok[T] | Err[E]]]: ...
 
 
-def safe(
+def safe[**P, T](
     func: Callable[P, T] | None = None,
     *,
     exceptions: tuple[type[Any], ...] | None = None,
@@ -93,13 +93,13 @@ def safe(
 
 
 @overload
-def safe_async(
+def safe_async[**P, T](
     func: Callable[P, Awaitable[T]],
 ) -> Callable[P, Awaitable[Ok[T] | Err[Exception]]]: ...
 
 
 @overload
-def safe_async(
+def safe_async[E: BaseException](
     *,
     exceptions: tuple[type[E], ...],
 ) -> Callable[
@@ -108,7 +108,7 @@ def safe_async(
 
 
 @overload
-def safe_async(
+def safe_async[E: BaseException](
     func: None = None,
     *,
     exceptions: tuple[type[E], ...] | None = None,
@@ -117,7 +117,7 @@ def safe_async(
 ]: ...
 
 
-def safe_async(
+def safe_async[**P, T](
     func: Callable[P, Awaitable[T]] | None = None,
     *,
     exceptions: tuple[type[Any], ...] | None = None,

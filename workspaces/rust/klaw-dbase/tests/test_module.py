@@ -1,17 +1,19 @@
 """Integration tests for klaw-dbase module."""
 
-from datetime import date, datetime
-from io import BytesIO
 import tempfile
-import time
 
 import polars as pl
 import pytest
-
-from klaw_dbase import scan_dbase, read_dbase, write_dbase
-from klaw_dbase import DbaseError, EmptySources, SchemaMismatch, EncodingError, DbcError
-
-from utils import frames_equal
+from klaw_dbase import (
+    DbaseError,
+    DbcError,
+    EmptySources,
+    EncodingError,
+    SchemaMismatch,
+    read_dbase,
+    scan_dbase,
+    write_dbase,
+)
 
 
 def test_api_imports() -> None:
@@ -41,7 +43,7 @@ def test_error_types() -> None:
     df = pl.from_dict({'x': [1, 2, 3]})
 
     # Test file not found
-    with pytest.raises((pl.exceptions.ComputeError)):
+    with pytest.raises(pl.exceptions.ComputeError):
         read_dbase('nonexistent_file.dbf')
 
     # Test empty sources

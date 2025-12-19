@@ -20,7 +20,7 @@ python_workspaces = [
 def get_title(source_path: Path) -> str:
     """Extract title from Python source file."""
     try:
-        with open(source_path, encoding='utf-8') as f:
+        with Path(source_path).open(encoding='utf-8') as f:
             tree = ast.parse(f.read())
         for node in ast.iter_child_nodes(tree):
             if isinstance(node, (ast.FunctionDef, ast.ClassDef)):
@@ -35,7 +35,7 @@ def get_module_info(module_path: Path) -> dict:
     if not module_path.exists():
         return {}
     try:
-        with open(module_path, encoding='utf-8') as f:
+        with Path(module_path).open(encoding='utf-8') as f:
             tree = ast.parse(f.read())
         for node in ast.iter_child_nodes(tree):
             if isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant):
@@ -183,7 +183,7 @@ for workspace_path in python_workspaces:
     is_rust_ext = 'rust' in workspace_path
 
     for path in sorted(src.rglob('*.py')):
-        if path.name in ('__main__.py', '__version__.py') or path.name.endswith('_test.py'):
+        if path.name in {'__main__.py', '__version__.py'} or path.name.endswith('_test.py'):
             continue
 
         # Skip private modules in Python packages only (any path component starting with _)

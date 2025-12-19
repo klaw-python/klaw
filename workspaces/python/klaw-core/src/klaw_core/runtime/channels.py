@@ -34,7 +34,7 @@ from __future__ import annotations
 
 import math
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, Generic, Protocol, TypeVar
+from typing import TYPE_CHECKING, Any, Protocol, TypeVar
 
 import anyio
 from anyio.streams.memory import MemoryObjectReceiveStream, MemoryObjectSendStream
@@ -273,7 +273,7 @@ class Receiver(Protocol[T]):
 # --- LocalChannel Implementation ---
 
 
-class LocalSender(Generic[T]):
+class LocalSender[T]:
     """Local channel sender using anyio memory object streams.
 
     Thread-safe and task-safe via anyio.MemoryObjectSendStream.
@@ -379,7 +379,7 @@ class LocalSender(Generic[T]):
         await self._stream.aclose()
 
 
-class LocalReceiver(Generic[T]):
+class LocalReceiver[T]:
     """Local channel receiver using anyio memory object streams.
 
     Thread-safe and task-safe via anyio.MemoryObjectReceiveStream.

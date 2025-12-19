@@ -1,5 +1,7 @@
 """Tests for composition utilities: pipe() and Deref."""
 
+from collections import UserString
+
 import pytest
 from hypothesis import given
 from hypothesis import strategies as st
@@ -294,7 +296,7 @@ class TestDerefOkForwarding:
     def test_deref_ok_method_returns_result(self):
         """Method returning Result is not double-wrapped."""
 
-        class MyStr(str):
+        class MyStr(UserString):
             def checked_upper(self) -> Ok[str]:
                 return Ok(self.upper())
 
@@ -381,7 +383,7 @@ class TestDerefSomeForwarding:
     def test_deref_some_method_returns_option(self):
         """Method returning Option is not double-wrapped."""
 
-        class MyStr(str):
+        class MyStr(UserString):
             def checked_upper(self) -> Some[str]:
                 return Some(self.upper())
 

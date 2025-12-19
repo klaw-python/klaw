@@ -65,3 +65,4 @@ def validate_encoding(encoding: str) -> bool:
 
     if encoding in _list_valid_encodings():
         return True
+    return None

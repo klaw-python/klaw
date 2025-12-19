@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from os import path
 from pathlib import Path
 from typing import BinaryIO
 
@@ -71,19 +70,16 @@ def write_dbase(
     """
     if df.is_empty():
         print(df)
-        raise EmptySources()
+        raise EmptySources
 
-    if batch_size is None:
-        frames = [df]
-    else:
-        frames = [df[i : i + batch_size].rechunk() for i in range(0, len(df), batch_size)]
+    frames = [df] if batch_size is None else [df[i:i + batch_size].rechunk() for i in range(0, len(df), batch_size)]
 
     if memo_threshold is not None:
         memo_threshold = None
 
     match dest:
         case str() | Path():
-            expanded = path.expanduser(dest)
+            expanded = Path(dest).expanduser()
 
             write_dbase_file(
                 frames=frames,
