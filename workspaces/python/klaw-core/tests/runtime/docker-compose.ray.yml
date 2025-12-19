@@ -1,0 +1,57 @@
+version: "3.8"
+
+x-ray-common: &ray-common
+  image: ${RAY_IMAGE:-rayproject/ray:2.9.0}
+  environment:
+    - RAY_OBJECT_STORE_MEMORY=${OBJECT_STORE_MEMORY:-100000000}
+
+services:
+  ray-head:
+    <<: *ray-common
+    container_name: ray-head
+    command: >
+      ray start --head
+      --port=6379
+      --dashboard-host=0.0.0.0
+      --dashboard-port=8265
+      --num-cpus=${HEAD_CPUS:-2}
+      --block
+    ports:
+      - "6379:6379"
+      - "8265:8265"
+      - "10001:10001"
+    healthcheck:
+      test: ["CMD", "ray", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ray-network
+    deploy:
+      resources:
+        limits:
+          cpus: "${HEAD_CPUS:-2}"
+
+  ray-worker:
+    <<: *ray-common
+    command: >
+      ray start
+      --address=ray-head:6379
+      --num-cpus=${WORKER_CPUS:-2}
+      --block
+    depends_on:
+      ray-head:
+        condition: service_healthy
+    networks:
+      - ray-network
+    deploy:
+      replicas: ${WORKER_REPLICAS:-1}
+      resources:
+        limits:
+          cpus: "${WORKER_CPUS:-2}"
+
+networks:
+  ray-network:
+    driver: overlay
+    attachable: true

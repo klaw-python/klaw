@@ -197,35 +197,19 @@ class TestDetectRayConcurrency:
         # Ray is not initialized in tests, should return None
         assert result is None
 
-    def test_returns_cpu_count_when_ray_initialized(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        import ray
+    @pytest.mark.ray
+    def test_returns_cpu_count_when_ray_initialized(self, ray_with_cpus_4: None) -> None:
         from klaw_core.runtime._config import _detect_ray_concurrency
 
-        # Opt-in to future Ray behavior for GPU env var handling
-        monkeypatch.setenv('RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO', '0')
+        result = _detect_ray_concurrency()
+        assert result == 4, f'Expected 4 CPUs from Ray, got {result}'
 
-        ray.init(num_cpus=4, ignore_reinit_error=True, include_dashboard=False)
-        try:
-            result = _detect_ray_concurrency()
-            assert result == 4, f'Expected 4 CPUs from Ray, got {result}'
-        finally:
-            ray.shutdown()
-
-    def test_detect_concurrency_uses_ray_when_backend_is_ray_and_initialized(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        import ray
+    @pytest.mark.ray
+    def test_detect_concurrency_uses_ray_when_backend_is_ray_and_initialized(self, ray_with_cpus_8: None) -> None:
         from klaw_core.runtime._config import Backend, _detect_concurrency
 
-        # Opt-in to future Ray behavior for GPU env var handling
-        monkeypatch.setenv('RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO', '0')
-
-        ray.init(num_cpus=8, ignore_reinit_error=True, include_dashboard=False)
-        try:
-            result = _detect_concurrency(Backend.RAY)
-            assert result == 8, f'Expected 8 CPUs from Ray, got {result}'
-        finally:
-            ray.shutdown()
+        result = _detect_concurrency(Backend.RAY)
+        assert result == 8, f'Expected 8 CPUs from Ray, got {result}'
 
     def test_detect_concurrency_falls_back_to_local_when_ray_not_initialized(self) -> None:
         from klaw_core.runtime._config import (
