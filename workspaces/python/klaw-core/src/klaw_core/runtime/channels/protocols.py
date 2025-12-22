@@ -1,9 +1,15 @@
-"""Channel protocols: Sender and Receiver abstract interfaces."""
+"""Channel protocols: Sender and Receiver abstract interfaces.
+
+Uses PEP 695 type parameter syntax (Python 3.12+) for automatic variance inference.
+Type checkers will infer:
+- Sender[T] as contravariant (T appears in input positions)
+- Receiver[T] as covariant (T appears in output positions)
+"""
 
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Protocol, TypeVar
+from typing import TYPE_CHECKING, Protocol, Self
 
 from klaw_core.result import Result
 from klaw_core.runtime.errors import ChannelClosed, ChannelEmpty, ChannelFull
@@ -13,10 +19,8 @@ if TYPE_CHECKING:
 
 __all__ = ['Receiver', 'ReferenceReceiver', 'ReferenceSender', 'Sender']
 
-T = TypeVar('T')
 
-
-class Sender(Protocol[T]):
+class Sender[T](Protocol):
     """Protocol for sending values into a channel.
 
     Sender is the transmit half of a channel. Multiple senders can exist
@@ -25,6 +29,8 @@ class Sender(Protocol[T]):
 
     Type Parameters:
         T: The type of values sent through the channel.
+            Variance is inferred by type checkers as contravariant
+            (T appears only in input positions).
     """
 
     @abstractmethod
@@ -66,7 +72,7 @@ class Sender(Protocol[T]):
         ...
 
     @abstractmethod
-    def clone(self) -> Sender[T]:
+    def clone(self) -> Self:
         """Clone this sender for multi-producer use.
 
         Returns a new sender that shares the same underlying channel.
@@ -77,7 +83,7 @@ class Sender(Protocol[T]):
         counter and returns immediately (no I/O or waiting involved).
 
         Returns:
-            A new Sender[T] pointing to the same channel.
+            A new Sender pointing to the same channel.
 
         Example:
             ```python
@@ -105,7 +111,7 @@ class Sender(Protocol[T]):
         ...
 
 
-class Receiver(Protocol[T]):
+class Receiver[T](Protocol):
     """Protocol for receiving values from a channel.
 
     Receiver is the receive half of a channel. Multiple receivers can exist
@@ -113,7 +119,9 @@ class Receiver(Protocol[T]):
     are dropped, `recv()` returns `Err(ChannelClosed)` after draining.
 
     Type Parameters:
-        T: The type of values received (covariant).
+        T: The type of values received from the channel.
+            Variance is inferred by type checkers as covariant
+            (T appears only in output positions).
     """
 
     @abstractmethod
@@ -157,7 +165,7 @@ class Receiver(Protocol[T]):
         ...
 
     @abstractmethod
-    def clone(self) -> Receiver[T]:
+    def clone(self) -> Self:
         """Clone this receiver for multi-consumer use.
 
         Returns a new receiver that shares the same underlying channel.
@@ -168,7 +176,7 @@ class Receiver(Protocol[T]):
         counter and returns immediately (no I/O or waiting involved).
 
         Returns:
-            A new Receiver[T] pointing to the same channel.
+            A new Receiver pointing to the same channel.
 
         Example:
             ```python
@@ -222,8 +230,12 @@ class Receiver(Protocol[T]):
         ...
 
 
-class ReferenceSender(Sender[T], Protocol[T]):
-    """Protocol for senders that support batch operations and pass references."""
+class ReferenceSender[T](Sender[T], Protocol):
+    """Protocol for senders that support batch operations and pass references.
+
+    Type Parameters:
+        T: The type of values sent (contravariant, inherited from Sender).
+    """
 
     @abstractmethod
     async def send_batch(self, values: list[T]) -> None:
@@ -238,8 +250,12 @@ class ReferenceSender(Sender[T], Protocol[T]):
         ...
 
 
-class ReferenceReceiver(Receiver[T], Protocol[T]):
-    """Protocol for receivers that support batch operations and receive references."""
+class ReferenceReceiver[T](Receiver[T], Protocol):
+    """Protocol for receivers that support batch operations and receive references.
+
+    Type Parameters:
+        T: The type of values received (covariant, inherited from Receiver).
+    """
 
     @abstractmethod
     async def recv_batch(self, max_items: int, timeout: float | None = None) -> list[T]:

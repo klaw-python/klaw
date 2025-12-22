@@ -53,5 +53,4 @@ services:
 
 networks:
   ray-network:
-    driver: overlay
-    attachable: true
+    driver: bridge

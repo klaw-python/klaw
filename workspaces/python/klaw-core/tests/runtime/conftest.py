@@ -27,36 +27,66 @@ class RayMode(StrEnum):
     CLUSTER = 'cluster'  # Connect to existing cluster (address from env)
 
 
-RAY_RUNTIME_ENV_EXCLUDES = [
-    '.git',
-    '.venv',
-    '.mypy_cache',
-    '.pytest_cache',
-    '.ruff_cache',
-    '.hypothesis',
-    '*.dbc',
-    'node_modules',
-    'target',
-    'dist',
-    'build',
-    'site',
-    'docs-build',
-    '.benchmarks',
-    '.cache',
-]
+from klaw_core.runtime._backends.ray import DEFAULT_RUNTIME_ENV_EXCLUDES
+
+RAY_RUNTIME_ENV_EXCLUDES = DEFAULT_RUNTIME_ENV_EXCLUDES
 
 
-@pytest.fixture(params=[RayMode.LOCAL])
-def ray_env(request: pytest.FixtureRequest) -> Generator[RayMode]:
+def _cleanup_orphan_ray_containers() -> None:
+    """Clean up orphan Ray containers and networks from previous test runs."""
+    try:
+        from python_on_whales import DockerClient
+
+        docker = DockerClient()
+
+        containers = docker.container.list(all=True, filters=[('name', 'ray_sunray')])
+        for container in containers:
+            try:
+                container.stop(time=5)
+                container.remove(force=True)
+            except Exception:
+                pass
+
+        networks = docker.network.list(filters=[('name', 'ray_sunray')])
+        for network in networks:
+            try:
+                docker.network.remove(network)
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+
+@pytest.fixture(scope='session', autouse=True)
+def _cleanup_orphan_ray_resources() -> None:
+    """Session-scoped fixture to clean up orphan Ray containers at test start."""
+    _cleanup_orphan_ray_containers()
+    yield
+    _cleanup_orphan_ray_containers()
+
+
+def _safe_ray_shutdown() -> None:
+    """Gracefully shutdown Ray, suppressing errors during teardown."""
+    import ray
+
+    try:
+        if ray.is_initialized():
+            ray.shutdown()
+    except OSError:
+        pass
+
+
+@pytest.fixture(params=[RayMode.STANDALONE])
+def ray_env(request: pytest.FixtureRequest, unique_name: str) -> Generator[RayMode]:
     """Initialize Ray with configurable mode.
 
-    Default: LOCAL mode for fast unit tests.
+    Default: STANDALONE mode (real Ray processes, supports async actors).
     Override with @pytest.mark.parametrize("ray_env", [...], indirect=True)
     or set KLAW_RAY_TEST_MODE env var.
 
     Modes:
-        LOCAL: local_mode=True, runs actor code in-process (fastest, easiest to debug)
-        STANDALONE: Real Ray processes on local machine (more realistic)
+        LOCAL: local_mode=True, in-process (NOTE: doesn't support async actors)
+        STANDALONE: Real Ray processes on local machine (default, supports async)
         CLUSTER: Connect to existing cluster via KLAW_RAY_CLUSTER_ADDRESS env var
 
     Example:
@@ -78,31 +108,69 @@ def ray_env(request: pytest.FixtureRequest) -> Generator[RayMode]:
     mode_override = os.environ.get('KLAW_RAY_TEST_MODE')
     mode = RayMode(mode_override) if mode_override else request.param
 
+    namespace = f'test{unique_name}' if unique_name else 'test_default'
+
     if mode == RayMode.LOCAL:
-        ray.init(local_mode=True, ignore_reinit_error=True)
+        ray.init(
+            local_mode=True,
+            ignore_reinit_error=True,
+            namespace=namespace,
+            runtime_env={'working_dir': None},
+        )
     elif mode == RayMode.STANDALONE:
         ray.init(
             num_cpus=2,
             ignore_reinit_error=True,
             include_dashboard=False,
+            namespace=namespace,
             runtime_env={'excludes': RAY_RUNTIME_ENV_EXCLUDES},
         )
     elif mode == RayMode.CLUSTER:
         address = os.environ.get('KLAW_RAY_CLUSTER_ADDRESS', 'auto')
-        ray.init(address=address, ignore_reinit_error=True)
+        ray.init(address=address, ignore_reinit_error=True, namespace=namespace)
 
     yield mode
-    ray.shutdown()
+    _safe_ray_shutdown()
+
+
+@pytest.fixture(scope='class')
+def ray_env_class(request: pytest.FixtureRequest, unique_name_class: str) -> Generator[RayMode]:
+    """Class-scoped Ray init for hypothesis tests.
+
+    Ray stays alive for all tests in the class, avoiding repeated init/shutdown
+    overhead when running many hypothesis examples.
+    """
+    import ray
+
+    mode = RayMode.STANDALONE
+    namespace = f'test{unique_name_class}' if unique_name_class else 'test_hypothesis'
+
+    ray.init(
+        num_cpus=2,
+        ignore_reinit_error=True,
+        include_dashboard=False,
+        namespace=namespace,
+        runtime_env={'excludes': RAY_RUNTIME_ENV_EXCLUDES},
+    )
+
+    yield mode
+    _safe_ray_shutdown()
 
 
 @pytest.fixture
-def ray_local() -> Generator[None]:
-    """Ray in local mode (fast, in-process). Simple fixture without parameterization."""
+def ray_local(unique_name: str) -> Generator[None]:
+    """Ray in local mode (fast, in-process). Uses namespace for xdist isolation."""
     import ray
 
-    ray.init(local_mode=True, ignore_reinit_error=True)
+    namespace = f'test{unique_name}' if unique_name else 'test_default'
+    ray.init(
+        local_mode=True,
+        ignore_reinit_error=True,
+        namespace=namespace,
+        runtime_env={'working_dir': None},
+    )
     yield
-    ray.shutdown()
+    _safe_ray_shutdown()
 
 
 @pytest.fixture
@@ -119,7 +187,7 @@ def ray_with_cpus_4() -> Generator[None]:
         runtime_env={'excludes': RAY_RUNTIME_ENV_EXCLUDES},
     )
     yield
-    ray.shutdown()
+    _safe_ray_shutdown()
 
 
 @pytest.fixture
@@ -136,7 +204,7 @@ def ray_with_cpus_8() -> Generator[None]:
         runtime_env={'excludes': RAY_RUNTIME_ENV_EXCLUDES},
     )
     yield
-    ray.shutdown()
+    _safe_ray_shutdown()
 
 
 @pytest.fixture
@@ -155,7 +223,7 @@ def get_worker_suffix() -> str:
 
 @pytest.fixture
 def unique_name() -> str:
-    """Return unique suffix for container names.
+    """Return unique suffix for container names (function-scoped).
 
     Ensures containers in parallel workers don't conflict.
 
@@ -164,6 +232,15 @@ def unique_name() -> str:
         def test_something(self, unique_name):
             container_name = f"test_container{unique_name}"
         ```
+    """
+    return get_worker_suffix()
+
+
+@pytest.fixture(scope='class')
+def unique_name_class() -> str:
+    """Return unique suffix for container names (class-scoped).
+
+    For class-scoped fixtures that need worker isolation.
     """
     return get_worker_suffix()
 
@@ -248,6 +325,7 @@ class ContainerRunner:
             'anyio',
             'tenacity',
             'diskcache',
+            'sunray',
             *self._extra_deps,
         ]
         deps_str = ' '.join(deps)
@@ -338,11 +416,11 @@ def container_runner(unique_name: str) -> ContainerRunner:
 
 
 def _get_ray_image() -> str:
-    """Get Ray Docker image for current platform."""
+    """Get Ray Docker image with Python 3.12+ for PEP 695 support."""
     arch = platform.machine()
     if arch in {'arm64', 'aarch64'}:
-        return 'rayproject/ray:2.9.0-aarch64'
-    return 'rayproject/ray:2.9.0'
+        return 'rayproject/ray:2.53.0-py312-aarch64'
+    return 'rayproject/ray:2.53.0-py312'
 
 
 def _wait_for_ray_head(docker: DockerClient, head_name: str, max_attempts: int = 30) -> bool:

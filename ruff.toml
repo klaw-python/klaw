@@ -188,6 +188,7 @@ lint.per-file-ignores."workspaces/python/klaw-core/src/klaw_core/**/*.py" = [
   "S110",    # try-except-pass for cleanup
   "SIM105",  # contextlib.suppress not required in cleanup
   "SLF001",  # internal API access (_complete, _fail, etc.)
+  "UP046",   # msgspec.Struct requires Generic[T] syntax, not PEP 695
 ]
 # lint.per-file-ignores."tests/test_examples/test_maybe/test_maybe_pattern_matching.py" = [
 #   "D101",

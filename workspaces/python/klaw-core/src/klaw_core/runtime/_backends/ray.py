@@ -5,8 +5,12 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import inspect
+import os
 from collections.abc import Awaitable, Callable
 from typing import Any, TypeVar
+
+# Suppress Ray's FutureWarning about accelerator env var override
+os.environ.setdefault('RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO', '0')
 
 from klaw_core.runtime._backends import ExitReason
 from klaw_core.runtime.errors import BackendException, CancelledError
@@ -17,6 +21,63 @@ __all__ = ['RayBackend']
 T = TypeVar('T')
 
 _ray: Any = None
+
+DEFAULT_RUNTIME_ENV_EXCLUDES = [
+    # Version control & IDE
+    '.git',
+    '.vscode',
+    '.idea',
+    '.kilocode',
+    # Python environments & caches
+    '.venv',
+    'venv',
+    '.mypy_cache',
+    '.pytest_cache',
+    '.ruff_cache',
+    '.hypothesis',
+    '__pycache__',
+    '*.pyc',
+    '*.pyo',
+    '.tox',
+    '.nox',
+    '.eggs',
+    '*.egg-info',
+    '.coverage',
+    'htmlcov',
+    # Rust artifacts (monorepo with Rust workspaces)
+    'target',
+    'workspaces/rust',
+    '*.rs',
+    'Cargo.lock',
+    'Cargo.toml',
+    # Build artifacts
+    'dist',
+    'build',
+    # Documentation
+    'site',
+    'docs',
+    'docs-build',
+    # Tests (not needed in Ray workers)
+    'tests',
+    '**/tests',
+    '*_test.py',
+    'test_*.py',
+    'conftest.py',
+    # Benchmarks & references
+    '.benchmarks',
+    '.cache',
+    '.reference',
+    # Other large/unnecessary files
+    '*.dbc',
+    'node_modules',
+    '.DS_Store',
+    '.env',
+    '*.log',
+    '*.lock',
+    'uv.lock',
+    # Tasks/PRD files
+    'tasks',
+]
 
 
 def _get_ray() -> Any:
@@ -68,6 +129,13 @@ class RayBackend:
                 for k, v in self._kwargs.items()
                 if k in {'address', 'namespace', 'runtime_env', 'num_cpus', 'num_gpus'}
             }
+            # Merge default excludes into runtime_env
+            runtime_env = init_kwargs.get('runtime_env', {})
+            if isinstance(runtime_env, dict):
+                existing_excludes = runtime_env.get('excludes', [])
+                merged_excludes = list(set(DEFAULT_RUNTIME_ENV_EXCLUDES + existing_excludes))
+                runtime_env = {**runtime_env, 'excludes': merged_excludes}
+                init_kwargs['runtime_env'] = runtime_env
             ray.init(**init_kwargs, ignore_reinit_error=True)
         self._initialized = True
 
