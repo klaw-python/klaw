@@ -60,39 +60,45 @@ impl WriteOptions {
 
 /// Resolve encoding string to a normalized form
 /// This mirrors the function in read.rs for consistency
+/// Uses encoding_rs exclusively for Send + Sync compatibility
 fn resolve_encoding_string(encoding_name: &str) -> Result<String, Error> {
     // Validate and normalize encoding names
     match encoding_name.to_lowercase().as_str() {
-        // Default encodings (always available)
+        // UTF-8 encodings
         "utf8" | "utf-8" => Ok("utf8".to_string()),
         "utf8-lossy" | "utf-8-lossy" => Ok("utf8-lossy".to_string()),
         "ascii" => Ok("ascii".to_string()),
 
-        // yore code pages (always available since we include yore)
+        // Windows code pages (all supported by encoding_rs)
         "cp1252" | "windows-1252" => Ok("cp1252".to_string()),
-        "cp850" | "dos-850" => Ok("cp850".to_string()),
-        "cp437" | "dos-437" => Ok("cp437".to_string()),
-        "cp852" | "dos-852" => Ok("cp852".to_string()),
-        "cp866" | "dos-866" => Ok("cp866".to_string()),
-        "cp865" | "dos-865" => Ok("cp865".to_string()),
-        "cp861" | "dos-861" => Ok("cp861".to_string()),
-        "cp874" | "dos-874" => Ok("cp874".to_string()),
-        "cp1255" | "windows-1255" => Ok("cp1255".to_string()),
-        "cp1256" | "windows-1256" => Ok("cp1256".to_string()),
         "cp1250" | "windows-1250" => Ok("cp1250".to_string()),
         "cp1251" | "windows-1251" => Ok("cp1251".to_string()),
-        "cp1254" | "windows-1254" => Ok("cp1254".to_string()),
         "cp1253" | "windows-1253" => Ok("cp1253".to_string()),
+        "cp1254" | "windows-1254" => Ok("cp1254".to_string()),
+        "cp1255" | "windows-1255" => Ok("cp1255".to_string()),
+        "cp1256" | "windows-1256" => Ok("cp1256".to_string()),
+        "cp1257" | "windows-1257" => Ok("cp1257".to_string()),
+        "cp1258" | "windows-1258" => Ok("cp1258".to_string()),
 
-        // encoding_rs support (always available since we include encoding_rs)
-        "gbk" | "gb2312" => Ok("gbk".to_string()),
+        // IBM/DOS code pages supported by encoding_rs
+        "cp866" | "ibm866" | "dos-866" => Ok("cp866".to_string()),
+        "cp874" | "windows-874" | "dos-874" => Ok("cp874".to_string()),
+
+        // ISO-8859 encodings (supported by encoding_rs)
+        "iso-8859-1" | "iso8859-1" | "latin1" => Ok("iso-8859-1".to_string()),
+        "iso-8859-2" | "iso8859-2" | "latin2" => Ok("iso-8859-2".to_string()),
+        "iso-8859-7" | "iso8859-7" | "greek" => Ok("iso-8859-7".to_string()),
+        "iso-8859-15" | "iso8859-15" | "latin9" => Ok("iso-8859-15".to_string()),
+
+        // CJK encodings (all supported by encoding_rs)
+        "gbk" | "gb2312" | "gb18030" => Ok("gbk".to_string()),
         "big5" => Ok("big5".to_string()),
-        "shift_jis" | "sjis" => Ok("shift_jis".to_string()),
-        "euc-jp" => Ok("euc-jp".to_string()),
-        "euc-kr" => Ok("euc-kr".to_string()),
+        "shift_jis" | "sjis" | "shift-jis" => Ok("shift_jis".to_string()),
+        "euc-jp" | "eucjp" => Ok("euc-jp".to_string()),
+        "euc-kr" | "euckr" => Ok("euc-kr".to_string()),
 
         _ => Err(Error::EncodingError(format!(
-            "Unsupported encoding: {}",
+            "Unsupported encoding: '{}'. Supported encodings: utf8, cp1250-1258, cp866, cp874, iso-8859-2, iso-8859-7, gbk, big5, shift_jis, euc-jp, euc-kr",
             encoding_name
         ))),
     }
@@ -220,44 +226,55 @@ fn adjust_specs_for_memo_fields(
 }
 
 /// Create a dBase TableWriter from field specifications with encoding support
+///
+/// Uses encoding_rs exclusively for Send + Sync compatibility.
 fn create_writer_from_specs(
     specs: &[DBaseFieldSpec],
     dest: impl Write + Seek,
     encoding: &str,
 ) -> Result<dbase::TableWriter<impl Write + Seek>, Error> {
+    // Helper macro to reduce boilerplate for encoding_rs encodings
+    macro_rules! with_encoding_rs {
+        ($enc:expr) => {
+            TableWriterBuilder::with_encoding(dbase::encoding::EncodingRs::from($enc))
+        };
+    }
+
     // Create builder with encoding
     let mut builder = match encoding {
+        // UTF-8 variants use built-in Unicode types
         "utf8" => TableWriterBuilder::with_encoding(dbase::Unicode),
-        "utf8-lossy" => TableWriterBuilder::with_encoding(dbase::UnicodeLossy),
-        "cp1252" => TableWriterBuilder::with_encoding(yore::code_pages::CP1252),
-        "cp850" => TableWriterBuilder::with_encoding(yore::code_pages::CP850),
-        "cp437" => TableWriterBuilder::with_encoding(yore::code_pages::CP437),
-        "cp852" => TableWriterBuilder::with_encoding(yore::code_pages::CP852),
-        "cp866" => TableWriterBuilder::with_encoding(yore::code_pages::CP866),
-        "cp865" => TableWriterBuilder::with_encoding(yore::code_pages::CP865),
-        "cp861" => TableWriterBuilder::with_encoding(yore::code_pages::CP861),
-        "cp874" => TableWriterBuilder::with_encoding(yore::code_pages::CP874),
-        "cp1255" => TableWriterBuilder::with_encoding(yore::code_pages::CP1255),
-        "cp1256" => TableWriterBuilder::with_encoding(yore::code_pages::CP1256),
-        "cp1250" => TableWriterBuilder::with_encoding(yore::code_pages::CP1250),
-        "cp1251" => TableWriterBuilder::with_encoding(yore::code_pages::CP1251),
-        "cp1254" => TableWriterBuilder::with_encoding(yore::code_pages::CP1254),
-        "cp1253" => TableWriterBuilder::with_encoding(yore::code_pages::CP1253),
-        "gbk" => {
-            TableWriterBuilder::with_encoding(dbase::encoding::EncodingRs::from(encoding_rs::GBK))
-        }
-        "big5" => {
-            TableWriterBuilder::with_encoding(dbase::encoding::EncodingRs::from(encoding_rs::BIG5))
-        }
-        "shift_jis" => TableWriterBuilder::with_encoding(dbase::encoding::EncodingRs::from(
-            encoding_rs::SHIFT_JIS,
-        )),
-        "euc-jp" => TableWriterBuilder::with_encoding(dbase::encoding::EncodingRs::from(
-            encoding_rs::EUC_JP,
-        )),
-        "euc-kr" => TableWriterBuilder::with_encoding(dbase::encoding::EncodingRs::from(
-            encoding_rs::EUC_KR,
-        )),
+        "utf8-lossy" | "ascii" => TableWriterBuilder::with_encoding(dbase::UnicodeLossy),
+
+        // Windows code pages via encoding_rs
+        "cp1252" => with_encoding_rs!(encoding_rs::WINDOWS_1252),
+        "cp1250" => with_encoding_rs!(encoding_rs::WINDOWS_1250),
+        "cp1251" => with_encoding_rs!(encoding_rs::WINDOWS_1251),
+        "cp1253" => with_encoding_rs!(encoding_rs::WINDOWS_1253),
+        "cp1254" => with_encoding_rs!(encoding_rs::WINDOWS_1254),
+        "cp1255" => with_encoding_rs!(encoding_rs::WINDOWS_1255),
+        "cp1256" => with_encoding_rs!(encoding_rs::WINDOWS_1256),
+        "cp1257" => with_encoding_rs!(encoding_rs::WINDOWS_1257),
+        "cp1258" => with_encoding_rs!(encoding_rs::WINDOWS_1258),
+
+        // IBM/DOS code pages via encoding_rs
+        "cp866" => with_encoding_rs!(encoding_rs::IBM866),
+        "cp874" => with_encoding_rs!(encoding_rs::WINDOWS_874),
+
+        // ISO-8859 via encoding_rs
+        // Note: ISO-8859-1 uses WINDOWS_1252 which is a superset (web standard behavior)
+        "iso-8859-1" => with_encoding_rs!(encoding_rs::WINDOWS_1252),
+        "iso-8859-2" => with_encoding_rs!(encoding_rs::ISO_8859_2),
+        "iso-8859-7" => with_encoding_rs!(encoding_rs::ISO_8859_7),
+        "iso-8859-15" => with_encoding_rs!(encoding_rs::ISO_8859_15),
+
+        // CJK encodings via encoding_rs
+        "gbk" => with_encoding_rs!(encoding_rs::GBK),
+        "big5" => with_encoding_rs!(encoding_rs::BIG5),
+        "shift_jis" => with_encoding_rs!(encoding_rs::SHIFT_JIS),
+        "euc-jp" => with_encoding_rs!(encoding_rs::EUC_JP),
+        "euc-kr" => with_encoding_rs!(encoding_rs::EUC_KR),
+
         _ => {
             // Default to UnicodeLossy for unknown encodings
             TableWriterBuilder::with_encoding(dbase::UnicodeLossy)

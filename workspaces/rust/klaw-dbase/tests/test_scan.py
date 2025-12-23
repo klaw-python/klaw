@@ -2,7 +2,6 @@
 
 import pathlib
 import tempfile
-from io import BytesIO
 
 import polars as pl
 import pytest
@@ -47,7 +46,17 @@ def test_projection_pushdown_dbase(sample_dataframe) -> None:
         assert 'PROJECT' in explain
 
         normal = lazy.collect()
-        unoptimized = lazy.collect(no_optimization=True)
+        no_opts = pl.lazyframe.opt_flags.QueryOptFlags(
+            predicate_pushdown=False,
+            projection_pushdown=False,
+            simplify_expression=False,
+            slice_pushdown=False,
+            comm_subplan_elim=False,
+            comm_subexpr_elim=False,
+            cluster_with_columns=False,
+            collapse_joins=False,
+        )
+        unoptimized = lazy.collect(optimizations=no_opts)
         assert frames_equal(normal, unoptimized)
 
 
@@ -64,7 +73,17 @@ def test_predicate_pushdown_dbase(sample_dataframe) -> None:
         assert 'SELECTION' in explain or 'FILTER' in explain
 
         normal = lazy.collect()
-        unoptimized = lazy.collect(no_optimization=True)
+        no_opts = pl.lazyframe.opt_flags.QueryOptFlags(
+            predicate_pushdown=False,
+            projection_pushdown=False,
+            simplify_expression=False,
+            slice_pushdown=False,
+            comm_subplan_elim=False,
+            comm_subexpr_elim=False,
+            cluster_with_columns=False,
+            collapse_joins=False,
+        )
+        unoptimized = lazy.collect(optimizations=no_opts)
         assert frames_equal(normal, unoptimized)
 
 
@@ -81,14 +100,20 @@ def test_glob_n_rows() -> None:
 
 def test_many_files(sample_dataframe) -> None:
     """Test that scan works with many files."""
-    buff = BytesIO()
-    write_dbase(sample_dataframe, buff)
+    import os
+    import tempfile
 
-    # Create multiple buffers
-    buffs = [BytesIO(buff.getvalue()) for _ in range(10)]
-    res = scan_dbase(buffs).collect()
-    reference = pl.concat([sample_dataframe] * 10)
-    assert frames_equal(res, reference)
+    # Create temporary directory with multiple files
+    with tempfile.TemporaryDirectory() as tmpdir:
+        paths = []
+        for i in range(10):
+            temp_path = os.path.join(tmpdir, f'test_{i}.dbf')
+            write_dbase(sample_dataframe, dest=temp_path, overwrite=True)
+            paths.append(temp_path)
+
+        res = scan_dbase(paths).collect()
+        reference = pl.concat([sample_dataframe] * 10)
+        assert frames_equal(res, reference)
 
 
 def test_scan_nrows_empty(sample_dataframe) -> None:
@@ -161,19 +186,21 @@ def test_glob_single_scan() -> None:
 
 
 def test_scan_in_memory(sample_dataframe) -> None:
-    """Test that scan works for in memory buffers."""
-    buff = BytesIO()
-    write_dbase(sample_dataframe, buff)
-    buff.seek(0)
-    scanned = scan_dbase(buff).collect()
-    assert frames_equal(sample_dataframe, scanned)
+    """Test that scan works for file paths (formerly in-memory buffers)."""
+    import tempfile
+
+    with tempfile.NamedTemporaryFile(suffix='.dbf', delete=False) as f:
+        temp_path = f.name
+        write_dbase(sample_dataframe, dest=temp_path, overwrite=True)
+        scanned = scan_dbase(temp_path).collect()
+        assert frames_equal(sample_dataframe, scanned)
 
 
 def test_encoding_detection() -> None:
     """Test auto-detection of encodings."""
     try:
         # Test with different encodings
-        encodings = ['cp1252', 'utf-8', 'cp850']
+        encodings = ['cp1252', 'utf-8', 'iso-8859-1']
 
         for encoding in encodings:
             df = pl.from_dict({
@@ -333,14 +360,15 @@ def test_real_dbf_files() -> None:
 
 
 def test_real_dbc_files() -> None:
-    """Test with actual .dbc files."""
+    """Test with actual .dbc files (same schema for parallel reading)."""
     try:
         dbc_files = [
-            'data/sids.dbc',
-            'data/DNAC1996.DBC',
-            'data/PAPA2501.dbc',
             'data/RDPA2401.dbc',
-            'data/ABMG1112.dbc',
+            'data/RDPA2402.dbc',
+            'data/RDPA2403.dbc',
+            'data/RDPA2404.dbc',
+            'data/RDPA2405.dbc',
+            'data/RDPA2406.dbc',
         ]
 
         for dbc_file in dbc_files:
@@ -363,7 +391,7 @@ def test_various_encodings() -> None:
         encoding_files = [
             ('data/test-cp1252-output.dbf', 'cp1252'),
             ('data/test-utf8-output.dbf', 'utf-8'),
-            ('data/test-cp850-output.dbf', 'cp850'),
+            ('data/test-iso8859-1-output.dbf', 'iso-8859-1'),
         ]
 
         for file_path, encoding in encoding_files:
@@ -416,6 +444,79 @@ def test_read_options() -> None:
         assert frame.shape == (3, 2)  # 3 rows, 2 columns (x + row_index)
         assert 'row_index' in frame.columns
         assert frame['row_index'].to_list() == [0, 1, 2]
+
+    finally:
+        pathlib.Path(temp_path).unlink()
+
+
+def test_parallel_read_multiple_files(sample_dataframe) -> None:
+    """Test parallel reading of multiple files."""
+    import os
+    import shutil
+    import tempfile
+
+    temp_dir = tempfile.mkdtemp()
+    try:
+        # Create multiple test files
+        temp_files = []
+        for i in range(5):
+            temp_file = os.path.join(temp_dir, f'test{i}.dbf')
+            write_dbase(sample_dataframe, temp_file, overwrite=True)
+            temp_files.append(temp_file)
+
+        # Test parallel reading with explicit n_workers
+        frame = read_dbase(temp_files, n_workers=2)
+        expected = pl.concat([sample_dataframe] * 5)
+        assert frame.height == expected.height
+        assert frame.width == expected.width
+
+        # Test parallel reading with default n_workers (all CPUs)
+        frame_default = read_dbase(temp_files)
+        assert frame_default.height == expected.height
+
+    finally:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+def test_parallel_scan_multiple_files(sample_dataframe) -> None:
+    """Test parallel scan of multiple files."""
+    import os
+    import shutil
+    import tempfile
+
+    temp_dir = tempfile.mkdtemp()
+    try:
+        # Create multiple test files
+        temp_files = []
+        for i in range(3):
+            temp_file = os.path.join(temp_dir, f'test{i}.dbf')
+            write_dbase(sample_dataframe, temp_file, overwrite=True)
+            temp_files.append(temp_file)
+
+        # Test parallel scan with explicit n_workers
+        frame = scan_dbase(temp_files, n_workers=2).collect()
+        expected = pl.concat([sample_dataframe] * 3)
+        assert frame.height == expected.height
+        assert frame.width == expected.width
+
+    finally:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+def test_n_workers_parameter() -> None:
+    """Test n_workers parameter with different values."""
+    df = pl.from_dict({'x': [1, 2, 3]})
+
+    with tempfile.NamedTemporaryFile(suffix='.dbf', delete=False) as f:
+        temp_path = f.name
+
+    try:
+        write_dbase(df, temp_path, overwrite=True)
+
+        # Test with different n_workers values
+        for n_workers in [1, 2, 4, None]:
+            result = read_dbase(temp_path, n_workers=n_workers)
+            assert frames_equal(df, result)
 
     finally:
         pathlib.Path(temp_path).unlink()

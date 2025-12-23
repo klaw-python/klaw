@@ -113,11 +113,17 @@ mod integration_tests {
 
     #[test]
     fn test_round_trip_with_encoding() {
-        // Test round-trip with different encodings
-        let encodings = vec!["cp1252", "utf8", "cp850"];
+        use crate::read::{DbfEncoding, resolve_encoding_string};
 
-        for encoding in encodings {
-            println!("Testing round-trip with {} encoding...", encoding);
+        // Test round-trip with different encodings (using encoding_rs supported encodings)
+        let encodings = vec![
+            ("cp1252", DbfEncoding::Cp1252),
+            ("utf8", DbfEncoding::Utf8),
+            ("cp866", DbfEncoding::Cp866),
+        ];
+
+        for (encoding_str, encoding_enum) in encodings {
+            println!("Testing round-trip with {} encoding...", encoding_str);
 
             let original_df = df! {
                 "name" => ["Alice", "Bob", "Charlie"],
@@ -126,8 +132,8 @@ mod integration_tests {
             }
             .unwrap();
 
-            let read_options = DbfReadOptions::with_encoding(encoding);
-            let write_options = WriteOptions::with_encoding(encoding);
+            let read_options = DbfReadOptions::with_encoding(encoding_enum);
+            let write_options = WriteOptions::with_encoding(encoding_str);
 
             // Create temporary file
             let temp_file = tempfile::NamedTempFile::new().unwrap();
@@ -138,7 +144,7 @@ mod integration_tests {
 
             match write_result {
                 Ok(()) => {
-                    println!("✅ Successfully wrote with {} encoding", encoding);
+                    println!("✅ Successfully wrote with {} encoding", encoding_str);
 
                     // Read back with same encoding using DbfReader
                     let read_result = DbfReader::new_with_options(
@@ -169,7 +175,7 @@ mod integration_tests {
                             if let Some(roundtrip_df) = roundtrip_df {
                                 println!(
                                     "✅ Successfully read back with {}: {} rows × {} columns",
-                                    encoding,
+                                    encoding_str,
                                     roundtrip_df.height(),
                                     roundtrip_df.width()
                                 );
@@ -178,15 +184,17 @@ mod integration_tests {
                                 assert_eq!(original_df.height(), roundtrip_df.height());
                                 assert_eq!(original_df.width(), roundtrip_df.width());
 
-                                println!("✅ Round-trip with {} successful!", encoding);
+                                println!("✅ Round-trip with {} successful!", encoding_str);
                             } else {
-                                println!("❌ No data read back with {}", encoding);
+                                println!("❌ No data read back with {}", encoding_str);
                             }
                         }
-                        Err(e) => println!("❌ Failed to create reader with {}: {}", encoding, e),
+                        Err(e) => {
+                            println!("❌ Failed to create reader with {}: {}", encoding_str, e)
+                        }
                     }
                 }
-                Err(e) => println!("❌ Write with {} failed: {}", encoding, e),
+                Err(e) => println!("❌ Write with {} failed: {}", encoding_str, e),
             }
         }
     }
@@ -308,7 +316,7 @@ mod integration_tests {
                 let read_result = DbfReader::new_with_options(
                     vec![std::fs::File::open(temp_file.path()).unwrap()],
                     None,
-                    DbfReadOptions::with_encoding("utf8"),
+                    DbfReadOptions::with_encoding(crate::read::DbfEncoding::Utf8),
                 );
 
                 match read_result {

@@ -71,15 +71,13 @@ tokio-rustls = "0.26.2"
 futures = "0.3.31"
 dbase = { version = "0.6.1", features = [
     "encoding_rs",
-    "yore",
     "chrono",
     "serde",
 ] }
 explode = "0.1.2"
-yore = "1.1.0"
 encoding_rs = "0.8"
 rayon = "1.8"
-encoding = "0.2.33"
+crossbeam-channel = "0.5"
 glob = "0.3"
 lru = "0.16.1"
 constriction = "0.4.1"

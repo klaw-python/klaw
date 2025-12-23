@@ -92,7 +92,7 @@ def test_round_trip_simple_data() -> None:
 
 def test_round_trip_with_encoding() -> None:
     """Test round-trip with different encodings - mirrors Rust test."""
-    encodings = ['cp1252', 'utf-8', 'cp850']
+    encodings = ['cp1252', 'utf-8', 'iso-8859-1']
 
     for encoding in encodings:
         # Create DataFrame with accented characters
@@ -121,7 +121,7 @@ def test_round_trip_with_encoding() -> None:
 
 
 def test_round_trip_memory_buffer() -> None:
-    """Test round-trip using in-memory buffer - mirrors Rust test."""
+    """Test round-trip using file path (formerly in-memory buffer) - mirrors Rust test."""
     original_df = pl.from_dict({
         'id': [1, 2, 3, 4, 5],
         'product': ['Apple', 'Banana', 'Orange', 'Grape', 'Mango'],
@@ -129,17 +129,21 @@ def test_round_trip_memory_buffer() -> None:
         'in_stock': [True, False, True, True, False],
     })
 
-    # Write to memory buffer
-    buffer = BytesIO()
-    write_dbase(original_df, buffer)
+    with tempfile.NamedTemporaryFile(suffix='.dbf', delete=False) as temp_file:
+        temp_path = temp_file.name
 
-    # Read back from memory buffer
-    buffer.seek(0)
-    roundtrip_df = read_dbase(buffer)
+    try:
+        # Write to file
+        write_dbase(original_df, temp_path, overwrite=True)
 
-    # Verify data integrity
-    assert original_df.height == roundtrip_df.height
-    assert original_df.width == roundtrip_df.width
+        # Read back from file
+        roundtrip_df = read_dbase(temp_path)
+
+        # Verify data integrity
+        assert original_df.height == roundtrip_df.height
+        assert original_df.width == roundtrip_df.width
+    finally:
+        Path(temp_path).unlink()
 
 
 def test_field_type_coverage() -> None:
@@ -168,8 +172,6 @@ def test_field_type_coverage() -> None:
         Path(temp_path).unlink()
 
 
-# NOTE: You can't write multiple chunks to a buffer since the bytes from a dBase file will include the header
-# and footer. So, we'll have to write to a file and read back from there.
 def test_chunk_processing() -> None:
     """Test writing multiple chunks - mirrors Rust test."""
     # Create multiple DataFrames
@@ -196,20 +198,22 @@ def test_chunk_processing() -> None:
     total_rows = expected_df.height
     print(expected_df)
 
-    # Write multiple chunks to memory buffer
-    buffer = BytesIO()
+    with tempfile.NamedTemporaryFile(suffix='.dbf', delete=False) as temp_file:
+        temp_path = temp_file.name
 
-    # Write each chunk
-    write_dbase(expected_df, buffer)
+    try:
+        # Write to file
+        write_dbase(expected_df, temp_path, overwrite=True)
 
-    # Read back from the buffer
-    buffer.seek(0)
-    roundtrip_df = read_dbase(buffer, batch_size=10)
+        # Read back from file
+        roundtrip_df = read_dbase(temp_path, batch_size=10)
 
-    # Verify all rows were written
-    print(total_rows)
-    assert total_rows == roundtrip_df.height
-    assert roundtrip_df.width == 2  # id and name columns
+        # Verify all rows were written
+        print(total_rows)
+        assert total_rows == roundtrip_df.height
+        assert roundtrip_df.width == 2  # id and name columns
+    finally:
+        Path(temp_path).unlink()
 
 
 def test_encoding_options() -> None:
@@ -219,7 +223,7 @@ def test_encoding_options() -> None:
         'city': ['São Paulo', 'Rio de Janeiro', 'Belo Horizonte'],
     })
 
-    encodings = ['cp1252', 'utf-8', 'cp850']
+    encodings = ['cp1252', 'utf-8', 'iso-8859-1']
 
     for encoding in encodings:
         with tempfile.NamedTemporaryFile(suffix='.dbf', delete=False) as temp_file:

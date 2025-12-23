@@ -20,29 +20,36 @@ class ValidEncoding:
         return self.value
 
 
+# Supported encodings using encoding_rs for Send + Sync compatibility
 _supported_encodings = {
+    # UTF-8 encodings
     'utf8': ValidEncoding(['utf8', 'utf-8'], 'utf8'),
     'utf8-lossy': ValidEncoding(['utf8-lossy', 'utf-8-lossy'], 'utf8-lossy'),
     'ascii': ValidEncoding(['ascii'], 'ascii'),
+    # Windows code pages (all supported by encoding_rs)
     'cp1252': ValidEncoding(['cp1252', 'windows-1252'], 'cp1252'),
-    'cp850': ValidEncoding(['cp850', 'dos-850'], 'cp850'),
-    'cp437': ValidEncoding(['cp437', 'dos-437'], 'cp437'),
-    'cp852': ValidEncoding(['cp852', 'dos-852'], 'cp852'),
-    'cp866': ValidEncoding(['cp866', 'dos-866'], 'cp866'),
-    'cp865': ValidEncoding(['cp865', 'dos-865'], 'cp865'),
-    'cp861': ValidEncoding(['cp861', 'dos-861'], 'cp861'),
-    'cp874': ValidEncoding(['cp874', 'dos-874'], 'cp874'),
-    'cp1255': ValidEncoding(['cp1255', 'windows-1255'], 'cp1255'),
-    'cp1256': ValidEncoding(['cp1256', 'windows-1256'], 'cp1256'),
     'cp1250': ValidEncoding(['cp1250', 'windows-1250'], 'cp1250'),
     'cp1251': ValidEncoding(['cp1251', 'windows-1251'], 'cp1251'),
-    'cp1254': ValidEncoding(['cp1254', 'windows-1254'], 'cp1254'),
     'cp1253': ValidEncoding(['cp1253', 'windows-1253'], 'cp1253'),
-    'gbk': ValidEncoding(['gbk', 'gb2312'], 'gbk'),
+    'cp1254': ValidEncoding(['cp1254', 'windows-1254'], 'cp1254'),
+    'cp1255': ValidEncoding(['cp1255', 'windows-1255'], 'cp1255'),
+    'cp1256': ValidEncoding(['cp1256', 'windows-1256'], 'cp1256'),
+    'cp1257': ValidEncoding(['cp1257', 'windows-1257'], 'cp1257'),
+    'cp1258': ValidEncoding(['cp1258', 'windows-1258'], 'cp1258'),
+    # IBM/DOS code pages supported by encoding_rs
+    'cp866': ValidEncoding(['cp866', 'ibm866', 'dos-866'], 'cp866'),
+    'cp874': ValidEncoding(['cp874', 'windows-874', 'dos-874'], 'cp874'),
+    # ISO-8859 encodings (supported by encoding_rs)
+    'iso-8859-1': ValidEncoding(['iso-8859-1', 'iso8859-1', 'latin1'], 'iso-8859-1'),
+    'iso-8859-2': ValidEncoding(['iso-8859-2', 'iso8859-2', 'latin2'], 'iso-8859-2'),
+    'iso-8859-7': ValidEncoding(['iso-8859-7', 'iso8859-7', 'greek'], 'iso-8859-7'),
+    'iso-8859-15': ValidEncoding(['iso-8859-15', 'iso8859-15', 'latin9'], 'iso-8859-15'),
+    # CJK encodings (all supported by encoding_rs)
+    'gbk': ValidEncoding(['gbk', 'gb2312', 'gb18030'], 'gbk'),
     'big5': ValidEncoding(['big5'], 'big5'),
-    'shift_jis': ValidEncoding(['shift_jis', 'sjis'], 'shift_jis'),
-    'euc-jp': ValidEncoding(['euc-jp', 'euc-jp'], 'euc-jp'),
-    'euc-kr': ValidEncoding(['euc-kr'], 'euc-kr'),
+    'shift_jis': ValidEncoding(['shift_jis', 'sjis', 'shift-jis'], 'shift_jis'),
+    'euc-jp': ValidEncoding(['euc-jp', 'eucjp'], 'euc-jp'),
+    'euc-kr': ValidEncoding(['euc-kr', 'euckr'], 'euc-kr'),
 }
 
 

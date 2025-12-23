@@ -4,13 +4,19 @@ from collections.abc import Iterator, Sequence
 from glob import iglob
 from os import path
 from pathlib import Path
-from typing import BinaryIO, Literal
+from typing import Literal
 
 import polars as pl
 from polars import DataFrame, Expr, LazyFrame, Schema
 from polars.io.plugins import register_io_source
 
-from ._dbase_rs import DbaseSource, EmptySources, EncodingError, get_record_count
+from ._dbase_rs import (
+    DbaseSource,
+    EmptySources,
+    EncodingError,
+    create_parallel_reader,
+    get_record_count,
+)
 from ._utils import validate_encoding
 
 
@@ -26,28 +32,30 @@ def expand_str(source: str | Path, *, glob: bool) -> Iterator[str]:
 
 
 def scan_dbase(
-    sources: Sequence[str | Path] | Sequence[BinaryIO] | str | Path | BinaryIO,
+    sources: Sequence[str | Path] | str | Path,
     *,
     batch_size: int = 8192,
+    n_workers: int | None = None,
     single_col_name: str | None = None,
     encoding: Literal[
         'utf8',
         'utf8-lossy',
         'ascii',
         'cp1252',
-        'cp850',
-        'cp437',
-        'cp852',
-        'cp866',
-        'cp865',
-        'cp861',
-        'cp874',
-        'cp1255',
-        'cp1256',
         'cp1250',
         'cp1251',
-        'cp1254',
         'cp1253',
+        'cp1254',
+        'cp1255',
+        'cp1256',
+        'cp1257',
+        'cp1258',
+        'cp866',
+        'cp874',
+        'iso-8859-1',
+        'iso-8859-2',
+        'iso-8859-7',
+        'iso-8859-15',
         'gbk',
         'big5',
         'shift_jis',
@@ -62,18 +70,22 @@ def scan_dbase(
     glob: bool = True,
     progress: bool = False,
 ) -> LazyFrame:
-    """Scan a dBase file or files.
+    """Scan a dBase file or files with parallel reading.
+
+    Files are read in parallel by default using all available CPU cores.
+    Each worker reads files independently and streams batches through a channel.
 
     Parameters:
-        sources: The dBase file or files to scan.
-        batch_size: The batch size to use for reading the dBase file. Defaults to 32768.
+        sources: The dBase file or files to scan. File paths only.
+        batch_size: The batch size to use for reading the dBase file. Defaults to 8192.
+        n_workers: Number of parallel workers. Defaults to None (all logical CPUs).
         single_col_name: The name of the single column to read. Defaults to None.
         encoding: The encoding to use for reading the dBase file. Defaults to "cp1252".
         character_trim: The character trim to use for reading the dBase file. Defaults to "begin_end".
         skip_deleted: Whether to skip deleted records. Defaults to True.
         validate_schema: Whether to validate the schema. Defaults to True.
-        compressed: Whether to read the dBase file as compressed. Defaults to True.
-        glob: Whether to use glob patterns. Defaults to False.
+        compressed: Whether to read the dBase file as compressed. Defaults to False.
+        glob: Whether to use glob patterns. Defaults to True.
         progress: Whether to show a progress bar during scanning. Defaults to False.
 
     Returns:
@@ -161,43 +173,42 @@ def scan_dbase(
             df: pl.LazyFrame = scan_dbase("data.dbc", compressed=True)
             ```
     """
-    # normalize sources
+    # normalize sources to file paths
     strs: list[str] = []
-    bins: list[BinaryIO] = []
     match sources:
         case [*_]:
             for source in sources:
                 if isinstance(source, str | Path):
                     strs.extend(expand_str(source, glob=glob))
                 else:
-                    bins.append(source)
+                    raise TypeError(f'Expected str or Path, got {type(source).__name__}')
         case str() | Path():
             strs.extend(expand_str(sources, glob=glob))
         case _:
-            bins.append(sources)
+            raise TypeError(f'Expected str, Path, or sequence of paths, got {type(sources).__name__}')
 
     def_batch_size = batch_size
+    def_n_workers = n_workers
 
-    if len(strs) == 0 and len(bins) == 0:
+    if len(strs) == 0:
         raise EmptySources
 
-    if validate_encoding(encoding):
-        pass
-    else:
+    if not validate_encoding(encoding):
         raise EncodingError(f'Unsupported encoding: {encoding}')
 
-    src = DbaseSource(
-        paths=strs,
-        buffs=bins,
-        single_col_name=single_col_name,
-        encoding=encoding,
-        character_trim=character_trim,
-        skip_deleted=skip_deleted,
-        validate_schema=validate_schema,
-        compressed=compressed,
-    )
-
+    # Get schema from first file
     def get_schema() -> Schema:
+        first_file = strs[0]
+        is_dbc = first_file.lower().endswith('.dbc')
+        src = DbaseSource(
+            paths=strs[:1],
+            single_col_name=single_col_name,
+            encoding=encoding,
+            character_trim=character_trim,
+            skip_deleted=skip_deleted,
+            validate_schema=validate_schema,
+            compressed=compressed or is_dbc,
+        )
         return Schema(src.schema())
 
     def source_generator(
@@ -206,13 +217,19 @@ def scan_dbase(
         n_rows: int | None,
         batch_size: int | None,
     ) -> Iterator[DataFrame]:
-        # Use progress-enabled iterator if requested
-        if progress:
-            dbase_iter = src.batch_iter_with_progress(batch_size or def_batch_size, with_columns, True)
-        else:
-            dbase_iter = src.batch_iter(batch_size or def_batch_size, with_columns)
+        # Create parallel reader with column selection and progress tracking
+        parallel_iter = create_parallel_reader(
+            paths=strs,
+            batch_size=batch_size or def_batch_size,
+            n_workers=def_n_workers,
+            encoding=encoding,
+            character_trim=character_trim,
+            skip_deleted=skip_deleted,
+            with_columns=with_columns,
+            progress=progress,
+        )
 
-        while (batch := dbase_iter.next()) is not None:
+        while (batch := parallel_iter.next()) is not None:
             if predicate is not None:
                 batch = batch.filter(predicate)
             if n_rows is None:
@@ -232,7 +249,7 @@ def scan_dbase(
 
 
 def read_dbase(
-    sources: Sequence[str | Path] | Sequence[BinaryIO] | str | Path | BinaryIO,
+    sources: Sequence[str | Path] | str | Path,
     *,
     columns: Sequence[int | str] | None = None,
     n_rows: int | None = None,
@@ -240,6 +257,7 @@ def read_dbase(
     row_index_offset: int = 0,
     rechunk: bool = False,
     batch_size: int = 8192,
+    n_workers: int | None = None,
     glob: bool = True,
     single_col_name: str | None = None,
     encoding: Literal[
@@ -247,19 +265,20 @@ def read_dbase(
         'utf8-lossy',
         'ascii',
         'cp1252',
-        'cp850',
-        'cp437',
-        'cp852',
-        'cp866',
-        'cp865',
-        'cp861',
-        'cp874',
-        'cp1255',
-        'cp1256',
         'cp1250',
         'cp1251',
-        'cp1254',
         'cp1253',
+        'cp1254',
+        'cp1255',
+        'cp1256',
+        'cp1257',
+        'cp1258',
+        'cp866',
+        'cp874',
+        'iso-8859-1',
+        'iso-8859-2',
+        'iso-8859-7',
+        'iso-8859-15',
         'gbk',
         'big5',
         'shift_jis',
@@ -272,23 +291,26 @@ def read_dbase(
     validate_schema: bool = True,
     compressed: bool = False,
 ) -> DataFrame:
-    """Read a dBase file or files into a DataFrame.
+    """Read a dBase file or files into a DataFrame with parallel reading.
+
+    Files are read in parallel by default using all available CPU cores.
 
     Parameters:
-        sources: The dBase file or files to read.
-        columns: hich reads all columns.
+        sources: The dBase file or files to read. File paths only.
+        columns: Which columns to read. Defaults to None, which reads all columns.
         n_rows: The number of rows to read. Defaults to None, which reads all rows.
         row_index_name: The name of the row index column. Defaults to None.
         row_index_offset: The offset to add to the row index. Defaults to 0.
         rechunk: Whether to rechunk the DataFrame. Defaults to False.
-        batch_size: The batch size to use for reading the dBase file. Defaults to 32768.
-        glob: Whether to use glob patterns. Defaults to False.
+        batch_size: The batch size to use for reading. Defaults to 8192.
+        n_workers: Number of parallel workers. Defaults to None (all logical CPUs).
+        glob: Whether to use glob patterns. Defaults to True.
         single_col_name: The name of the single column to read. Defaults to None.
-        encoding: The encoding to use for reading the dBase file. Defaults to "cp1252".
-        character_trim: The character trim to use for reading the dBase file. Defaults to "begin_end".
+        encoding: The encoding to use for reading. Defaults to "cp1252".
+        character_trim: The character trim option. Defaults to "begin_end".
         skip_deleted: Whether to skip deleted records. Defaults to True.
         validate_schema: Whether to validate the schema. Defaults to True.
-        compressed: Whether to read the dBase file as compressed. Defaults to True.
+        compressed: Whether to read as compressed (DBC). Defaults to False.
 
     Returns:
         DataFrame: The read dBase file as a DataFrame.
@@ -378,6 +400,7 @@ def read_dbase(
     lazy = scan_dbase(
         sources=sources,
         batch_size=batch_size,
+        n_workers=n_workers,
         single_col_name=single_col_name,
         encoding=encoding,
         character_trim=character_trim,

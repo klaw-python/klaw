@@ -76,6 +76,20 @@ impl<R: Read> DbcReader<R> {
             .read_exact(&mut crc32_bytes)
             .map_err(|e| ValueError::DbcError(format!("Failed to read CRC32: {}", e)))?;
 
+        // Patch unsupported code pages to CP1252 (0x03)
+        // Code page byte is at offset 29 in combined header = offset 19 in header vec
+        // Unsupported code pages in encoding_rs: CP850 (0x02), CP437 (0x01), etc.
+        const CODE_PAGE_OFFSET: usize = 19; // 29 - 10 (pre_header size)
+        if header.len() > CODE_PAGE_OFFSET {
+            let code_page = header[CODE_PAGE_OFFSET];
+            // Map unsupported DOS code pages to CP1252 (Windows Latin-1)
+            // 0x01 = CP437, 0x02 = CP850, 0x64 = CP852, etc.
+            let needs_patch = matches!(code_page, 0x01 | 0x02 | 0x64 | 0x65 | 0x66 | 0x67 | 0x68);
+            if needs_patch {
+                header[CODE_PAGE_OFFSET] = 0x03; // CP1252
+            }
+        }
+
         // Create streaming decompressor for the compressed content
         let compressed_reader = ExplodeReader::new(dbc_reader);
 

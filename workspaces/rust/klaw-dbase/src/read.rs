@@ -24,6 +24,115 @@ use super::des::{ValueBuilder, new_value_builder, try_from_schema};
 use super::error::Error as ValueError;
 use dbase::{ReaderBuilder, Unicode, UnicodeLossy};
 
+/// Typed encoding enum that is Copy + Send + Sync
+///
+/// This replaces the String-based encoding to enable parallel file reading.
+/// All variants use encoding_rs internally for Send + Sync compatibility.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub enum DbfEncoding {
+    /// UTF-8 (strict)
+    Utf8,
+    /// UTF-8 with lossy replacement for invalid sequences
+    Utf8Lossy,
+    /// ASCII
+    Ascii,
+    /// Windows-1252 (Western European) - default for DataSUS
+    #[default]
+    Cp1252,
+    /// Windows-1250 (Central European)
+    Cp1250,
+    /// Windows-1251 (Cyrillic)
+    Cp1251,
+    /// Windows-1253 (Greek)
+    Cp1253,
+    /// Windows-1254 (Turkish)
+    Cp1254,
+    /// Windows-1255 (Hebrew)
+    Cp1255,
+    /// Windows-1256 (Arabic)
+    Cp1256,
+    /// Windows-1257 (Baltic)
+    Cp1257,
+    /// Windows-1258 (Vietnamese)
+    Cp1258,
+    /// IBM866 (Russian DOS)
+    Cp866,
+    /// Windows-874 (Thai)
+    Cp874,
+    /// ISO-8859-1 (Latin-1, Western European)
+    Iso8859_1,
+    /// ISO-8859-2 (Central European)
+    Iso8859_2,
+    /// ISO-8859-7 (Greek)
+    Iso8859_7,
+    /// ISO-8859-15 (Latin-9, Western European with Euro)
+    Iso8859_15,
+    /// GBK (Simplified Chinese)
+    Gbk,
+    /// Big5 (Traditional Chinese)
+    Big5,
+    /// Shift_JIS (Japanese)
+    ShiftJis,
+    /// EUC-JP (Japanese)
+    EucJp,
+    /// EUC-KR (Korean)
+    EucKr,
+}
+
+impl std::fmt::Display for DbfEncoding {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use DbfEncoding::*;
+        let name = match self {
+            Utf8 => "utf8",
+            Utf8Lossy => "utf8-lossy",
+            Ascii => "ascii",
+            Cp1252 => "cp1252",
+            Cp1250 => "cp1250",
+            Cp1251 => "cp1251",
+            Cp1253 => "cp1253",
+            Cp1254 => "cp1254",
+            Cp1255 => "cp1255",
+            Cp1256 => "cp1256",
+            Cp1257 => "cp1257",
+            Cp1258 => "cp1258",
+            Cp866 => "cp866",
+            Cp874 => "cp874",
+            Iso8859_1 => "iso-8859-1",
+            Iso8859_2 => "iso-8859-2",
+            Iso8859_7 => "iso-8859-7",
+            Iso8859_15 => "iso-8859-15",
+            Gbk => "gbk",
+            Big5 => "big5",
+            ShiftJis => "shift_jis",
+            EucJp => "euc-jp",
+            EucKr => "euc-kr",
+        };
+        write!(f, "{}", name)
+    }
+}
+
+impl std::str::FromStr for DbfEncoding {
+    type Err = ValueError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        resolve_encoding_string(s)
+    }
+}
+
+/// Progress tracking mode for file reading
+///
+/// Controls how progress is reported during batch iteration.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum ProgressMode {
+    /// No progress tracking (default)
+    #[default]
+    None,
+    /// Track only overall progress across all files
+    Total,
+    /// Track per-file progress and overall progress
+    PerFile,
+}
+
 /// Configuration options for DBF scanning
 #[derive(Debug, Clone)]
 pub struct DbfReadOptions {
@@ -35,8 +144,8 @@ pub struct DbfReadOptions {
     pub skip_deleted: bool,
     /// Whether to validate schema consistency across files
     pub validate_schema: bool,
-    /// Encoding for text fields (e.g., "cp1252", "utf8-lossy", "gbk")
-    pub encoding: String,
+    /// Encoding for text fields
+    pub encoding: DbfEncoding,
 }
 
 impl Default for DbfReadOptions {
@@ -46,18 +155,27 @@ impl Default for DbfReadOptions {
             character_trim: dbase::TrimOption::BeginEnd,
             skip_deleted: true,
             validate_schema: true,
-            encoding: "cp1252".to_string(), // Default for DataSUS files
+            encoding: DbfEncoding::default(),
         }
     }
 }
 
 impl DbfReadOptions {
-    /// Create options with specific encoding
-    pub fn with_encoding(encoding: impl Into<String>) -> Self {
+    /// Create options with specific encoding (enum variant)
+    pub fn with_encoding(encoding: DbfEncoding) -> Self {
         Self {
-            encoding: encoding.into(),
+            encoding,
             ..Self::default()
         }
+    }
+
+    /// Create options with encoding from string (for Python compatibility)
+    pub fn with_encoding_str(encoding: impl AsRef<str>) -> Result<Self, ValueError> {
+        let encoding = resolve_encoding_string(encoding.as_ref())?;
+        Ok(Self {
+            encoding,
+            ..Self::default()
+        })
     }
 
     /// Set batch size for reading
@@ -73,41 +191,111 @@ impl DbfReadOptions {
     }
 }
 
-/// Local encoding resolver that uses ValueError instead of the old Error type
-pub fn resolve_encoding_string(encoding_name: &str) -> Result<String, ValueError> {
-    // Validate and normalize encoding names
+/// Parse encoding name string to DbfEncoding enum
+///
+/// Supports all encodings available in encoding_rs for Send + Sync compatibility.
+pub fn resolve_encoding_string(encoding_name: &str) -> Result<DbfEncoding, ValueError> {
+    use DbfEncoding::*;
     match encoding_name.to_lowercase().as_str() {
-        // Default encodings (always available)
-        "utf8" | "utf-8" => Ok("utf8".to_string()),
-        "utf8-lossy" | "utf-8-lossy" => Ok("utf8-lossy".to_string()),
-        "ascii" => Ok("ascii".to_string()),
+        // UTF-8 encodings
+        "utf8" | "utf-8" => Ok(Utf8),
+        "utf8-lossy" | "utf-8-lossy" => Ok(Utf8Lossy),
+        "ascii" => Ok(Ascii),
 
-        // yore code pages (always available since we include yore)
-        "cp1252" | "windows-1252" => Ok("cp1252".to_string()),
-        "cp850" | "dos-850" => Ok("cp850".to_string()),
-        "cp437" | "dos-437" => Ok("cp437".to_string()),
-        "cp852" | "dos-852" => Ok("cp852".to_string()),
-        "cp866" | "dos-866" => Ok("cp866".to_string()),
-        "cp865" | "dos-865" => Ok("cp865".to_string()),
-        "cp861" | "dos-861" => Ok("cp861".to_string()),
-        "cp874" | "dos-874" => Ok("cp874".to_string()),
-        "cp1255" | "windows-1255" => Ok("cp1255".to_string()),
-        "cp1256" | "windows-1256" => Ok("cp1256".to_string()),
-        "cp1250" | "windows-1250" => Ok("cp1250".to_string()),
-        "cp1251" | "windows-1251" => Ok("cp1251".to_string()),
-        "cp1254" | "windows-1254" => Ok("cp1254".to_string()),
-        "cp1253" | "windows-1253" => Ok("cp1253".to_string()),
+        // Windows code pages (all supported by encoding_rs)
+        "cp1252" | "windows-1252" => Ok(Cp1252),
+        "cp1250" | "windows-1250" => Ok(Cp1250),
+        "cp1251" | "windows-1251" => Ok(Cp1251),
+        "cp1253" | "windows-1253" => Ok(Cp1253),
+        "cp1254" | "windows-1254" => Ok(Cp1254),
+        "cp1255" | "windows-1255" => Ok(Cp1255),
+        "cp1256" | "windows-1256" => Ok(Cp1256),
+        "cp1257" | "windows-1257" => Ok(Cp1257),
+        "cp1258" | "windows-1258" => Ok(Cp1258),
 
-        // encoding_rs support (always available since we include encoding_rs)
-        "gbk" | "gb2312" => Ok("gbk".to_string()),
-        "big5" => Ok("big5".to_string()),
-        "shift_jis" | "sjis" => Ok("shift_jis".to_string()),
-        "euc-jp" => Ok("euc-jp".to_string()),
-        "euc-kr" => Ok("euc-kr".to_string()),
+        // IBM/DOS code pages supported by encoding_rs
+        "cp866" | "ibm866" | "dos-866" => Ok(Cp866),
+        "cp874" | "windows-874" | "dos-874" => Ok(Cp874),
 
-        _ => Err(ValueError::InternalError {
-            message: format!("Unsupported encoding: {}", encoding_name),
-        }),
+        // ISO-8859 encodings (supported by encoding_rs)
+        "iso-8859-1" | "iso8859-1" | "latin1" => Ok(Iso8859_1),
+        "iso-8859-2" | "iso8859-2" | "latin2" => Ok(Iso8859_2),
+        "iso-8859-7" | "iso8859-7" | "greek" => Ok(Iso8859_7),
+        "iso-8859-15" | "iso8859-15" | "latin9" => Ok(Iso8859_15),
+
+        // CJK encodings (all supported by encoding_rs)
+        "gbk" | "gb2312" | "gb18030" => Ok(Gbk),
+        "big5" => Ok(Big5),
+        "shift_jis" | "sjis" | "shift-jis" => Ok(ShiftJis),
+        "euc-jp" | "eucjp" => Ok(EucJp),
+        "euc-kr" | "euckr" => Ok(EucKr),
+
+        _ => Err(ValueError::EncodingError(format!(
+            "Unsupported encoding: '{}'. Supported encodings: utf8, cp1250-1258, cp866, cp874, iso-8859-2, iso-8859-7, gbk, big5, shift_jis, euc-jp, euc-kr",
+            encoding_name
+        ))),
+    }
+}
+
+/// Build a dbase Reader with the specified encoding
+///
+/// Uses encoding_rs exclusively for all non-UTF8 encodings to ensure Send + Sync.
+fn build_reader_with_encoding<R: Read + Seek>(
+    source: R,
+    encoding: DbfEncoding,
+    reading_options: dbase::ReadingOptions,
+) -> Result<Reader<R>, dbase::Error> {
+    use DbfEncoding::*;
+
+    // Helper macro to reduce boilerplate for encoding_rs encodings
+    macro_rules! with_encoding_rs {
+        ($enc:expr) => {
+            ReaderBuilder::new(source)
+                .with_encoding(dbase::encoding::EncodingRs::from($enc))
+                .with_options(reading_options)
+                .build()
+        };
+    }
+
+    match encoding {
+        // UTF-8 variants use built-in Unicode types
+        Utf8 => ReaderBuilder::new(source)
+            .with_encoding(Unicode)
+            .with_options(reading_options)
+            .build(),
+        Utf8Lossy | Ascii => ReaderBuilder::new(source)
+            .with_encoding(UnicodeLossy)
+            .with_options(reading_options)
+            .build(),
+
+        // Windows code pages via encoding_rs
+        Cp1252 => with_encoding_rs!(encoding_rs::WINDOWS_1252),
+        Cp1250 => with_encoding_rs!(encoding_rs::WINDOWS_1250),
+        Cp1251 => with_encoding_rs!(encoding_rs::WINDOWS_1251),
+        Cp1253 => with_encoding_rs!(encoding_rs::WINDOWS_1253),
+        Cp1254 => with_encoding_rs!(encoding_rs::WINDOWS_1254),
+        Cp1255 => with_encoding_rs!(encoding_rs::WINDOWS_1255),
+        Cp1256 => with_encoding_rs!(encoding_rs::WINDOWS_1256),
+        Cp1257 => with_encoding_rs!(encoding_rs::WINDOWS_1257),
+        Cp1258 => with_encoding_rs!(encoding_rs::WINDOWS_1258),
+
+        // IBM/DOS code pages via encoding_rs
+        Cp866 => with_encoding_rs!(encoding_rs::IBM866),
+        Cp874 => with_encoding_rs!(encoding_rs::WINDOWS_874),
+
+        // ISO-8859 via encoding_rs
+        // Note: ISO-8859-1 uses WINDOWS_1252 which is a superset (web standard behavior)
+        Iso8859_1 => with_encoding_rs!(encoding_rs::WINDOWS_1252),
+        Iso8859_2 => with_encoding_rs!(encoding_rs::ISO_8859_2),
+        Iso8859_7 => with_encoding_rs!(encoding_rs::ISO_8859_7),
+        Iso8859_15 => with_encoding_rs!(encoding_rs::ISO_8859_15),
+
+        // CJK encodings via encoding_rs
+        Gbk => with_encoding_rs!(encoding_rs::GBK),
+        Big5 => with_encoding_rs!(encoding_rs::BIG5),
+        ShiftJis => with_encoding_rs!(encoding_rs::SHIFT_JIS),
+        EucJp => with_encoding_rs!(encoding_rs::EUC_JP),
+        EucKr => with_encoding_rs!(encoding_rs::EUC_KR),
     }
 }
 
@@ -253,43 +441,12 @@ where
             message: "No sources provided".to_string(),
         })??;
 
-        // Create the first reader to extract schema with encoding support
-        let validated_encoding =
-            resolve_encoding_string(&options.encoding).map_err(|_| ValueError::InternalError {
-                message: format!("Unsupported encoding: {}", options.encoding),
-            })?;
+        // Create reading options from configuration
         let reading_options =
             dbase::ReadingOptions::default().character_trim(options.character_trim);
 
-        let reader = match validated_encoding.as_str() {
-            "utf8" => ReaderBuilder::new(source)
-                .with_encoding(Unicode)
-                .with_options(reading_options)
-                .build()?,
-            "utf8-lossy" => ReaderBuilder::new(source)
-                .with_encoding(UnicodeLossy)
-                .with_options(reading_options)
-                .build()?,
-            "cp1252" => ReaderBuilder::new(source)
-                .with_encoding(yore::code_pages::CP1252)
-                .with_options(reading_options)
-                .build()?,
-            "cp850" => ReaderBuilder::new(source)
-                .with_encoding(yore::code_pages::CP850)
-                .with_options(reading_options)
-                .build()?,
-            "gbk" => ReaderBuilder::new(source)
-                .with_encoding(dbase::encoding::EncodingRs::from(encoding_rs::GBK))
-                .with_options(reading_options)
-                .build()?,
-            _ => {
-                // Default to UnicodeLossy for unknown encodings
-                ReaderBuilder::new(source)
-                    .with_encoding(UnicodeLossy)
-                    .with_options(reading_options)
-                    .build()?
-            }
-        };
+        // Build reader with typed encoding enum
+        let reader = build_reader_with_encoding(source, options.encoding, reading_options)?;
 
         let field_info = reader.fields().to_vec();
         let schema = Arc::new(try_from_schema(&field_info, single_column_name.as_ref())?);
@@ -345,8 +502,9 @@ where
             batch_size: actual_batch_size,
             with_columns,
             progress_tracker: None,
+            progress_mode: ProgressMode::None,
             current_file_index: 0,
-            records_processed_in_batch: 0,
+            records_processed_in_file: 0,
         }
         .fuse()
     }
@@ -385,6 +543,7 @@ where
         batch_size: Option<usize>,
         with_columns: Option<Arc<[usize]>>,
         progress_tracker: Option<DbaseProgressTracker>,
+        progress_mode: ProgressMode,
     ) -> Fuse<DbfIter<R, I>> {
         let actual_batch_size = batch_size.unwrap_or(self.options.batch_size);
         DbfIter {
@@ -398,8 +557,9 @@ where
             batch_size: actual_batch_size,
             with_columns,
             progress_tracker,
+            progress_mode,
             current_file_index: 0,
-            records_processed_in_batch: 0,
+            records_processed_in_file: 0,
         }
         .fuse()
     }
@@ -423,8 +583,9 @@ where
     with_columns: Option<Arc<[usize]>>,
     // Progress tracking
     progress_tracker: Option<DbaseProgressTracker>,
+    progress_mode: ProgressMode,
     current_file_index: usize,
-    records_processed_in_batch: usize,
+    records_processed_in_file: usize,
 }
 
 impl<R, E, I> DbfIter<R, I>
@@ -433,6 +594,36 @@ where
     ValueError: From<E>,
     I: Iterator<Item = Result<R, E>>,
 {
+    /// Update progress tracking based on configured mode
+    fn update_progress(&mut self, records_read: usize) {
+        match self.progress_mode {
+            ProgressMode::None => { /* no-op */ }
+            ProgressMode::Total => {
+                if let Some(ref tracker) = self.progress_tracker {
+                    tracker.update_overall_progress(records_read as u64);
+                }
+            }
+            ProgressMode::PerFile => {
+                if let Some(ref tracker) = self.progress_tracker {
+                    self.records_processed_in_file += records_read;
+                    tracker.update_file_progress(
+                        self.current_file_index,
+                        self.records_processed_in_file as u64,
+                    );
+                    tracker.update_overall_progress(records_read as u64);
+                }
+            }
+        }
+    }
+
+    /// Handle file transition and reset progress tracking
+    fn on_file_transition(&mut self) {
+        if self.progress_mode == ProgressMode::PerFile {
+            self.current_file_index += 1;
+            self.records_processed_in_file = 0;
+        }
+    }
+
     fn read_columns(
         &mut self,
         with_columns: impl IntoIterator<Item = usize> + Clone,
@@ -446,61 +637,29 @@ where
         for _ in 0..self.batch_size {
             if let Some(record_result) = self.reader.iter_records().next() {
                 records.push(record_result);
-
-                // Update progress tracking
-                if let Some(ref tracker) = self.progress_tracker {
-                    self.records_processed_in_batch += 1;
-                    tracker.update_file_progress(
-                        self.current_file_index,
-                        self.records_processed_in_batch as u64,
-                    );
-                    tracker.update_overall_progress(1);
-                }
             } else {
                 break;
             }
+        }
+
+        // Update progress after collecting batch (more efficient than per-record)
+        if !records.is_empty() {
+            self.update_progress(records.len());
         }
 
         // If we need more records, try to get them from additional sources
         if records.len() < self.batch_size {
             while records.len() < self.batch_size {
                 if let Some(source_result) = self.sources.next() {
-                    let validated_encoding = resolve_encoding_string(&self.options.encoding)
-                        .map_err(|_| ValueError::InternalError {
-                            message: format!("Unsupported encoding: {}", self.options.encoding),
-                        })?;
                     let reading_options = dbase::ReadingOptions::default()
                         .character_trim(self.options.character_trim);
 
-                    self.reader = match validated_encoding.as_str() {
-                        "utf8" => ReaderBuilder::new(source_result?)
-                            .with_encoding(Unicode)
-                            .with_options(reading_options)
-                            .build()?,
-                        "utf8-lossy" => ReaderBuilder::new(source_result?)
-                            .with_encoding(UnicodeLossy)
-                            .with_options(reading_options)
-                            .build()?,
-                        "cp1252" => ReaderBuilder::new(source_result?)
-                            .with_encoding(yore::code_pages::CP1252)
-                            .with_options(reading_options)
-                            .build()?,
-                        "cp850" => ReaderBuilder::new(source_result?)
-                            .with_encoding(yore::code_pages::CP850)
-                            .with_options(reading_options)
-                            .build()?,
-                        "gbk" => ReaderBuilder::new(source_result?)
-                            .with_encoding(dbase::encoding::EncodingRs::from(encoding_rs::GBK))
-                            .with_options(reading_options)
-                            .build()?,
-                        _ => {
-                            // Default to UnicodeLossy for unknown encodings
-                            ReaderBuilder::new(source_result?)
-                                .with_encoding(UnicodeLossy)
-                                .with_options(reading_options)
-                                .build()?
-                        }
-                    };
+                    // Build reader with typed encoding enum
+                    self.reader = build_reader_with_encoding(
+                        source_result?,
+                        self.options.encoding,
+                        reading_options,
+                    )?;
 
                     // Validate schema if required
                     if self.options.validate_schema {
@@ -515,16 +674,8 @@ where
                         }
                     }
 
-                    // Update file index when switching to new file
-                    if let Some(ref tracker) = self.progress_tracker {
-                        tracker.update_file_progress(
-                            self.current_file_index,
-                            self.records_processed_in_batch as u64,
-                        );
-
-                        self.current_file_index += 1;
-                        self.records_processed_in_batch = 0;
-                    }
+                    // Handle file transition
+                    self.on_file_transition();
 
                     let current_remaining = self.batch_size - records.len();
 
@@ -537,14 +688,9 @@ where
 
                     let num_records_added = records_to_add.len();
 
-                    // Update progress for the new file
-                    if let Some(ref tracker) = self.progress_tracker {
-                        tracker.update_file_progress(
-                            self.current_file_index,
-                            num_records_added as u64,
-                        );
-                        tracker.update_overall_progress(num_records_added as u64);
-                        self.records_processed_in_batch = num_records_added;
+                    // Update progress for new records
+                    if num_records_added > 0 {
+                        self.update_progress(num_records_added);
                     }
 
                     records.extend(records_to_add);
@@ -743,20 +889,32 @@ mod read_tests {
     fn test_read_options_default() {
         let options = DbfReadOptions::default();
         assert_eq!(options.batch_size, 1024);
-        assert_eq!(options.encoding, "cp1252");
+        assert_eq!(options.encoding, DbfEncoding::Cp1252);
         assert!(options.skip_deleted);
         assert!(options.validate_schema);
     }
 
     #[test]
     fn test_read_options_builder() {
-        let options = DbfReadOptions::with_encoding("utf8")
+        let options = DbfReadOptions::with_encoding(DbfEncoding::Utf8)
             .with_batch_size(2048)
             .with_character_trim(dbase::TrimOption::End);
 
-        assert_eq!(options.encoding, "utf8");
+        assert_eq!(options.encoding, DbfEncoding::Utf8);
         assert_eq!(options.batch_size, 2048);
         assert!(matches!(options.character_trim, dbase::TrimOption::End));
+    }
+
+    #[test]
+    fn test_read_options_from_string() {
+        let options = DbfReadOptions::with_encoding_str("utf8").expect("utf8 should be valid");
+        assert_eq!(options.encoding, DbfEncoding::Utf8);
+
+        let options = DbfReadOptions::with_encoding_str("cp1252").expect("cp1252 should be valid");
+        assert_eq!(options.encoding, DbfEncoding::Cp1252);
+
+        let result = DbfReadOptions::with_encoding_str("invalid-encoding");
+        assert!(result.is_err(), "invalid encoding should fail");
     }
 
     #[test]
@@ -777,7 +935,7 @@ mod read_tests {
     fn test_reader_with_utf8_encoding() {
         let (temp_file, _fields) = create_test_dbf().expect("Should create test DBF file");
 
-        let options = DbfReadOptions::with_encoding("utf8");
+        let options = DbfReadOptions::with_encoding(DbfEncoding::Utf8);
         let result = DbfReader::new_with_options(vec![temp_file.into_file()], None, options);
 
         assert!(result.is_ok());
@@ -787,7 +945,7 @@ mod read_tests {
     fn test_reader_with_cp1252_encoding() {
         let (temp_file, _fields) = create_test_dbf().expect("Should create test DBF file");
 
-        let options = DbfReadOptions::with_encoding("cp1252");
+        let options = DbfReadOptions::with_encoding(DbfEncoding::Cp1252);
         let result = DbfReader::new_with_options(vec![temp_file.into_file()], None, options);
 
         assert!(result.is_ok());
@@ -803,14 +961,26 @@ mod read_tests {
     }
 
     #[test]
-    fn test_reader_invalid_encoding() {
-        let (temp_file, _fields) = create_test_dbf().expect("Should create test DBF file");
+    fn test_encoding_enum_display() {
+        assert_eq!(DbfEncoding::Utf8.to_string(), "utf8");
+        assert_eq!(DbfEncoding::Cp1252.to_string(), "cp1252");
+        assert_eq!(DbfEncoding::Gbk.to_string(), "gbk");
+    }
 
-        let _options = DbfReadOptions::with_encoding("invalid-encoding");
-        let _result = DbfReader::new(vec![temp_file.into_file()], None);
-
-        // Note: This might still succeed as encoding validation happens during iteration
-        // The exact behavior depends on the implementation
+    #[test]
+    fn test_encoding_enum_from_str() {
+        use std::str::FromStr;
+        assert_eq!(DbfEncoding::from_str("utf8").unwrap(), DbfEncoding::Utf8);
+        assert_eq!(DbfEncoding::from_str("UTF-8").unwrap(), DbfEncoding::Utf8);
+        assert_eq!(
+            DbfEncoding::from_str("cp1252").unwrap(),
+            DbfEncoding::Cp1252
+        );
+        assert_eq!(
+            DbfEncoding::from_str("windows-1252").unwrap(),
+            DbfEncoding::Cp1252
+        );
+        assert!(DbfEncoding::from_str("invalid").is_err());
     }
 
     #[test]
@@ -890,25 +1060,40 @@ mod read_tests {
 
     #[test]
     fn test_encoding_resolution() {
-        // Test that our encoding resolution works
+        // Test that our encoding resolution works for all valid string names
         let valid_encodings = vec![
-            "utf8",
-            "utf-8",
-            "utf8-lossy",
-            "ascii",
-            "cp1252",
-            "windows-1252",
-            "cp850",
-            "dos-850",
-            "gbk",
-            "big5",
-            "shift_jis",
+            ("utf8", DbfEncoding::Utf8),
+            ("utf-8", DbfEncoding::Utf8),
+            ("utf8-lossy", DbfEncoding::Utf8Lossy),
+            ("ascii", DbfEncoding::Ascii),
+            ("cp1252", DbfEncoding::Cp1252),
+            ("windows-1252", DbfEncoding::Cp1252),
+            ("cp866", DbfEncoding::Cp866),
+            ("ibm866", DbfEncoding::Cp866),
+            ("cp874", DbfEncoding::Cp874),
+            ("iso-8859-2", DbfEncoding::Iso8859_2),
+            ("gbk", DbfEncoding::Gbk),
+            ("big5", DbfEncoding::Big5),
+            ("shift_jis", DbfEncoding::ShiftJis),
         ];
 
-        for encoding in valid_encodings {
-            let options = DbfReadOptions::with_encoding(encoding);
-            assert_eq!(options.encoding, encoding);
+        for (encoding_str, expected_enum) in valid_encodings {
+            let parsed = resolve_encoding_string(encoding_str)
+                .unwrap_or_else(|_| panic!("{} should be a valid encoding", encoding_str));
+            assert_eq!(
+                parsed, expected_enum,
+                "Encoding {} should map to {:?}",
+                encoding_str, expected_enum
+            );
+
+            // Also test via with_encoding_str
+            let options = DbfReadOptions::with_encoding_str(encoding_str)
+                .unwrap_or_else(|_| panic!("{} should create valid options", encoding_str));
+            assert_eq!(options.encoding, expected_enum);
         }
+
+        // Test invalid encoding
+        assert!(resolve_encoding_string("invalid-encoding").is_err());
     }
 
     #[test]
@@ -951,7 +1136,7 @@ mod read_tests {
         let file = std::fs::File::open(file_path).expect("Should be able to open test file");
 
         // Create scanner with proper options for the real file
-        let options = DbfReadOptions::with_encoding("cp1252") // The file has codepage ID=0x57 (cp1252)
+        let options = DbfReadOptions::with_encoding(DbfEncoding::Cp1252)
             .with_batch_size(50)
             .with_character_trim(dbase::TrimOption::BeginEnd);
 
@@ -1019,12 +1204,12 @@ mod read_tests {
         // This test would work with actual DBF files
         // For now, we'll just verify the structure is correct
 
-        let options = DbfReadOptions::with_encoding("cp1252")
+        let options = DbfReadOptions::with_encoding(DbfEncoding::Cp1252)
             .with_batch_size(1024)
             .with_character_trim(dbase::TrimOption::BeginEnd);
 
         // Verify options are set correctly
-        assert_eq!(options.encoding, "cp1252");
+        assert_eq!(options.encoding, DbfEncoding::Cp1252);
         assert_eq!(options.batch_size, 1024);
         assert!(matches!(
             options.character_trim,
@@ -1254,7 +1439,7 @@ mod read_tests {
         let file = std::fs::File::open(file_path).expect("Should be able to open test file");
 
         // Create scanner with proper options for the real file
-        let options = DbfReadOptions::with_encoding("cp1252") // The file has codepage ID=0x57 (cp1252)
+        let options = DbfReadOptions::with_encoding(DbfEncoding::Cp1252)
             .with_batch_size(100)
             .with_character_trim(dbase::TrimOption::BeginEnd);
 
@@ -1351,7 +1536,7 @@ mod read_tests {
             let reader2 = DbfReader::new_with_options(
                 vec![file2],
                 None,
-                DbfReadOptions::with_encoding("cp1252"),
+                DbfReadOptions::with_encoding(DbfEncoding::Cp1252),
             )
             .expect("Should create scanner again");
 
@@ -1409,7 +1594,7 @@ mod read_tests {
             let reader3 = DbfReader::new_with_options(
                 vec![file3],
                 None,
-                DbfReadOptions::with_encoding("cp1252"),
+                DbfReadOptions::with_encoding(DbfEncoding::Cp1252),
             )
             .expect("Should create scanner again");
 
