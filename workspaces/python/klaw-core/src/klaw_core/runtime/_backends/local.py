@@ -183,7 +183,6 @@ class LocalBackend:
             except Exception:
                 # Suppress any other exceptions during cleanup
                 pass
-
         self._task_group = None
         self._task_group_cm = None
 
