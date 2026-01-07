@@ -132,14 +132,11 @@ jobs:
           path: workspaces/rust/klaw-dbase/dist
 
   macos:
-    runs-on: ${{ matrix.platform.runner }}
+    runs-on: macos-15
     strategy:
       matrix:
         platform:
-          - runner: macos-15-large
-            target: x86_64
-          - runner: macos-15
-            target: aarch64
+          - target: aarch64
 
     defaults:
       run:
