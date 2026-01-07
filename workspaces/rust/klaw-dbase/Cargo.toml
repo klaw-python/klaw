@@ -56,19 +56,11 @@ serde       = { version = "1.0", features = ["derive"] }
 serde_json  = { version = "1.0" }
 thiserror   = "2.0"
 anyhow      = "1.0.98"
-reqwest     = { version = "0.12", default-features = false, features = ["json", "stream", "rustls-tls"] }
-async-trait = "0.1"
 lazy_static = "1.4"
 
 regex = "1.11.1"
 
-
-url = { version = "2.5.4", features = ["serde"] }
-suppaftp = { version = "6.3.0", features = ["async-rustls"] }
 tempfile = "3.20.0"
-tokio = { version = "1.45.1", features = ["full"] }
-tokio-rustls = "0.26.2"
-futures = "0.3.31"
 dbase = { version = "0.6.1", features = [
     "encoding_rs",
     "chrono",
@@ -84,3 +76,8 @@ constriction = "0.4.1"
 probability = "0.20.3"
 indicatif = { version = "0.18.0", features = ["rayon"] }
 console = "0.16.1"
+
+[profile.release]
+lto = "thin"
+strip = true
+codegen-units = 1

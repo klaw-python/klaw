@@ -1,54 +1,59 @@
 [project]
-name        = "klaw-dbase"
-version     = "0.1.0"
+name = "klaw-dbase"
+version = "0.1.0"
 description = "Fast Polars-based reading/writing of dBase/DBF files with async I/O and compression support"
-readme      = "README.md"
-license     = { text = "MIT" }
-authors     = [{ name = "Raphael Vaz", email = "raphael@wrath.codes" }]
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Raphael Vaz", email = "raphael@wrath.codes" }]
 classifiers = [
-    "Programming Language :: Rust",
-    "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.13",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: POSIX :: Linux",
-    "Operating System :: MacOS",
-    "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Rust",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.13",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
 ]
-keywords = ["polars", "dbase", "dbf", "dataframe", "datasus", "klaw"]
+keywords = [
+  "polars",
+  "dbase",
+  "dbc",
+  "sus",
+  "dbf",
+  "dataframe",
+  "datasus",
+  "klaw",
+]
 
 requires-python = ">=3.13"
-dependencies = [
-    "polars-lts-cpu>=1.33.1",
-    "pyarrow>=15.0.0",
-    "psutil>=6.1.0",
-]
+dependencies = ["polars-lts-cpu>=1.33.1", "pyarrow>=15.0.0", "psutil>=6.1.0"]
 
 [project.urls]
-Homepage      = "https://github.com/wrath-codes/klaw"
-Repository    = "https://github.com/wrath-codes/klaw"
-Issues        = "https://github.com/wrath-codes/klaw/issues"
+Homepage = "https://github.com/wrath-codes/klaw"
+Repository = "https://github.com/wrath-codes/klaw"
+Issues = "https://github.com/wrath-codes/klaw/issues"
 Documentation = "https://github.com/wrath-codes/klaw/tree/main/workspaces/rust/klaw-dbase"
 
 [dependency-groups]
 # CI: minimal deps for testing
 test = [
-    "maturin>=1.9.4",
-    "pytest>=8.3.3",
-    "pytest-asyncio>=0.24.0",
-    "pytest-mock>=3.14.0",
-    "logot[loguru]>=1.3.0",
+  "maturin>=1.9.4",
+  "pytest>=8.3.3",
+  "pytest-asyncio>=0.24.0",
+  "pytest-mock>=3.14.0",
+  "logot[loguru]>=1.3.0",
 ]
 # Local dev: includes test + extras
 dev = [
-    { include-group = "test" },
-    "mypy>=1.10.1",
-    "loguru-mypy>=0.0.4",
-    "maturin-import-hook>=0.3.0",
-    "pytest-icdiff>=0.9",
-    "pytest-xdist>=3.6.1",
-    "pytest-randomly>=3.16.0",
-    "pytest-sugar>=1.0.0",
+  { include-group = "test" },
+  "mypy>=1.10.1",
+  "loguru-mypy>=0.0.4",
+  "maturin-import-hook>=0.3.0",
+  "pytest-icdiff>=0.9",
+  "pytest-xdist>=3.6.1",
+  "pytest-randomly>=3.16.0",
+  "pytest-sugar>=1.0.0",
 ]
 
 # [project.scripts]
@@ -56,8 +61,9 @@ dev = [
 
 [tool.maturin]
 module-name = "klaw_dbase._dbase_rs"
-features    = ["pyo3/extension-module"]
+features = ["pyo3/extension-module"]
+exclude = ["data/**", "tests/**", ".benchmarks/**", ".pytest_cache/**"]
 
 [build-system]
-requires      = ["maturin>=1.0,<2.0"]
+requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
