@@ -27,12 +27,8 @@ jobs:
         platform:
           - runner: depot-ubuntu-24.04-4
             target: x86_64
-          - runner: depot-ubuntu-24.04-4
-            target: x86
-          - runner: depot-ubuntu-24.04-4
+          - runner: depot-ubuntu-24.04-arm-4
             target: aarch64
-          - runner: depot-ubuntu-24.04-4
-            target: armv7
 
     defaults:
       run:
@@ -69,7 +65,7 @@ jobs:
         platform:
           - runner: depot-ubuntu-24.04-4
             target: x86_64
-          - runner: depot-ubuntu-24.04-4
+          - runner: depot-ubuntu-24.04-arm-4
             target: aarch64
 
     defaults:
@@ -107,8 +103,6 @@ jobs:
         platform:
           - runner: depot-windows-2022-4
             target: x64
-          - runner: depot-windows-2022-4
-            target: x86
 
     defaults:
       run:
