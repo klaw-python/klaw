@@ -55,26 +55,6 @@ def demo_with_progress(files: list[str]):
     print(f'Throughput: {len(df) / elapsed:,.0f} rows/sec')
 
 
-def demo_single_file_progress(files: list[str]):
-    """Read each file individually with progress."""
-    print('\n' + '=' * 60)
-    print('MODE 3: Single File Progress (one file at a time)')
-    print('=' * 60)
-
-    total_rows = 0
-    start = time.perf_counter()
-
-    for f in files:
-        print(f'\nReading: {f}')
-        df = scan_dbase(f, progress=True).collect()
-        total_rows += len(df)
-        print(f'  → {len(df):,} rows')
-
-    elapsed = time.perf_counter() - start
-    print(f'\nTotal: {total_rows:,} rows in {elapsed:.2f}s')
-    print(f'Throughput: {total_rows / elapsed:,.0f} rows/sec')
-
-
 def main():
     """Run the progress tracking demo."""
     print('=' * 60)
@@ -92,7 +72,6 @@ def main():
     # Demo each mode
     demo_no_progress(files)
     demo_with_progress(files)
-    demo_single_file_progress(files)
 
     print('\n' + '=' * 60)
     print('Demo complete!')
