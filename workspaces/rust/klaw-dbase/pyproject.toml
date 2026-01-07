@@ -1,6 +1,6 @@
 [project]
 name = "klaw-dbase"
-version = "0.1.0"
+version = "0.1.1"
 description = "Fast Polars-based reading/writing of dBase/DBF files with async I/O and compression support"
 readme = "README.md"
 license = { text = "MIT" }
