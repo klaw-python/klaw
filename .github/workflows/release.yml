@@ -18,7 +18,6 @@ permissions:
 env:
   PACKAGE_NAME: klaw-dbase
   PYTHON_VERSION: "3.13"
-  DEPOT_TOKEN: ${{ secrets.DEPOT_TOKEN }}
 
 jobs:
   linux:
@@ -45,7 +44,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: workspaces/rust/klaw-dbase
-          cache-provider: depot
+
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -86,7 +85,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: workspaces/rust/klaw-dbase
-          cache-provider: depot
+
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -130,7 +129,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: workspaces/rust/klaw-dbase
-          cache-provider: depot
+
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
