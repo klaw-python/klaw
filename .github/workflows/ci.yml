@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [depot-ubuntu-24.04-4, macos-14, depot-windows-2022-4]
+        os: [blacksmith-2vcpu-ubuntu-2404, macos-14, depot-windows-2022-4]
 
     defaults:
       run:
